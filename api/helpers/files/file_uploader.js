@@ -29,17 +29,18 @@ const storage = multer.diskStorage({
 		}
 	};
 
-module.exports = ({ fileSize, fieldName, fieldNameSize }) => {
+module.exports = ({ fileSize, fieldName, fieldNameSize, maxFilesAmount }) => {
 	return (req, res, next) => {
 		multer({
 			storage: storage,
 			fileFilter: fileFilter,
 			limits: {
 				fileSize: 1024 * 1024 * parseInt(fileSize), // filesizer is in bytes => 5mb
-				fieldNameSize: fieldNameSize
+				fieldNameSize: fieldNameSize,
+
 			}
-		}).single(fieldName)(req, res, function(err){
-			console.log("FILE: ", req.file);
+		}).array(fieldName,maxFilesAmount)(req, res, function(err){
+			// console.log("FILE: ", req.files);
 			//Catching and handling errors of multer
 			if (err instanceof multer.MulterError) {
 				return res.status(500).json({

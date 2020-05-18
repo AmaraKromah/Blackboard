@@ -15,7 +15,7 @@ exports.assignments_list = async (req, res) => {
 		fullpath = res.fullpath;
 
 	try {
-		assigment = await Assignments.find().populate("file", "name type");
+		assigment = await Assignments.find().populate("file", "_id");
 
 		// If none exist
 		if (!assigment.length > 0) {
@@ -54,26 +54,27 @@ exports.assignments_list = async (req, res) => {
 };
 
 exports.assignments_create = async (req, res, next) => {
-
-	/**
-	 * TODO: handling multiple files
-	 */
 	try {
+		let files = req.files;
 		let teacher = res.userData;
+		let files_id = [];
 
-		let new_file = {};
-		if (req.file) {
-			console.log("FILE is undefined");
+		if (files.length >= 1) {
+			for (let file of files) {
+				console.log("element", file);
 
-			new_file = await new Files({
-				name: req.file.filename,
-				url: req.file.path,
-				ext: req.file.filename.split(".").pop(),
-				type: req.file.mimetype
-			}).save();
+				new_file = await new Files({
+					name: file.filename,
+					url: file.path,
+					ext: file.filename.split(".").pop(),
+					type: file.mimetype
+				}).save();
+
+				files_id.push(new_file._id);
+			}
 		}
 
-		let file = req.file ? new Array(new_file._id) : [];
+		let file = files_id.length >= 1 ? files_id : [];
 
 		let new_assigment = await new Assignments({
 			title: req.body.title,
@@ -87,7 +88,6 @@ exports.assignments_create = async (req, res, next) => {
 
 		res.status(201).json({
 			message: "Assigment Created",
-			file: new_file,
 			assigment: new_assigment
 		});
 	} catch (error) {
@@ -96,4 +96,9 @@ exports.assignments_create = async (req, res, next) => {
 			error: error.message
 		});
 	}
+};
+
+
+exports.assigments_delete_list = async (req, res, next)=>{
+
 };
