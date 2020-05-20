@@ -15,7 +15,7 @@ exports.assignments_list = async (req, res) => {
 		fullpath = res.fullpath;
 
 	try {
-		assigment = await Assignments.find().populate("file", "_id");
+		assigment = await Assignments.find().populate("file", "_id url");
 
 		// If none exist
 		if (!assigment.length > 0) {
