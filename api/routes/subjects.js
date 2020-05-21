@@ -1,7 +1,7 @@
 const express = require("express"),
 	router = express.Router();
 
-const courses_controller = require("../controllers/coursesController");
+const courses_controller = require("../controllers/subjectController");
 
 let subjects = require("../models/courses/subject"),
 	educations = require("../models/courses/education");

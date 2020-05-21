@@ -163,3 +163,137 @@ exports.auth_signin = async (req, res, next) => {
 		});
 	}
 };
+
+exports.pass_forgot_create = async (req, res, next) => {
+	/*
+    todo: Security question when resetting password
+    */
+	let email = req.body.email;
+	JWT_KEY = process.env.JWT_RESET_EMAIL_KEY;
+
+	try {
+		//- Check if email exsist
+		user = await Users.findOne({
+			email: email
+		});
+
+		// Wrong Email
+		if (!user) {
+			return res.status(404).json({
+				message: "No user witch such email"
+			});
+		}
+		// - Create token if email exist
+		let token = await reuse.create_token({
+			info: { id: user._id },
+			JWT_KEY,
+			expiresIn: "10m"
+		});
+
+		// - create link for mailer
+		const url = ` http://localhost:3000/auth/reset/${token}`;
+
+		//- Send mail
+		try {
+			mailer.transport.sendMail(
+				mailer.options.reset_pass_options({
+					email: `${user.email}`,
+					url: url
+				}),
+				(error, info) => {
+					if (error) {
+						return res.status(500).json({
+							message: error.message
+						});
+					}
+					console.log("Message sent: %s", info.messageId);
+
+					return res.status(202).json({
+						message: `Process to reset your password has been send to your email `
+					});
+				}
+			);
+		} catch (error) {
+			return res.status(500).json({
+				message: error.message
+			});
+		}
+	} catch (error) {
+		return res.status(500).json({
+			message: "Something went wrong",
+			error: error.message
+		});
+	}
+};
+
+exports.pass_forgot_get_token = async (req, res, next) => {
+	let token = req.params.token;
+	let JWT_KEY = process.env.JWT_RESET_EMAIL_KEY;
+
+	try {
+		//- try to verify the token
+		let { id } = await reuse.consume_token({
+			token,
+			JWT_KEY
+		});
+
+		// verification failed
+		if (!id) {
+			return res.status(401).json({
+				message: "Link is no longer valid or something went wrong please try again"
+			});
+		}
+
+		return res.status(200).json({
+			message: "You may now reset your pass",
+			token: req.params.token
+		});
+	} catch (error) {
+		return res.status(500).json({
+			message: "Something went wrong",
+			error: error
+		});
+	}
+};
+exports.pass_forgot_consume_token = async (req, res, next) => {
+	let token = req.params.token;
+	let password = req.body.password;
+	let JWT_KEY = process.env.JWT_RESET_EMAIL_KEY;
+
+	try {
+		//- try to verify the token
+		let { id } = await reuse.consume_token({
+			token,
+			JWT_KEY
+		});
+
+		// verification failed
+		if (!id) {
+			return res.status(401).json({
+				message: "Link is no longer valid or something went wrong please try again"
+			});
+		}
+
+		//- Hash our password
+		hashed_pass = await bcrypt.hash(password, 10);
+		//- try to update the user password
+		Users.findByIdAndUpdate(id, { password: hashed_pass }, { useFindAndModify: false })
+			.exec()
+			.then(updated => {
+				return res.status(200).json({
+					message: "Your password has been updated, Try not to forget it"
+				});
+			})
+			.catch(err => {
+				return res.status(401).json({
+					message: "Something went wrong",
+					error: err.message
+				});
+			});
+	} catch (error) {
+		return res.status(500).json({
+			message: "Something went wrong",
+			error: error.message
+		});
+	}
+};
