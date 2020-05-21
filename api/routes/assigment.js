@@ -46,7 +46,7 @@ router.delete("/", async (req, res, next) => {
  *# Single
  */
 
-//- Get/update one
+//- Get
 
 router.get("/:id", async (req, res, next) => {
 	let id = req.params.id;
@@ -58,12 +58,95 @@ router.get("/:id", async (req, res, next) => {
 	});
 });
 
-router.patch("/:id", async (req, res, next) => {});
+//- update one
+router.patch("/:id", fileUpload({ fileSize: 50, fieldNameSize: 50, fieldName: "file", maxFilesAmount: 5 }), async (req, res, next) => {
+	let id = req.params.id;
+	let files = req.files;
+	// let teacher = res.userData; // todo teacher's ID
+	let files_id = [];
+
+	//# files
+	// - find assignment first
+
+	task = await Assignments.findById(id).populate("file", "_id url ");
+	task_files = task.file;
+
+	// - Delete exsisting files in public folder
+	if (task_files.length >= 1) {
+		let errors = [];
+		try {
+			task_files.forEach(async file => {
+				if (fs.existsSync(file.url)) {
+					// - Delete file in public folder
+					fs.unlink(file.url, error => {
+						if (error) {
+							errors.push({ message: error });
+						}
+					});
+				} else {
+					errors.push({ message: `File: ${file.url} doesn't exist` });
+				}
+			});
+		} catch (error) {
+			errors.push({ message: error });
+		}
+
+		if (errors.length >= 1) {
+			//! misschien toegevoegde bestanden ook mee verwijderen?
+			return res.status(500).json({
+				message: "Something went wrong",
+				err: errors
+			});
+		}
+	}
+
+	// - Delete exsisting files in database
+	try {
+		let to_delete_files_id = task_files.map(file => file._id);
+		await Files.deleteMany({ _id: { $in: to_delete_files_id } });
+
+		// //- Adding new (updated) file if any
+		if (files.length >= 1) {
+			for (let file of files) {
+				new_file = await new Files({
+					name: file.filename,
+					url: file.path,
+					ext: file.filename.split(".").pop(),
+					type: file.mimetype
+				}).save();
+				files_id.push(new_file._id);
+			}
+		}
+
+		//# Assignment
+		// Updating Assignment
+		let file = files_id.length >= 1 ? files_id : [];
+		var update_task = {
+			title: req.body.title,
+			description: req.body.description,
+			type: req.body.type,
+			file: file,
+			subject: req.body.subject,
+			// teacher: teacher.id,
+			deadline: req.body.deadline
+		};
+		updated_assignment = await Assignments.findByIdAndUpdate(id, update_task, { useFindAndModify: false });
+
+		return res.status(200).json({
+			message: "Updating Assigment",
+			current_assignment: task,
+			updated_assignment: update_task
+		});
+	} catch (error) {
+		return res.status(500).json({
+			message: "Something went wrong",
+			error: error
+		});
+	}
+});
 
 //- delete one
-
 //  todo ERROR handling (and testing exspecially files) + auth + permission and auth
-
 
 router.delete("/:id", async (req, res, next) => {
 	let id = req.params.id;
