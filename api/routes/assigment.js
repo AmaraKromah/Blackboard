@@ -7,11 +7,10 @@ const Assignments = require("../models/courses/assigment"),
 	Subjects = require("../models/courses/subject"),
 	Files = require("../models/file");
 
-const { assignments_list,assignments_create } = require("../controllers/assignmentController"),
+const { assignments_list, assignments_create } = require("../controllers/assignmentController"),
 	{ isAuth } = require("../middleware/auth/authorization");
 
 const fileUpload = require("../helpers/files/file_uploader");
-
 
 /* Assigments */
 
@@ -19,23 +18,13 @@ const fileUpload = require("../helpers/files/file_uploader");
  * todo:  Permission, push to controller
  */
 
-router.get("/", isAuth, assignments_list );
+router.get("/", isAuth, assignments_list);
+router.post("/", isAuth, fileUpload({ fileSize: 50, fieldNameSize: 50, fieldName: "file" }), assignments_create);
 
-
-
-
-router.post("/", isAuth, fileUpload({fileSize: 50, fieldNameSize:50, fieldName:"file"}), assignments_create);
-
-
-
-
-
-// delete all 
+// delete all
 router.delete("/", async (req, res, next) => {
-	
 	res.status(201).json({
-		message: "Deleted all assigments with associated files",
-
+		message: "Deleted all assigments with associated files"
 	});
 });
 /**
