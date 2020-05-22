@@ -9,7 +9,7 @@ exports.assignmentValidationRules = () => {
 		body("type")
 			.trim()
 			.custom((value, { req, loc, path }) => {
-				if (String(value).toLowerCase().match(/\b(?:" "|hoorcollege|practicum|regular)\b/)) {
+				if (String(value).match(/\b(?:" "|hoorcollege|practicum|regular)\b/)) {
 					// trow error if passwords do not match
 					return value;
 				} else {

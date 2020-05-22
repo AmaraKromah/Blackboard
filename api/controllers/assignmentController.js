@@ -27,6 +27,7 @@ exports.assignments_list = async (req, res) => {
 		let response = {
 			message: "Feched all data",
 			count: assigment.length,
+			id: req.params,
 			assigments: assigment.map(doc => {
 				return {
 					title: doc.title,

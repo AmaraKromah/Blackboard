@@ -58,8 +58,9 @@ app.use((req, res, next) => {
 app.use("/", indexRouter);
 app.use("/auth", authRouter);
 app.use("/users", usersRouter);
-app.use("/courses", SubjectsRouter);
+app.use("/subjects", SubjectsRouter);
 app.use("/educations", educationRouter);
+// app.use("/subjects/:sub_id/assigments", AssigmentsRouter);
 app.use("/subjects/assigments", AssigmentsRouter);
 
 //-      Error Handling          //

@@ -4,7 +4,6 @@ const mongoose = require('mongoose'),
 
 let SubjectSchema = new Schema({
     name: {type: String, required: true},
-    points: Number,
     teacher: [{type: Schema.Types.ObjectId, ref: 'User'}],
     education: [{type: Schema.Types.ObjectId, ref: 'Education'}],
 })
