@@ -63,8 +63,6 @@ exports.assignments_create = async (req, res, next) => {
 
 		if (files.length >= 1) {
 			for (let file of files) {
-				console.log("element", file);
-
 				new_file = await new Files({
 					name: file.filename,
 					url: file.path,
@@ -94,7 +92,7 @@ exports.assignments_create = async (req, res, next) => {
 		});
 	} catch (error) {
 		res.status(500).json({
-			message: "Bob, Something went wrong",
+			message: "Something went wrong",
 			error: error.message
 		});
 	}
@@ -184,13 +182,13 @@ exports.assigments_update = async (req, res, next) => {
 	}
 };
 
-//-error handling 
+//-error handling
 exports.assigments_delete = async (req, res, next) => {
 	let id = req.params.id;
 	let files_ids = req.body.file;
 	let only_files = req.body.file_only;
 
-	//- convert tiles to array just in case
+	//- convert files to array just in case
 	if (!(files_ids instanceof Array)) {
 		if (typeof files_ids === "undefined") files_ids = [];
 		else files_ids = new Array(files_ids);
@@ -198,7 +196,14 @@ exports.assigments_delete = async (req, res, next) => {
 
 	//- delete  assignment only if only_files (only files should be deleted and not the assigments itself)
 	if (only_files === "false") {
-		await Assignments.findByIdAndDelete(id);
+		try {
+			await Assignments.findByIdAndDelete(id);
+		} catch (error) {
+			return res.status(500).json({
+				message: "Something went wrong",
+				err: error
+			});
+		}
 	}
 	//- delete all files_ids if any
 	let errors = [];
@@ -206,19 +211,24 @@ exports.assigments_delete = async (req, res, next) => {
 		//-delete files
 		try {
 			files_ids.forEach(async file_id => {
-				file = await Files.findById(file_id);
-				if (file) {
-					// -File exsist in public folder
-					if (fs.existsSync(file.url)) {
-						// - Delete file in public folder
-						fs.unlink(file.url, err => {
-							if (err) errors.push({ message: err });
-						});
+				//-check if input is a Object ID
+				if (String(file_id).match(/^[0-9a-fA-F]{24}$/)) {
+					file = await Files.findById(file_id);
+					if (file) {
+						// -File exsist in public folder
+						if (fs.existsSync(file.url)) {
+							// - Delete file in public folder
+							fs.unlink(file.url, err => {
+								if (err) errors.push({ message: err });
+							});
+						} else {
+							errors.push({ message: `File: ${file.url} doesn't exist` });
+						}
+						// - delete file in db
+						await Files.findByIdAndDelete(file_id);
 					} else {
-						errors.push({ message: `File: ${file.url} doesn't exist` });
+						errors.push({ message: `File: doesn't exist` });
 					}
-					// - delete file in db
-					await Files.findByIdAndDelete(file_id);
 				}
 			});
 		} catch (err) {
@@ -232,7 +242,6 @@ exports.assigments_delete = async (req, res, next) => {
 			message: "Something went wrong",
 			err: errors
 		});
-	} else {
 		return res.status(202).json({
 			message: "Removal succesfull"
 		});
