@@ -26,4 +26,6 @@ var methods = {
 	}
 };
 
+
+//- misschien file verwijderen aan toevoegen 
 module.exports = methods;

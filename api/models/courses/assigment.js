@@ -7,7 +7,7 @@ let AssigmentSchema = new Schema({
 	description: { type: String, required: true },
 	type: {
 		type: String,
-		enum: [ "Hoorcollege", "Practicum", "regular" ],
+		enum: [ "hoorcollege", "practicum", "regular" ],
 		default: "regular"
 	},
 	file: [ { type: Schema.Types.ObjectId, ref: "File" } ],

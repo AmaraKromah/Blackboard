@@ -37,24 +37,19 @@ module.exports = ({ fileSize, fieldName, fieldNameSize, maxFilesAmount }) => {
 			limits: {
 				fileSize: 1024 * 1024 * parseInt(fileSize), // filesizer is in bytes => 5mb
 				fieldNameSize: fieldNameSize,
-
 			}
 		}).array(fieldName,maxFilesAmount)(req, res, function(err){
 			// console.log("FILE: ", req.files);
-			//Catching and handling errors of multer
 			if (err instanceof multer.MulterError) {
 				return res.status(500).json({
 					message: err.message,
 					error_code: err.code
 				});
-
-				// Other errors
 			} else if (err) {
 				return res.status(500).json({
 					message: err
 				});
 			}
-			//Everything is ok
 			next();
 		});
 	};

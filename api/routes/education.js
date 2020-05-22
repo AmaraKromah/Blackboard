@@ -8,7 +8,7 @@ const educations_controller = require("../controllers/educationController"),
     {
         educationValidationRules,
         validate
-    } = require("../middleware/form validations/educationValidation");
+    } = require("../middleware/form_validations/educationValidation");
 
 
 /// Education ROUTES ///
