@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt"),
 	jwt = require("jsonwebtoken"),
 	async = require("async"),
 	fs = require("fs");
+const mongoose = require("mongoose");
 
 //* Models needed
 const Assignments = require("../models/courses/assigment"),
@@ -13,6 +14,8 @@ const Assignments = require("../models/courses/assigment"),
 
 // Get all assigments
 exports.assignments_list = async (req, res) => {
+	console.log("@", req.params.sub_id);
+
 	let origin = req.originalUrl,
 		fullpath = res.fullpath;
 
@@ -158,6 +161,7 @@ exports.assigments_update = async (req, res, next) => {
 
 		//# Assignment
 		// Updating Assignment
+		//! misschien files leeglaten als niks opgegeven is 
 		let file = files_id.length >= 1 ? files_id : old_files_id;
 		var update_task = {
 			title: req.body.title,
@@ -213,7 +217,7 @@ exports.assigments_delete = async (req, res, next) => {
 		try {
 			files_ids.forEach(async file_id => {
 				//-check if input is a Object ID
-				if (String(file_id).match(/^[0-9a-fA-F]{24}$/)) {
+				if (mongoose.isValidObjectId(file_id)) {
 					file = await Files.findById(file_id);
 					if (file) {
 						// -File exsist in public folder

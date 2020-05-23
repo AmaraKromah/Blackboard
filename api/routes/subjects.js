@@ -1,73 +1,60 @@
 const express = require("express"),
 	router = express.Router();
 
-const courses_controller = require("../controllers/subjectController");
+// const fetch = require("node-fetch");
+const mongoose = require("mongoose"),
+	fs = require("fs");
 
-let subjects = require("../models/courses/subject"),
-	educations = require("../models/courses/education");
+const { subject_list } = require("../controllers/subjectController");
+
+const Subjects = require("../models/courses/subject"),
+	educations = require("../models/courses/education"),
+	Assignments = require("../models/courses/assigment"),
+	Files = require("../models/file"),
+	{ isAuth } = require("../middleware/auth/authorization");
 
 /// Courses ROUTES ///
 
-router.get("/", courses_controller.course_list);
+/**
+ * todo
+ * # Improved validations (more advanced),
+ * # Permissions
+ * 
+ */
+router.get("/", subject_list);
 
-router.post("/", (req, res, next) => {
-	let ids_edu = req.body.education;
+router.post("/", async (req, res, next) => {
+	let ids_edu = req.body.education,
+		name = req.body.name;
+	fullpath = res.fullpath;
 
-	// Making sure given input is an Array
+	// convert to array if not already an array
 	if (!(ids_edu instanceof Array)) {
 		if (typeof ids_edu === "undefined") ids_edu = [];
 		else ids_edu = new Array(ids_edu);
 	}
 
-	educations
-		.find({ _id: { $in: ids_edu } })
-		.select("-__v")
-		.exec()
-		.then(result => {
-			if (result.length > 0) {
-				// Making sure only the right ID's are passed. this may not be needed client level
-				ids_edu.length = 0;
-				result.forEach(item => {
-					ids_edu.push(item._id);
-				});
+	let education = ids_edu.length >= 1 ? ids_edu : [];
 
-				const course = new subjects({
-					name: req.body.name,
-					points: req.body.points,
-					education: ids_edu
-				});
-				return course.save(); // hiermee gaat de volgende then aan de slag
+	let subject = await new Subjects({
+		name,
+		education
+	}).save();
+
+	res.status(201).json({
+		message: "Subject added",
+		subject: {
+			name: subject.name,
+			education: subject.education,
+			request: {
+				type: "GET",
+				url: `${fullpath}${subject._id}`
 			}
-		})
-		// Output van hierboven word in  "Results" van de volgende then gestoken
-		.then(result => {
-			if (!result) {
-				// Als result leeg is wil het zeggen dat we ze hierboven niet konden opvullen
-				return res.status(404).json({ error: "Education not found" });
-			}
-			let port = req.app.settings.port,
-				origin = req.originalUrl,
-				fullpath = `${req.protocol}://${req.hostname}:${port}${origin}`;
-			res.status(201).json({
-				message: "Course added",
-				course: {
-					name: result.name,
-					points: result.points,
-					education: result.education,
-					request: {
-						type: "GET",
-						url: `${fullpath}${result._id}`
-					}
-				}
-			});
-		})
-		// Elke error dat een van de bovenstaande then uitgeeft word door deze then opgevangen
-		.catch(err => {
-			res.status(500).json({ error: err });
-		});
+		}
+	});
 });
 
-// Delete All Courses
+// Delete All subjects
 router.delete("/", (req, res, next) => {
 	subjects
 		.deleteMany()
@@ -87,35 +74,42 @@ router.delete("/", (req, res, next) => {
 
 ///////////////////////////////////////////////
 
-// Get single course
-router.get("/:id", (req, res, next) => {
-	let id = req.params.id;
-	let port = req.app.settings.port,
-		origin = req.originalUrl,
-		fullpath = `${req.protocol}://${req.hostname}:${port}${origin}`;
+// Get single subject
+router.get("/:id", async (req, res, next) => {
+	let id = req.params.id,
+		fullpath = res.fullpath;
 
-	subjects
-		.findById(id)
-		.select("-__v")
-		.populate("education", "-__v")
-		.exec()
-		.then(doc => {
-			if (doc) {
-				res.status(200).json({
-					courses: doc,
-					request: {
-						type: "GET",
-						description: "GET ALL courses",
-						url: fullpath.slice(0, -24)
-					}
-				});
-			} else {
-				res.status(404).json({ message: "Course not found" });
+	try {
+		if (!mongoose.isValidObjectId(id)) {
+			throw new Error("Invalid subject ID");
+		}
+
+		let tsk = Assignments.find({ subject: id }).select("type file description deadline"),
+			sub = Subjects.findById(id).select("-__v"),
+			subject_array = await Promise.all([ tsk, sub ]);
+
+		let task = subject_array[0],
+			subject = subject_array[1];
+
+		if (!subject) {
+			return res.status(404).json({ message: "Subject not found" });
+		}
+
+		res.status(200).json({
+			subject,
+			task,
+			request: {
+				type: "GET",
+				description: "GET ALL subjects",
+				url: fullpath.slice(0, -24)
 			}
-		})
-		.catch(err => {
-			res.status(500).json({ error: err });
 		});
+	} catch (error) {
+		res.status(500).json({
+			message: "Something went wrong",
+			error: error.message
+		});
+	}
 });
 
 // Update single course
@@ -151,23 +145,65 @@ router.patch("/:id", (req, res, next) => {
 });
 
 // Delete single course
-router.delete("/:id", (req, res, next) => {
+router.delete("/:id", async (req, res, next) => {
 	let id = req.params.id;
-	subjects
-		.findByIdAndDelete(id)
-		.exec()
-		.then(result => {
-			if (result) {
-				console.log(`Deleted ${result.name} with ID ${result._id} `);
-				res.status(200).json({ deleted: result });
-			} else {
-				console.log(`${id} does not exist`);
-				res.status(404).json({ message: "Course not found to delete" });
+	try {
+		//- check if any assignments is linked to subject, if so, delete assignment aswell
+
+		if (!mongoose.isValidObjectId(id)) {
+			throw new Error("Invalid subject ID");
+		}
+		//Subject verwijderen
+		let del_subject = await Subjects.findByIdAndDelete(id);
+		let task_list = await Assignments.find({ subject: id });
+		if (task_list.length >= 1) {
+			let files_ids = "";
+			task_list.forEach(file => {
+				console.log("Assignments:", file);
+				files_ids = file.file;
+			});
+			console.log("###", files_ids);
+			await Assignments.deleteMany({ subject: id });
+			let errors = [];
+			if (files_ids.length >= 1) {
+				try {
+					files_ids.forEach(async file_id => {
+						file = await Files.findById(file_id);
+						console.log("FILES &: ", file);
+						if (file) {
+							if (fs.existsSync(file.url)) {
+								fs.unlink(file.url, err => {
+									if (err) errors.push({ message: err });
+								});
+							} else {
+								errors.push({ message: `File: ${file.url} doesn't exist` });
+							}
+							await Files.findByIdAndDelete(file_id);
+						} else {
+							errors.push({ message: `File: doesn't exist` });
+						}
+					});
+				} catch (error) {
+					errors.push({ message: err });
+				}
 			}
-		})
-		.catch(err => {
-			res.status(500).json({ error: err });
+			if (errors.length >= 1) {
+				//! misschien toegevoegde bestanden ook mee verwijderen?
+				return res.status(500).json({
+					message: "Something went wrong",
+					err: errors
+				});
+			}
+		}
+
+		if (!del_subject) return res.status(404).json({ message: "Course not found to delete" });
+		res.status(200).json({ message: "Subject was succesfully deleted", deleted: del_subject });
+	} catch (err) {
+		res.status(500).json({
+			message: "Something went wrong",
+			error: err.message
 		});
+	}
 });
 
 module.exports = router;

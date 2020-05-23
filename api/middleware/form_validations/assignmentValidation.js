@@ -48,7 +48,7 @@ exports.validate = async (req, res, next) => {
 		});
 	}
 	res.status(422).json({
-		Error: "Creation Error",
+		Error: "An error occured",
 		errors_details: extractedErrors
 	});
 };

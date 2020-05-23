@@ -50,7 +50,9 @@ app.use((req, res, next) => {
 	let port = req.app.settings.port,
 		origin = req.originalUrl,
 		fullpath = `${req.protocol}://${req.hostname}:${port}${origin}`;
-	res.fullpath = fullpath;
+		
+	res.hostname = `${req.protocol}://${req.hostname}:${port}`	
+	res.fullpath = fullpath;	
 	next();
 });
 
@@ -60,17 +62,13 @@ app.use("/auth", authRouter);
 app.use("/users", usersRouter);
 app.use("/subjects", SubjectsRouter);
 app.use("/educations", educationRouter);
-// app.use("/subjects/:sub_id/assigments", AssigmentsRouter);
-app.use("/subjects/assigments", AssigmentsRouter);
+app.use("/subjects/:sub_id/assigments", AssigmentsRouter);
 
 //-      Error Handling          //
 
 // for when routes are not found
 app.use((req, res, next) => {
-	let port = req.app.settings.port,
-		origin = req.originalUrl,
-		fullpath = `${req.protocol}://${req.hostname}:${port}${origin}`;
-
+	let fullpath = res.fullpath;
 	const error = new Error(`url: ${fullpath} not found `);
 	error.status = 404;
 	next(error);
