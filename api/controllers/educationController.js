@@ -3,9 +3,8 @@ const educations = require("../models/courses/education");
 
 // Display list of all Courses (GET /).
 exports.education_list = function(req, res, next){
-	let port = req.app.settings.port,
-		origin = req.originalUrl,
-		fullpath = `${req.protocol}://${req.hostname}:${port}${origin}`;
+	let origin = res.origin,
+		fullpath = res.fullpath;
 	educations
 		.find()
 		.exec()
@@ -37,12 +36,12 @@ exports.education_list = function(req, res, next){
 
 // Create education (POST /)..
 exports.education_create = function(req, res, next){
+	let origin = res.origin,
+		fullpath = res.fullpath;
 	const education = new educations({
 		name: req.body.name
 	});
-	let port = req.app.settings.port,
-		origin = req.originalUrl,
-		fullpath = `${req.protocol}://${req.hostname}:${port}${origin}`;
+
 	education
 		.save()
 		.then(result => {
@@ -82,11 +81,7 @@ exports.education_delete_list = function(req, res, next){
 
 // Display details for one course (GET /:id).
 exports.education_detail = function(req, res, next){
-	let id = req.params.id;
-	let port = req.app.settings.port,
-		origin = req.originalUrl,
-		fullpath = `${req.protocol}://${req.hostname}:${port}${origin}`;
-
+	let fullpath = res.fullpath;
 	educations
 		.findById(id)
 		.select("-__v")
@@ -98,7 +93,7 @@ exports.education_detail = function(req, res, next){
 					request: {
 						type: "GET",
 						description: "GET ALL educations",
-						url: fullpath.slice(0, -24)
+						url: String(fullpath).slice(0, -24)
 					}
 				});
 			} else {
@@ -112,12 +107,11 @@ exports.education_detail = function(req, res, next){
 
 // Update single education (PATCH /:id).
 exports.education_update = function(req, res, next){
+	let origin = res.origin,
+		fullpath = res.fullpath;
+
 	let id = req.params.id;
 	let bodyObject = new Object(req.body);
-
-	let port = req.app.settings.port,
-		origin = req.originalUrl,
-		fullpath = `${req.protocol}://${req.hostname}:${port}${origin}`;
 
 	// making sure only keys in the database are passed
 	for (let obj in bodyObject) {

@@ -45,6 +45,21 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cors(corsOptions));
 
+// const sloc = require('node-sloc')
+
+// const options = {
+// 	path: './api',                      // Required. The path to walk or file to read.
+// 	ignorePaths: ['node_modules'],       // A list of directories to ignore.
+// 	ignoreDefault: false,                // Whether to ignore the default file extensions or not
+// 	logger: console.log,                 // Optional. Outputs extra information to if specified.
+//   }
+   
+//   // Using promises
+//   sloc(options).then((res) => {
+// 	console.log(res)
+//   })
+
+
 //- Making fullpath globally available
 app.use((req, res, next) => {
 	let port = req.app.settings.port,
