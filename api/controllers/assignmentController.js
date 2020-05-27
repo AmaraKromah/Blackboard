@@ -9,7 +9,7 @@ const mongoose = require("mongoose");
 const Assignments = require("../models/courses/assigment"),
 	Subjects = require("../models/courses/subject"),
 	Files = require("../models/file");
-const reuse = require("../helpers/re_useables/reuse");
+const {remove_files} = require("../helpers/re_useables/reuse");
 
 //# Get all request
 
@@ -212,7 +212,7 @@ exports.assigments_delete = async (req, res, next) => {
 	//- delete all files_ids if any
 	let errors = "";
 	if (files_ids.length >= 1) {
-		errors = await reuse.remove_files({ files_ids: files_ids, Model_ref: Assignments, _id: id });
+		errors = await remove_files({ files_ids: files_ids, Model_ref: Assignments, _id: id });
 	}
 	if (errors.length >= 1) {
 		//! misschien toegevoegde bestanden ook mee verwijderen?
