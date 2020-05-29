@@ -59,7 +59,6 @@ app.use(cors(corsOptions));
 // 	console.log(res)
 //   })
 
-
 //- Making fullpath globally available
 app.use((req, res, next) => {
 	let port = req.app.settings.port,
@@ -68,6 +67,7 @@ app.use((req, res, next) => {
 		
 	res.hostname = `${req.protocol}://${req.hostname}:${port}`	
 	res.fullpath = fullpath;	
+	res.origin = origin;	
 	next();
 });
 
@@ -75,8 +75,8 @@ app.use((req, res, next) => {
 app.use("/", indexRouter);
 app.use("/auth", authRouter);
 app.use("/users", usersRouter);
-app.use("/subjects", SubjectsRouter);
 app.use("/educations", educationRouter);
+app.use("/subjects", SubjectsRouter);
 app.use("/subjects/:sub_id/assigments", AssigmentsRouter);
 
 //-      Error Handling          //

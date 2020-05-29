@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const Subjects = require("../models/courses/subject"),
 	Assignments = require("../models/courses/assigment");
-const {remove_files} = require("../helpers/re_useables/reuse");
+const { remove_files } = require("../helpers/re_useables/reuse");
 
 // Display list of all Courses (GET /).
 exports.subject_list = async (req, res, next) => {
@@ -51,6 +51,7 @@ exports.subject_create = async (req, res, next) => {
 
 	let education = ids_edu.length >= 1 ? ids_edu : [];
 
+	console.log("edu ", education);
 	let subject = await new Subjects({
 		name,
 		education
@@ -80,7 +81,7 @@ exports.subject_details = async (req, res, next) => {
 			throw new Error("Invalid subject ID");
 		}
 
-		let tsk = Assignments.find({ subject: id }).select("type file description deadline"),
+		let tsk = Assignments.find({ subject: id }).select("title type description file"),
 			sub = Subjects.findById(id).select("-__v"),
 			subject_array = await Promise.all([ tsk, sub ]);
 		let task = subject_array[0],
@@ -124,6 +125,9 @@ exports.subject_delete = async (req, res, next) => {
 		let subject_list = await Promise.all([ subj, task ]);
 		let del_subject = subject_list[0];
 		let task_list = subject_list[1];
+
+		if (!del_subject) return res.status(404).json({ message: "Course not found to delete" });
+
 		if (task_list.length >= 1) {
 			let files_ids = [];
 			task_list.forEach(file => {
@@ -147,7 +151,6 @@ exports.subject_delete = async (req, res, next) => {
 		const del_task = Assignments.deleteMany({ subject: id });
 		await Promise.all([ del_subj, del_task ]);
 
-		if (!del_subject) return res.status(404).json({ message: "Course not found to delete" });
 		res.status(200).json({ message: "Subject was succesfully deleted", deleted: del_subject });
 	} catch (err) {
 		res.status(500).json({

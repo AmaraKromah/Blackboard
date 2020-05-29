@@ -45,7 +45,8 @@ var methods = {
 						errors.push({ message: `Filepath: ${file.url} doesn't exist` });
 					}
 					await Files.findByIdAndDelete(file_id);
-					if (Model_ref) await Model_ref.findByIdAndUpdate(_id, { $pull: { file: file_id } }, { useFindAndModify: false });
+					if (Model_ref) await Model_ref.updateOne(_id, { $pull: { file: file_id } });
+					// if (Model_ref) await Model_ref.findByIdAndUpdate(_id, { $pull: { file: file_id } }, { useFindAndModify: false });
 				} else {
 					errors.push({ message: `Couldn't find file` });
 				}
