@@ -12,7 +12,7 @@ let AssigmentSchema = new Schema({
 	},
 	file: [ { type: Schema.Types.ObjectId, ref: "File" } ],
 	subject: { type: Schema.Types.ObjectId, ref: "Subject" }, // vak
-	teacher: { type: Schema.Types.ObjectId, ref: "User" },
+	// teacher: { type: Schema.Types.ObjectId, ref: "User" },
 	deadline: { type: Date },
 	send_at: { type: Date, default: Date.now() },
 	changed_at: { type: Date }

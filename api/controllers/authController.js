@@ -3,7 +3,8 @@ const bcrypt = require("bcrypt"),
 	async = require("async");
 
 const Users = require("../models/auth/User"),
-	mailer = require("../helpers/mailers/nodemailer");
+	mailer = require("../helpers/mailers/nodemailer"),
+	 reuse = require("../helpers/re_useables/reuse");
 
 /*
 

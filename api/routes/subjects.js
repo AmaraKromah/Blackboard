@@ -1,73 +1,80 @@
 const express = require("express"),
 	router = express.Router();
 
-const courses_controller = require("../controllers/subjectController");
+// const fetch = require("node-fetch");
+const mongoose = require("mongoose"),
+	fs = require("fs");
 
-let subjects = require("../models/courses/subject"),
-	educations = require("../models/courses/education");
+const { subject_list, subject_create, subject_details, subject_delete } = require("../controllers/subjectController");
+
+const Subjects = require("../models/courses/subject"),
+	educations = require("../models/courses/education"),
+	Assignments = require("../models/courses/assigment"),
+	Files = require("../models/file"),
+	{ isAuth } = require("../middleware/auth/authorization");
 
 /// Courses ROUTES ///
 
-router.get("/", courses_controller.course_list);
+/**
+ * todo
+ * # Improved validations (more advanced),
+ * # Permissions
+ * 
+ */
+router.get("/", subject_list);
 
-router.post("/", (req, res, next) => {
-	let ids_edu = req.body.education;
+router.post("/", subject_create);
 
-	// Making sure given input is an Array
-	if (!(ids_edu instanceof Array)) {
-		if (typeof ids_edu === "undefined") ids_edu = [];
-		else ids_edu = new Array(ids_edu);
+///////////////////////////////////////////////
+
+// Get single subject
+router.get("/:id", subject_details);
+
+// Update single course
+//! nog testen
+router.patch("/:id", async (req, res, next) => {
+	let id = req.params.id;
+	let bodyObject = new Object(req.body);
+	origin = String(res.origin);
+	fullpath = res.fullpath;
+
+	// let update = {
+	// 	name: req.body.name,
+
+	// }
+	for (let obj in bodyObject) {
+		if (!(obj in Subjects.schema.paths)) delete bodyObject[obj];
 	}
+	try {
+		if (!mongoose.isValidObjectId(id)) {
+			throw new Error("Invalid subject ID");
+		}
 
-	educations
-		.find({ _id: { $in: ids_edu } })
-		.select("-__v")
-		.exec()
-		.then(result => {
-			if (result.length > 0) {
-				// Making sure only the right ID's are passed. this may not be needed client level
-				ids_edu.length = 0;
-				result.forEach(item => {
-					ids_edu.push(item._id);
-				});
+		let tsk = Assignments.find({ subject: id }).select("type file description deadline"),
+			sub = Subjects.findByIdAndUpdate(id, bodyObject, { useFindAndModify: false }).select("-__v");
+		subject_array = await Promise.all([ tsk, sub ]);
 
-				const course = new subjects({
-					name: req.body.name,
-					points: req.body.points,
-					education: ids_edu
-				});
-				return course.save(); // hiermee gaat de volgende then aan de slag
+		let task = subject_array[0],
+			subject = subject_array[1];
+
+		res.status(200).json({
+			before: { subject, task },
+			changed: bodyObject,
+			reques: {
+				type: "GET",
+				url: `${fullpath}${subject._id}`
 			}
-		})
-		// Output van hierboven word in  "Results" van de volgende then gestoken
-		.then(result => {
-			if (!result) {
-				// Als result leeg is wil het zeggen dat we ze hierboven niet konden opvullen
-				return res.status(404).json({ error: "Education not found" });
-			}
-			let port = req.app.settings.port,
-				origin = req.originalUrl,
-				fullpath = `${req.protocol}://${req.hostname}:${port}${origin}`;
-			res.status(201).json({
-				message: "Course added",
-				course: {
-					name: result.name,
-					points: result.points,
-					education: result.education,
-					request: {
-						type: "GET",
-						url: `${fullpath}${result._id}`
-					}
-				}
-			});
-		})
-		// Elke error dat een van de bovenstaande then uitgeeft word door deze then opgevangen
-		.catch(err => {
-			res.status(500).json({ error: err });
 		});
+	} catch (error) {
+		res.status(500).json(error.message);
+	}
 });
 
-// Delete All Courses
+// Delete single course
+router.delete("/:id", subject_delete);
+
+// Delete All subjects
+//# Later 
 router.delete("/", (req, res, next) => {
 	subjects
 		.deleteMany()
@@ -84,90 +91,4 @@ router.delete("/", (req, res, next) => {
 			res.status(500).json({ message: err });
 		});
 });
-
-///////////////////////////////////////////////
-
-// Get single course
-router.get("/:id", (req, res, next) => {
-	let id = req.params.id;
-	let port = req.app.settings.port,
-		origin = req.originalUrl,
-		fullpath = `${req.protocol}://${req.hostname}:${port}${origin}`;
-
-	subjects
-		.findById(id)
-		.select("-__v")
-		.populate("education", "-__v")
-		.exec()
-		.then(doc => {
-			if (doc) {
-				res.status(200).json({
-					courses: doc,
-					request: {
-						type: "GET",
-						description: "GET ALL courses",
-						url: fullpath.slice(0, -24)
-					}
-				});
-			} else {
-				res.status(404).json({ message: "Course not found" });
-			}
-		})
-		.catch(err => {
-			res.status(500).json({ error: err });
-		});
-});
-
-// Update single course
-router.patch("/:id", (req, res, next) => {
-	let id = req.params.id;
-	let bodyObject = new Object(req.body);
-	let port = req.app.settings.port,
-		origin = req.originalUrl,
-		fullpath = `${req.protocol}://${req.hostname}:${port}${origin}`;
-
-	// making sure only keys in the database are passed
-	for (let obj in bodyObject) {
-		if (!(obj in subjects.schema.paths)) delete bodyObject[obj];
-	}
-
-	subjects
-		.findByIdAndUpdate(id, bodyObject, { useFindAndModify: false })
-		.select("-__v")
-		.exec()
-		.then(doc => {
-			res.status(200).json({
-				before: doc,
-				changed: bodyObject,
-				reques: {
-					type: "GET",
-					url: origin.slice(-1) === "/" ? `${fullpath}${doc._id}` : `${fullpath}/${doc._id}`
-				}
-			});
-		})
-		.catch(err => {
-			res.status(500).json(err);
-		});
-});
-
-// Delete single course
-router.delete("/:id", (req, res, next) => {
-	let id = req.params.id;
-	subjects
-		.findByIdAndDelete(id)
-		.exec()
-		.then(result => {
-			if (result) {
-				console.log(`Deleted ${result.name} with ID ${result._id} `);
-				res.status(200).json({ deleted: result });
-			} else {
-				console.log(`${id} does not exist`);
-				res.status(404).json({ message: "Course not found to delete" });
-			}
-		})
-		.catch(err => {
-			res.status(500).json({ error: err });
-		});
-});
-
 module.exports = router;
