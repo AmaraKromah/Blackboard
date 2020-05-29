@@ -149,7 +149,7 @@ exports.auth_signin = async (req, res, next) => {
 			},
 			JWT_EMAIL_KEY,
 			{
-				expiresIn: "1d"
+				expiresIn: "7d"
 			},
 			(err, token) => {
 				return res.status(200).json({
