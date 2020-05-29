@@ -6,7 +6,7 @@ const moment = require("moment");
 let UserSchema = new Schema({
 	firstname  : { type: String },
 	lastname   : { type: String },
-	email      : { type: String },
+	email      : { type: String, unique: true },
 	password   : { type: String },
 	verified     : { type: Boolean, default: false },
 	role       : [

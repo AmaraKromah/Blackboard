@@ -1,5 +1,5 @@
 const express = require("express"),
-	router = express.Router();
+	router = express.Router({ mergeParams: true });
 
 // const fetch = require("node-fetch");
 const mongoose = require("mongoose"),
@@ -8,7 +8,6 @@ const mongoose = require("mongoose"),
 const { subject_list, subject_create, subject_details, subject_delete } = require("../controllers/subjectController");
 
 const Subjects = require("../models/courses/subject"),
-	educations = require("../models/courses/education"),
 	Assignments = require("../models/courses/assigment"),
 	Files = require("../models/file"),
 	{ isAuth } = require("../middleware/auth/authorization");

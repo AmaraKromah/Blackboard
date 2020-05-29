@@ -117,6 +117,7 @@ exports.assigments_update = async (req, res, next) => {
 	// - Delete exsisting files in public folder
 	if (files.length >= 1) {
 		let errors = [];
+		// todo reuse gebruiken
 		try {
 			task_files.forEach(async file => {
 				if (fs.existsSync(file.url)) {
@@ -167,7 +168,7 @@ exports.assigments_update = async (req, res, next) => {
 			description: req.body.description,
 			type: req.body.type,
 			file: file,
-			subject: req.body.subject,
+			// subject: req.body.subject,
 			// teacher: teacher.id,
 			deadline: req.body.deadline
 		};
