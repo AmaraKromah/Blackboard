@@ -3,16 +3,72 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {
+  NbThemeModule,
+  NbLayoutModule,
+  NbSidebarModule,
+  NbMenuModule,
+  NbDatepickerModule,
+  NbDialogModule,
+  NbWindowModule,
+  NbToastrModule,
+  NbCardModule,
+  NbInputModule,
+  NbButtonModule,
+  NbListModule,
+  NbTreeGridModule,
+} from '@nebular/theme';
+import { NbEvaIconsModule } from '@nebular/eva-icons';
+import { NbDateFnsDateModule } from '@nebular/date-fns';
+import { ListEducationComponent } from './features/education/list-education.component';
+import { CreateEducationComponent } from './features/education/create-education.component';
+import { HomeComponent } from './features/home/home.component';
+import { NotFoundComponent } from './core/not-found/not-found.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ListEducationComponent,
+    CreateEducationComponent,
+    HomeComponent,
+    NotFoundComponent,
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    NbThemeModule.forRoot({ name: 'default' }),
+    NbLayoutModule,
+    NbEvaIconsModule,
+    NbSidebarModule.forRoot(),
+    NbMenuModule.forRoot(),
+    NbDatepickerModule.forRoot(),
+    NbDialogModule.forRoot(),
+    NbWindowModule.forRoot(),
+    NbToastrModule.forRoot(),
+    NbDateFnsDateModule.forRoot({
+      format: 'dd.MM.yyyy',
+      parseOptions: {
+        useAdditionalWeekYearTokens: true,
+        useAdditionalDayOfYearTokens: true,
+      },
+      formatOptions: {
+        useAdditionalWeekYearTokens: true,
+        useAdditionalDayOfYearTokens: true,
+      },
+    }),
+    //# libs
+    ReactiveFormsModule,
+    //# add to features
+    NbCardModule,
+    NbInputModule,
+    NbButtonModule,
+    NbListModule,
+    NbTreeGridModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

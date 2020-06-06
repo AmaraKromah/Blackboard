@@ -147,11 +147,11 @@ exports.assigments_update = async (req, res, next) => {
 		let old_files_id = task_files.map(file => file._id);
 		if (files.length >= 1) {
 			await Files.deleteMany({ _id: { $in: old_files_id } });
-
+			file_path =res.hostname + String(file.path).replace(/\\/g, "/").slice(6);
 			for (let file of files) {
 				new_file = await new Files({
 					name: file.filename,
-					url: file.path,
+					url: file_path,
 					ext: file.filename.split(".").pop(),
 					type: file.mimetype
 				}).save();

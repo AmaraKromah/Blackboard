@@ -1,0 +1,131 @@
+<div class="row">
+  <div class="col-md-12 col-lg-8 col-xxxl-8 col-center">
+    <nb-card>
+      <nb-card-header class="text-light bg-dark text-center"
+        >Create education</nb-card-header
+      >
+      <nb-card-body>
+        <form [formGroup]="educationForm" (ngSubmit)="onSubmit()">
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="form-group required">
+                <label for="edu_name" class="label control-label">Name</label>
+                <input
+                  type="text"
+                  nbInput
+                  fullWidth
+                  id="edu_name"
+                  formControlName="name"
+                  placeholder="Education name"
+                  class="form-control"
+                  [ngClass]="{
+                    'is-invalid': name.errors && (name.touched || name.dirty)
+                  }"
+                />
+                <div *ngIf="name.errors && (name.touched || name.dirty)">
+                  <div class="text-danger" *ngIf="name.errors.required">
+                    Field is required.
+                  </div>
+                  <div class="text-danger" *ngIf="name.errors.minlength">
+                    Field must be
+                    {{ name.errors.minlength.requiredLength }} long
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="form-group required">
+                <label for="begin_date_picker" class="label control-label"
+                  >Begin Date</label
+                >
+                <input
+                  nbInput
+                  fullWidth
+                  placeholder="dd.mm.yyyy"
+                  formControlName="beginDate"
+                  [nbDatepicker]="begin_date_picker"
+                  [ngClass]="{
+                    'is-invalid':
+                      beginDate.errors && (beginDate.touched || beginDate.dirty)
+                  }"
+                />
+
+                <nb-datepicker
+                  #begin_date_picker
+                  [min]="minBegin"
+                ></nb-datepicker>
+
+                <span
+                  *ngIf="
+                    beginDate.errors && (beginDate.touched || beginDate.dirty)
+                  "
+                >
+                  <div class="text-danger" *ngIf="beginDate.errors?.required">
+                    Date field is required.
+                  </div>
+                  <div
+                    class="text-danger"
+                    *ngIf="beginDate.errors?.nbDatepickerMin"
+                  >
+                    Invalid date
+                  </div>
+                </span>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group required">
+                <label for="end_date_picker" class="label control-label"
+                  >End Date</label
+                >
+                <input
+                  nbInput
+                  fullWidth
+                  placeholder="dd.mm.yyyy"
+                  formControlName="endDate"
+                  [nbDatepicker]="end_date_picker"
+                  [ngClass]="{
+                    'is-invalid':
+                      endDate.errors && (endDate.touched || endDate.dirty)
+                  }"
+                />
+                <nb-datepicker
+                  #end_date_picker
+                  [min]="minEnd"
+                  [max]="maxEnd"
+                ></nb-datepicker>
+                <span
+                  *ngIf="endDate.errors && (endDate.touched || endDate.dirty)"
+                >
+                  <div class="text-danger" *ngIf="endDate.errors?.required">
+                    Date field is required.
+                  </div>
+                  <div
+                    class="text-danger"
+                    *ngIf="
+                      endDate.errors?.nbDatepickerMin ||
+                      endDate.errors?.nbDatepickerMax
+                    "
+                  >
+                    Invalid date
+                  </div>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" nbButton status="primary" fullWidth [disabled]="educationForm.invalid"
+          >
+            Submit
+          </button>
+        </form>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>
+
+<p>Form invalid: {{ educationForm.invalid }}</p>
+<p>beginDate valid: {{ beginDate.valid }}</p>
+<p>beginDate touched: {{ beginDate.touched }}</p>
+<p>beginDate dirty: {{ beginDate.dirty }}</p>

@@ -11,7 +11,9 @@ const indexRouter = require("./api/routes/index"),
 	usersRouter = require("./api/routes/users"),
 	educationRouter = require("./api/routes/education"),
 	SubjectsRouter = require("./api/routes/subjects"),
-	AssigmentsRouter = require("./api/routes/assigment");
+	AssigmentsRouter = require("./api/routes/assigment"),
+	//angular
+	postRouter = require("./api/routes/post");
 
 // ENVIRONMENT VARIABLE
 let mongo_url = process.env.MONGO_URL,
@@ -22,7 +24,7 @@ let mongo_url = process.env.MONGO_URL,
 // END ENVIRONMENT VARIABLE
 
 let corsOptions = {
-	optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+	optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
 const mongodb = `${mongo_url}${mongo_pass}${mongo_cluster}${mongo_db}?retryWrites=true&w=majority`;
@@ -32,7 +34,7 @@ var app = express();
 mongoose.set("useCreateIndex", true);
 mongoose.connect(mongodb, {
 	useNewUrlParser: true,
-	useUnifiedTopology: true
+	useUnifiedTopology: true,
 });
 const db = mongoose.connection;
 db.on("connected", () => console.log("MongoDB connection succesful:"));
@@ -53,7 +55,7 @@ app.use(cors(corsOptions));
 // 	ignoreDefault: false,                // Whether to ignore the default file extensions or not
 // 	logger: console.log,                 // Optional. Outputs extra information to if specified.
 //   }
-   
+
 //   // Using promises
 //   sloc(options).then((res) => {
 // 	console.log(res)
@@ -64,10 +66,11 @@ app.use((req, res, next) => {
 	let port = req.app.settings.port,
 		origin = req.originalUrl,
 		fullpath = `${req.protocol}://${req.hostname}:${port}${origin}`;
-		
-	res.hostname = `${req.protocol}://${req.hostname}:${port}`	
-	res.fullpath = fullpath;	
-	res.origin = origin;	
+
+	res.hostname = `${req.protocol}://${req.hostname}:${port}`;
+	res.fullpath = fullpath;
+	res.origin = origin;
+	console.log("Fullpath:", fullpath);
 	next();
 });
 
@@ -78,6 +81,11 @@ app.use("/users", usersRouter);
 app.use("/educations", educationRouter);
 app.use("/subjects", SubjectsRouter);
 app.use("/subjects/:sub_id/assigments", AssigmentsRouter);
+
+//# ANGULAR TESTING
+
+app.use("/api/posts", postRouter);
+//# END ANGULAR TESTING
 
 //-      Error Handling          //
 
@@ -95,8 +103,8 @@ app.use((error, req, res, next) => {
 	res.json({
 		error: {
 			//maak een error object met daarin de boodschap
-			message: error.message
-		}
+			message: error.message,
+		},
 	});
 });
 
