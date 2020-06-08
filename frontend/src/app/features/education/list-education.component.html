@@ -15,29 +15,31 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <th scope="row">1</th>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>@mdo</td>
-                <td class="row">
+              <tr *ngFor="let edu of eduList">
+                <th scope="row">{{ edu.name }}</th>
+                <td>{{ edu.begin_date | date: "dd.MM.yyyy" }}</td>
+                <td>{{ edu.end_date | date: "dd.MM.yyyy" }}</td>
+                <td>{{ edu.total_years }}</td>
+                <td>
                   <div
                     class="btn-toolbar"
                     role="toolbar"
                     aria-label="Toolbar with button edit en delete action"
                   >
-                    <button role="group" class="mr-2" nbButton status="primary">
+                    <a role="group" class="mr-2" nbButton status="primary" [routerLink]="['edit', edu._id]">
                       edit
-                    </button>
-                    <button role="group" class="mr-2" nbButton status="danger">
+                    </a>
+                    <button role="group" class="mr-2" nbButton status="danger" (click)="deleteEdu(edu._id)">
                       delete
                     </button>
                   </div>
                 </td>
               </tr>
+              
             </tbody>
           </table>
         </div>
+        <p class="text-center" *ngIf="eduList.length === 0">No education available</p>
       </nb-card-body>
     </nb-card>
   </div>

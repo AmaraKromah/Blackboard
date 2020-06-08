@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validator, Validators } from '@angular/forms';
-import { Education } from 'src/app/core/model/education.model';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { IEducation } from 'src/app/core/model/education.model';
 import { NbDateService } from '@nebular/theme';
-import { add } from 'date-fns';
+import { parseISO } from 'date-fns';
+import { EducationService } from 'src/app/core/services/education.service';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 
 @Component({
   selector: 'app-create-education',
@@ -11,48 +13,62 @@ import { add } from 'date-fns';
 })
 export class CreateEducationComponent implements OnInit {
   educationForm: FormGroup;
-  education: Education;
+  education: IEducation;
   minBegin: Date;
   minEnd: Date;
   maxEnd: Date;
-
-  validationMessages: {
-    name: {
-      required: 'Name is required';
-      minlenght: 'Name may not be greater then 3 charachters';
-    };
-    beginDate: {
-      required: 'Name is required';
-    };
-    endDate: {
-      required: 'Name is required';
-    };
-  };
-
-  formError ={
-    name:"",
-    beginDate:"",
-    endDate:"",
-  }
+  mode: string = 'create';
+  edu_id: string = '';
 
   constructor(
     private fb: FormBuilder,
-    protected dateService: NbDateService<Date>
+    protected dateService: NbDateService<Date>,
+    private educationService: EducationService,
+    public route: ActivatedRoute
   ) {}
-  ngOnInit(): void {
+
+  async ngOnInit() {
     this.educationForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
       beginDate: ['', Validators.required],
       endDate: ['', Validators.required],
     });
     this.setPickerRange();
+    this.route.paramMap.subscribe((paramMap: ParamMap) => {
+      if (paramMap.has('id')) {
+        this.mode = 'edit';
+        this.edu_id = paramMap.get('id');
+        this.educationService.getEducation(this.edu_id).subscribe((data) => {
+          this.education = data['response'].education[0];
+          this.educationForm.setValue({
+            name: this.education.name,
+            beginDate: new Date(this.education.begin_date),
+            endDate: new Date(this.education.end_date),
+          });
+        });
+      } else {
+        this.mode = 'create';
+      }
+    });
   }
 
   onSubmit() {
-    console.log('Value Begin: ', this.educationForm.get('beginDate').value);
-    console.log('Errors Begin: ', this.educationForm.get('beginDate').errors);
-    console.log('Value End: ', this.educationForm.get('endDate').value);
-    console.log('Errors End: ', this.educationForm.get('endDate').errors);
+    let toSubmit = {
+      _id: null,
+      name: this.educationForm.value.name,
+      begin_date: this.educationForm.value.beginDate,
+      end_date: this.educationForm.value.endDate,
+    };
+    if (this.educationForm.valid) {
+      if (this.mode === 'create') {
+        this.educationService.addEducation(toSubmit);
+      } else {
+        toSubmit._id = this.education._id;
+        this.educationService.updateEducation(toSubmit);
+      }
+    }else{
+      console.log("Invalid form");
+    }
   }
 
   // Getters en Setters

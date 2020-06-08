@@ -26,6 +26,8 @@ import { CreateEducationComponent } from './features/education/create-education.
 import { HomeComponent } from './features/home/home.component';
 import { NotFoundComponent } from './core/not-found/not-found.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { ServerErrorComponent } from './core/server-error/server-error.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +36,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     CreateEducationComponent,
     HomeComponent,
     NotFoundComponent,
+    ServerErrorComponent,
   ],
   imports: [
     BrowserModule,
@@ -42,6 +45,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     NbThemeModule.forRoot({ name: 'default' }),
     NbLayoutModule,
     NbEvaIconsModule,
+    HttpClientModule,
     NbSidebarModule.forRoot(),
     NbMenuModule.forRoot(),
     NbDatepickerModule.forRoot(),

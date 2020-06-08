@@ -94,6 +94,7 @@
                   #end_date_picker
                   [min]="minEnd"
                   [max]="maxEnd"
+                  [date]="minEnd"
                 ></nb-datepicker>
                 <span
                   *ngIf="endDate.errors && (endDate.touched || endDate.dirty)"
@@ -125,7 +126,3 @@
   </div>
 </div>
 
-<p>Form invalid: {{ educationForm.invalid }}</p>
-<p>beginDate valid: {{ beginDate.valid }}</p>
-<p>beginDate touched: {{ beginDate.touched }}</p>
-<p>beginDate dirty: {{ beginDate.dirty }}</p>
