@@ -1,0 +1,78 @@
+nb-card {
+  border-radius: 4px;
+  padding: 32px 24px;
+
+  &:hover {
+    transition: all 0.2s ease-out;
+    box-shadow: 0px 4px 8px rgba(38, 38, 38, 0.2);
+    top: -4px;
+    border: 1px solid #dbd9d9;
+    background-color: white;
+  }
+}
+nb-card-header {
+  border-bottom: none;
+  margin-bottom: 0.5rem;
+}
+
+nb-card-body {
+  padding: 0;
+}
+
+.col-center {
+  margin: 0 auto;
+}
+
+/////@extend
+.summary-container {
+  display: flex;
+  flex-wrap: wrap;
+  flex: 1;
+  background-color: #f7f9fc;
+  border: 1px solid #edf1f7;
+  border-right: none;
+  border-left: none;
+  padding: 1.5rem 2rem 0;
+  margin-bottom: 1rem;
+}
+.summary-container div {
+  margin-right: auto;
+}
+.summary-container span {
+  display: block;
+}
+.content {
+  margin-bottom: 1rem;
+}
+
+nb-icon {
+  font-size: 1.35rem;
+  line-height: 2;
+  width: 2em;
+  height: 2em;
+}
+.options {
+  margin-top: 1rem;
+
+  padding: 0.5rem;
+  border-top: 1px solid #edf1f7;
+  border-bottom-left-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+}
+.pop_up {
+  padding: 15px 24px;
+}
+.pop_up_header {
+  padding: 0.3rem 1.5rem;
+}
+.pop_up_footer {
+  padding: 0.5rem 1.5rem;
+}
+.pop_up_body {
+  padding-top: 2rem;
+  text-align: center;
+
+  p {
+    line-height: 0.5rem;
+  }
+}

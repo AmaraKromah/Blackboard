@@ -1,0 +1,180 @@
+<span *ngIf="taskList.length >= 1; else elseBlock">
+  <nb-card *ngFor="let task of taskList">
+    <nb-card-header class="text-light bg-dark text-center">{{
+      task.title
+    }}</nb-card-header>
+    <nb-card-body>
+      <nb-tabset class="task_list" fullWidth>
+        <!-- Tab Omschrijving -->
+        <nb-tab tabTitle="Omschrijving">
+          <div class="summary-container">
+            <div class="blockquote">
+              Deadline
+              <span class="lead">
+                {{ task.deadline | date: "dd.mm.yyyy - h:mm" }}
+              </span>
+            </div>
+            <div class="blockquote">
+              Type
+              <span class="lead">
+                {{ task.type }}
+              </span>
+            </div>
+            <div class="blockquote">
+              Send at
+              <span class="lead">
+                {{ task.send_at | date: "dd.mm.yyyy - h:mm" }}
+              </span>
+            </div>
+          </div>
+          {{ task.description }}
+        </nb-tab>
+
+        <!-- Bestanden Tab  -->
+        <nb-tab
+          tabTitle="Bestanden"
+          [active]="isActive"
+          *ngIf="task.file.length > 0"
+          badgeText="{{ task.file.length }}"
+          badgeStatus="info"
+        >
+          <!-- Lijst met bestanden  -->
+          <span *ngFor="let file of task.file; index as i">
+            <div class="row">
+              <div class="col-md-6">
+                <a href="{{ file.url }}">
+                  <nb-icon
+                    icon="file-outline"
+                    [options]="{ animation: { type: 'pulse' } }"
+                  ></nb-icon
+                  >{{ file.name }}</a
+                >
+              </div>
+              <div class="col-md-6">
+                <nb-checkbox
+                  status="info"
+                  (checkedChange)="onCheckboxChange($event, task._id, file._id)"
+                  *ngIf="allSelectedList.includes(task._id); else notChecked"
+                  checked="true"
+                  >delete</nb-checkbox
+                >
+                <ng-template #notChecked>
+                  <nb-checkbox
+                    (checkedChange)="
+                      onCheckboxChange($event, task._id, file._id)
+                    "
+                    checked="false"
+                    >delete</nb-checkbox
+                  >
+                </ng-template>
+              </div>
+            </div>
+          </span>
+          <!-- Optie op bestanden -->
+          <div class="row options">
+            <button
+              *ngIf="!allSelectedList.includes(task._id); else deselect"
+              nbButton
+              status="primary"
+              size="small"
+              (click)="selectAll(task._id)"
+            >
+              Select all
+            </button>
+            <ng-template #deselect>
+              <button
+                nbButton
+                status="primary"
+                size="small"
+                outline
+                (click)="selectAll(task._id)"
+              >
+                Deselect all
+              </button>
+            </ng-template>
+            <button
+              class="ml-2"
+              nbButton
+              outline
+              size="small"
+              status="danger"
+              (click)="deleteTaskFiles(task._id)"
+            >
+              delete selected files
+            </button>
+          </div>
+        </nb-tab>
+      </nb-tabset>
+    </nb-card-body>
+    <nb-card-footer>
+      <div class="row">
+        <a
+          role="group"
+          class="mr-2"
+          nbButton
+          outline
+          status="primary"
+          [routerLink]="['edit', task._id]"
+        >
+          edit
+        </a>
+        <button
+          role="group"
+          class="mr-2"
+          nbButton
+          outline
+          status="danger"
+          (click)="openDialogBox(confirmDelete, task._id, task.file)"
+        >
+          delete assignment
+        </button>
+      </div>
+
+      <ng-template #confirmDelete let-data let-ref="dialogRef">
+        <nb-card size="tiny" class="pop_up">
+          <nb-card-header class="text-center pop_up_header"
+            >Are you sure?</nb-card-header
+          >
+          <nb-card-body class="pop_up_body">
+            <p>This will delete this task permanently</p>
+            <p>
+              <span *ngIf="data.file_length > 0">
+                All associated files ({{ data.file_length }}) will also be
+                deleted
+              </span>
+            </p>
+          </nb-card-body>
+          <nb-card-footer class="pop_up_footer">
+            <div class="row">
+              <div class="col-sm-auto">
+                <button nbButton size="small" ghost (click)="ref.close()">
+                  cancel
+                </button>
+              </div>
+              <div class="col-sm-auto">
+                <button
+                  nbButton
+                  size="small"
+                  status="danger"
+                  outline
+                  (click)="deleteTask(data.task_id); ref.close()"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </nb-card-footer>
+        </nb-card>
+      </ng-template>
+    </nb-card-footer>
+  </nb-card>
+</span>
+<ng-template #elseBlock>
+  <nb-card>
+    <nb-card-header class="text-center h4"
+      >No assignments available</nb-card-header
+    >
+  </nb-card>
+</ng-template>
+
+<!-- Bootstrap jquery en shit verwijderen -->

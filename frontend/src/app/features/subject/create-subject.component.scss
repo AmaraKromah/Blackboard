@@ -1,3 +1,7 @@
+nb-checkbox {
+  margin-bottom: 1rem;
+}
+
 .form-inline [fullWidth] {
   flex: 1;
 }
@@ -9,14 +13,12 @@
 nb-card.inline-form-card nb-card-body {
   padding-bottom: 0;
 }
-
 .col-center {
   margin: 0 auto;
 }
-.form-control{
-  height: auto;
-}
-// herhaalbaar => check SCSS docu 
+
+//herhaalbaar
+
 .is-invalid {
   // border-color: #dc3545;
   // padding-right: calc(1.5em + 0.75rem);
@@ -25,11 +27,19 @@ nb-card.inline-form-card nb-card-body {
   height: auto;
 }
 .text-danger {
-  color:#e83e8c!important;
+  color: #e83e8c !important;
+}
+.text-danger.name {
+  margin-top: -0.5rem;
 }
 
 .form-group.required .control-label:after {
-  content:"*";
-  color:#e83e8c !important;
+  content: "*";
+  color: #e83e8c !important;
   margin-left: 0.25rem;
+}
+
+nb-select.form-control {
+  padding: 0;
+  border: 1px solid #fff;
 }

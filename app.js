@@ -70,7 +70,6 @@ app.use((req, res, next) => {
 	res.hostname = `${req.protocol}://${req.hostname}:${port}`;
 	res.fullpath = fullpath;
 	res.origin = origin;
-	console.log("Fullpath:", fullpath);
 	next();
 });
 
@@ -80,7 +79,7 @@ app.use("/auth", authRouter);
 app.use("/users", usersRouter);
 app.use("/educations", educationRouter);
 app.use("/subjects", SubjectsRouter);
-app.use("/subjects/:sub_id/assigments", AssigmentsRouter);
+app.use("/assignments", AssigmentsRouter);
 
 //# ANGULAR TESTING
 

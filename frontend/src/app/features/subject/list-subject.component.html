@@ -1,0 +1,49 @@
+<p>Misschien toevoegen:</p>
+<ul>
+  <li>Bij klik welke tonen welke educatie daarbij horen in een card</li>
+</ul>
+<div class="row">
+  <div class="col-md-12 col-lg-8 col-xxxl-6 col-center">
+    <nb-card class="list-card">
+      <nb-card-header class="text-center">Subject List</nb-card-header>
+      <nb-card-body>
+        <div class="table-responsive{-sm|-md|-lg|}">
+          <table class="table table-hover">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let subj of subjList">
+                <th scope="row">{{ subj.name }}</th>
+                <td>
+                  <div class="">
+                    <a role="group" class="mr-2" nbButton status="primary"  [routerLink]="['edit', subj._id]">
+                      edit
+                    </a>
+                    <button
+                      role="group"
+                      nbButton
+                      class="mr-2"
+                      status="danger"
+                      (click)="deleteSubj(subj._id)"
+                    >
+                      delete
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-center" *ngIf="!subjList">
+          No subjects available
+        </p>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>
+
+

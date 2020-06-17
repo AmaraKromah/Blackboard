@@ -1,9 +1,10 @@
 <nb-layout windowMode>
   <nb-layout-header fixed>Company Name</nb-layout-header>
 
-  <nb-sidebar responsive
+  <nb-sidebar responsive #sidenav
     >Sidebar Content
-
+    <br />
+    <strong>Education</strong>
     <ul>
       <li>
         <a
@@ -22,11 +23,51 @@
         >
       </li>
     </ul>
+    <strong>Subjects</strong>
+    <ul>
+      <li>
+        <a
+          mat-button
+          routerLink="/dashboard/subjects"
+          routerLinkActive="isAcctive"
+          >Subjects list
+        </a>
+      </li>
+      <li>
+        <a
+          mat-button
+          routerLink="/dashboard/subjects/create"
+          routerLinkActive="isAcctive"
+          >Create subjects</a
+        >
+      </li>
+    </ul>
+    <strong>Assignments</strong>
+    <ul>
+      <li>
+        <a
+          mat-button
+          routerLink="/dashboard/assignments"
+          routerLinkActive="isAcctive"
+          >Assignments list
+        </a>
+      </li>
+      <li>
+        <a
+          mat-button
+          routerLink="/dashboard/assignments/create"
+          routerLinkActive="isAcctive"
+          >Create assignments</a
+        >
+      </li>
+    </ul>
   </nb-sidebar>
   <nb-layout-column>
     <router-outlet></router-outlet>
     <!-- <app-create-education></app-create-education> -->
   </nb-layout-column>
 
-  <nb-layout-footer fixed>Contact us Bo</nb-layout-footer>
+  <nb-layout-footer fixed>
+    Contact us Bro
+  </nb-layout-footer>
 </nb-layout>

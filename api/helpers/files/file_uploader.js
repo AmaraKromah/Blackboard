@@ -1,10 +1,10 @@
 const multer = require("multer");
 const MIME_TYPE_MAP = require("./mime").MIME_TYPE_FILE;
 
-//todo update allowed file types 
+//todo update allowed file types
 
 const storage = multer.diskStorage({
-		destination: function(req, file, cb){
+		destination: function (req, file, cb) {
 			// Uploads is the Upload_folder_name
 			cb(null, "./public/documents/assignments");
 		},
@@ -18,9 +18,10 @@ const storage = multer.diskStorage({
 			name += "_" + Date.now();
 			const ext = MIME_TYPE_MAP[file.mimetype];
 			cb(null, name + "." + ext);
-		}
+		},
 	}),
 	fileFilter = (req, file, cb) => {
+		console.log("Type: ", file.mimetype);
 		const isValid = MIME_TYPE_MAP[file.mimetype];
 		if (isValid) {
 			cb(null, true);
@@ -37,19 +38,19 @@ module.exports = ({ fileSize, fieldName, fieldNameSize, maxFilesAmount }) => {
 			limits: {
 				fileSize: 1024 * 1024 * parseInt(fileSize), // filesizer is in bytes => 5mb
 				fieldNameSize: fieldNameSize,
-			}
-		}).array(fieldName,maxFilesAmount)(req, res, function(err){
-			// console.log("FILE: ", req.files);
+			},
+		}).array(fieldName, maxFilesAmount)(req, res, function (err) {
 			if (err instanceof multer.MulterError) {
 				return res.status(500).json({
 					message: err.message,
-					error_code: err.code
+					error_code: err.code,
 				});
 			} else if (err) {
 				return res.status(500).json({
-					message: err
+					message: err,
 				});
 			}
+
 			next();
 		});
 	};

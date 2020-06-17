@@ -18,6 +18,12 @@ import {
   NbButtonModule,
   NbListModule,
   NbTreeGridModule,
+  NbSelectModule,
+  NbInfiniteListDirective,
+  NbTabsetModule,
+  NbRouteTabsetModule,
+  NbIconModule,
+  NbCheckboxModule,
 } from '@nebular/theme';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { NbDateFnsDateModule } from '@nebular/date-fns';
@@ -28,6 +34,10 @@ import { NotFoundComponent } from './core/not-found/not-found.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ServerErrorComponent } from './core/server-error/server-error.component';
+import { CreateSubjectComponent } from './features/subject/create-subject.component';
+import { ListSubjectComponent } from './features/subject/list-subject.component';
+import { ListAssignmentComponent } from './features/assignment/list-assignment.component';
+import { CreateAssignmentComponent } from './features/assignment/create-assignment.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +47,10 @@ import { ServerErrorComponent } from './core/server-error/server-error.component
     HomeComponent,
     NotFoundComponent,
     ServerErrorComponent,
+    CreateSubjectComponent,
+    ListSubjectComponent,
+    ListAssignmentComponent,
+    CreateAssignmentComponent,
   ],
   imports: [
     BrowserModule,
@@ -63,14 +77,27 @@ import { ServerErrorComponent } from './core/server-error/server-error.component
         useAdditionalDayOfYearTokens: true,
       },
     }),
+    NbDialogModule.forRoot(),
+
     //# libs
     ReactiveFormsModule,
     //# add to features
+    //- Used by edu
     NbCardModule,
     NbInputModule,
     NbButtonModule,
     NbListModule,
     NbTreeGridModule,
+    NbMenuModule,
+    //- used by subject
+
+    NbSelectModule,
+    NbTabsetModule,
+    NbIconModule,
+    NbCheckboxModule,
+
+    //-uses by task
+    NbDialogModule.forChild(),
   ],
   providers: [],
   bootstrap: [AppComponent],

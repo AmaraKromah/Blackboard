@@ -26,20 +26,33 @@
                     role="toolbar"
                     aria-label="Toolbar with button edit en delete action"
                   >
-                    <a role="group" class="mr-2" nbButton status="primary" [routerLink]="['edit', edu._id]">
+                    <a
+                      role="group"
+                      class="mr-2"
+                      nbButton
+                      status="primary"
+                      [routerLink]="['edit', edu._id]"
+                    >
                       edit
                     </a>
-                    <button role="group" class="mr-2" nbButton status="danger" (click)="deleteEdu(edu._id)">
+                    <button
+                      role="group"
+                      class="mr-2"
+                      nbButton
+                      status="danger"
+                      (click)="deleteEdu(edu._id)"
+                    >
                       delete
                     </button>
                   </div>
                 </td>
               </tr>
-              
             </tbody>
           </table>
         </div>
-        <p class="text-center" *ngIf="eduList.length === 0">No education available</p>
+        <p class="text-center" *ngIf="eduList.length === 0">
+          No education available
+        </p>
       </nb-card-body>
     </nb-card>
   </div>

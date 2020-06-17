@@ -1,0 +1,74 @@
+<div class="row">
+  <div class="col-md-12 col-lg-8 col-xxxl-8 col-center">
+    <nb-card>
+      <nb-card-header class="text-light bg-dark text-center"
+        >Create Subject</nb-card-header
+      >
+      <nb-card-body>
+        <form [formGroup]="subjectForm">
+          <div class="form-group">
+            <label for="name" class="label">Name</label>
+            <input
+              type="email"
+              nbInput
+              fullWidth
+              id="name"
+              placeholder="Name"
+              formControlName="name"
+              [ngClass]="{
+                'is-invalid': name.errors && (name.touched || name.dirty)
+              }"
+            />
+          </div>
+          <span *ngIf="name.errors && (name.touched || name.dirty)">
+            <div class="text-danger name" *ngIf="name.errors.required">
+              Field is required.
+            </div>
+            <div class="text-danger name" *ngIf="name.errors.minlength">
+              Field must be
+              {{ name.errors.minlength.requiredLength }} long
+            </div>
+          </span>
+
+          <div class="form-group">
+            <label for="exampleInputPassword1" class="label">Subjects</label>
+            <nb-select
+              class="select-button placeholder"
+              fullWidth
+              formControlName="education"
+              class="form-control"
+              placeholder="Select subject"
+              multiple="false"
+              [ngClass]="{
+                'is-invalid':
+                  education.errors && (education.touched || education.dirty)
+              }"
+            >
+              <nb-option [value]="edu._id" *ngFor="let edu of eduList">{{
+                edu.name
+              }}</nb-option>
+            </nb-select>
+            <span
+              *ngIf="education.errors && (education.touched || education.dirty)"
+            >
+              <div class="text-danger" *ngIf="education.errors.required">
+                Field is required.
+              </div>
+            </span>
+          </div>
+          <div class="form-group"></div>
+          <button
+            type="submit"
+            nbButton
+            status="primary"
+            fullWidth
+            (click)="onSubmit()"
+            [disabled]="subjectForm.invalid"
+          >
+            Submit
+          </button>
+        </form>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>

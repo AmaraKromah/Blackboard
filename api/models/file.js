@@ -3,9 +3,10 @@ const mongoose = require("mongoose"),
 
 let FileSchema = new Schema({
 	name: { type: String, required: true },
+	path: String,
 	url: String,
 	ext: String, // extention
-	type: String // type of file (pdf, image...)
+	type: String, // type of file (pdf, image...)
 });
 
 //Export model

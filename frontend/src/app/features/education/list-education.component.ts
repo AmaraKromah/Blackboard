@@ -28,7 +28,7 @@ export class ListEducationComponent implements OnInit, OnDestroy {
     this.eduService.deleteEducation(id);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.eduSub.unsubscribe();
   }
   private getEduList() {

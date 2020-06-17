@@ -1,0 +1,227 @@
+<div class="row">
+  <div class="col-md-12 col-lg-8 col-xxxl-8 col-center">
+    <nb-card>
+      <nb-card-header
+        class="text-light bg-dark text-center"
+        *ngIf="displayMode == 'create'"
+        >Create assignment</nb-card-header
+      >
+      <nb-card-header
+        class="text-light bg-dark text-center"
+        *ngIf="displayMode == 'edit'"
+        >Edit assignment</nb-card-header
+      >
+
+      <nb-card-body>
+        <form [formGroup]="taskForm">
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="form-group">
+                <label for="title" class="label">Title</label>
+                <input
+                  type="text"
+                  nbInput
+                  fullWidth
+                  id="title"
+                  placeholder="Title"
+                  formControlName="title"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="form-group">
+                <label for="Description" class="label">Description</label>
+                <textarea
+                  nbInput
+                  fullWidth
+                  placeholder="Replace with text editor"
+                  id="Description"
+                  formControlName="description"
+                ></textarea>
+              </div>
+            </div>
+            <div class="col-sm-12">
+              <div class="form-group">
+                <label for="file" class="label">File</label>
+                <input
+                  type="file"
+                  multiple
+                  id="file"
+                  placeholder="Select file(s)"
+                  nbInput
+                  fullWidth
+                  class="form-control"
+                  (change)="onFilePicked($event.target.files)"
+                />
+                <div *ngIf="files.errors">
+                  <div
+                    class="text-danger"
+                    *ngFor="let typeError of files.errors.invalid_type"
+                  >
+                    <span>- {{ typeError }}.</span>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group" *ngIf="displayMode == 'edit'">
+                <nb-checkbox
+                  checked="true"
+                  (checkedChange)="replaceCurrent($event)"
+                >
+                  Replace current file(s)</nb-checkbox
+                >
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label for="type" class="label">Type</label>
+                <nb-select
+                  fullWidth
+                  formControlName="type"
+                  placeholder="Select Showcase"
+                >
+                  <nb-option [value]="type" *ngFor="let type of taskType">
+                    {{ type }}
+                  </nb-option>
+                </nb-select>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label for="deadline" class="label">Deadline</label>
+                <input
+                  nbInput
+                  fullWidth
+                  id="deadline"
+                  [nbDatepicker]="datepicker"
+                  formControlName="deadline"
+                />
+                <nb-datepicker #datepicker></nb-datepicker>
+              </div>
+            </div>
+          </div>
+          <button
+            *ngIf="displayMode == 'create'"
+            type="submit"
+            nbButton
+            status="primary"
+            fullWidth
+            (click)="onSubmit()"
+          >
+            Create
+          </button>
+          <button
+            *ngIf="displayMode == 'edit'"
+            type="submit"
+            nbButton
+            status="primary"
+            fullWidth
+            (click)="onSubmit()"
+          >
+            Edit
+          </button>
+        </form>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12 col-lg-8 col-xxxl-8 col-center">
+    <nb-card
+      *ngIf="displayMode == 'edit' && assignment && assignment.file.length"
+    >
+      <nb-card-header class="text-center text-light bg-secondary"
+        >Files</nb-card-header
+      >
+
+      <nb-card-body>
+        <div class="row options">
+          <!--- //////////////////////////////// -->
+          <button
+            nbButton
+            status="primary"
+            outline
+            size="small"
+            (click)="selectAll()"
+            *ngIf="
+              !checkBoxFilesSelect.includes(assignment._id) && fileLength > 1;
+              else deselect
+            "
+          >
+            Select all
+          </button>
+          <ng-template #deselect>
+            <button
+              nbButton
+              status="primary"
+              outline
+              size="small"
+              (click)="selectAll()"
+              *ngIf="fileLength > 1"
+            >
+              Deselect all
+            </button>
+          </ng-template>
+          <!--- //////////////////////////////// -->
+          <button
+            class="ml-2"
+            nbButton
+            outline
+            size="small"
+            status="danger"
+            (click)="deleteSelected()"
+          >
+            delete selected files
+          </button>
+        </div>
+        <span *ngFor="let file of assignment.file">
+          <div class="row">
+            <div class="col-md">
+              <a href="{{ file.url }}">
+                <nb-icon
+                  icon="file-outline"
+                  [options]="{ animation: { type: 'pulse' } }"
+                ></nb-icon
+                >{{ file.name }}</a
+              >
+            </div>
+            <div class="col-md">
+              <!--- //////////////////////////////// -->
+              <nb-checkbox
+                status="primary"
+                (checkedChange)="selectSingle($event, file._id)"
+                *ngIf="
+                  checkBoxFilesSelect.includes(assignment._id);
+                  else unCheck
+                "
+                checked="true"
+                >delete
+              </nb-checkbox>
+              <ng-template #unCheck>
+                <nb-checkbox
+                  status="primary"
+                  (checkedChange)="selectSingle($event, file._id)"
+                  checked="false"
+                  >delete
+                </nb-checkbox>
+              </ng-template>
+              <!--- //////////////////////////////// -->
+            </div>
+          </div>
+        </span>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>
+
+<p>Files : {{ files.value }}</p>
+<p>Files toched : {{ files.touched }}</p>
+<p>Files dirty : {{ files.dirty }}</p>
+<p>Files valid: {{ files.valid }}</p>
+<p>Files errors: {{ files.errors }}</p>
+
+<!-- invalid_type -->

@@ -11,7 +11,7 @@ var methods = {
 	create_token: ({ info, JWT_KEY, expiresIn }) => {
 		try {
 			let token = jwt.sign(info, JWT_KEY, {
-				expiresIn: expiresIn
+				expiresIn: expiresIn,
 			});
 			return token;
 		} catch (error) {
@@ -34,19 +34,19 @@ var methods = {
 				if (!mongoose.isValidObjectId(file_id)) {
 					errors.push({ message: ` ${file_id}: is an invalid file ID` });
 				}
-				file = await Files.findById(file_id).select("url");
+				file = await Files.findById(file_id).select("path");
 				console.log("FILES: ", file);
 				if (file) {
-					if (fs.existsSync(file.url)) {
-						fs.unlink(file.url, err => {
+					if (fs.existsSync(file.path)) {
+						fs.unlink(file.path, err => {
 							if (err) errors.push({ message: err });
 						});
 					} else {
-						errors.push({ message: `Filepath: ${file.url} doesn't exist` });
+						errors.push({ message: `Filepath: ${file.path} doesn't exist` });
 					}
 					await Files.findByIdAndDelete(file_id);
-					if (Model_ref) await Model_ref.updateOne(_id, { $pull: { file: file_id } });
-					// if (Model_ref) await Model_ref.findByIdAndUpdate(_id, { $pull: { file: file_id } }, { useFindAndModify: false });
+					// if (Model_ref) await Model_ref.updateOne({ _id }, { $pull: { file: file_id } });
+					if (Model_ref) await Model_ref.findByIdAndUpdate(_id, { $pull: { file: file_id } }, { useFindAndModify: false });
 				} else {
 					errors.push({ message: `Couldn't find file` });
 				}
@@ -63,7 +63,7 @@ var methods = {
 			return res.status(500).json({ error: "Subject ID is not valid" });
 		}
 		next();
-	}
+	},
 };
 
 //- misschien file verwijderen aan toevoegen
