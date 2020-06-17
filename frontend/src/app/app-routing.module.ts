@@ -9,9 +9,15 @@ import { ListSubjectComponent } from './features/subject/list-subject.component'
 import { CreateSubjectComponent } from './features/subject/create-subject.component';
 import { ListAssignmentComponent } from './features/assignment/list-assignment.component';
 import { CreateAssignmentComponent } from './features/assignment/create-assignment.component';
+import { LoginComponent } from './core/auth/login/login.component';
+import { RegisterComponent } from './core/auth/register/register.component';
+import { RequestPasswordComponent } from './core/auth/request-password/request-password.component';
+import { ResetPasswordComponent } from './core/auth/reset-password/reset-password.component';
 
 const routes: Routes = [
   { path: 'dashboard', component: HomeComponent },
+  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+
   //Educations
   { path: 'dashboard/educations', component: ListEducationComponent },
   { path: 'dashboard/educations/create', component: CreateEducationComponent },
@@ -34,7 +40,12 @@ const routes: Routes = [
     path: 'dashboard/assignments/edit/:id',
     component: CreateAssignmentComponent,
   },
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+
+  // AUTH
+  { path: 'auth/login', component: LoginComponent },
+  { path: 'auth/register', component: RegisterComponent },
+  { path: 'auth/request-password', component: RequestPasswordComponent },
+  { path: 'auth/reset-password', component: ResetPasswordComponent },
 
   //errors
   { path: 'error_500', component: ServerErrorComponent },

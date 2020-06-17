@@ -53,10 +53,38 @@
         </a>
       </li>
     </ul>
+    <strong>Auth</strong>
+    <ul>
+      <li>
+        <a mat-button routerLink="auth/login" routerLinkActive="isAcctive"
+          >Login
+        </a>
+      </li>
+      <li>
+        <a mat-button routerLink="auth/register" routerLinkActive="isAcctive"
+          >Register
+        </a>
+      </li>
+      <li>
+        <a
+          mat-button
+          routerLink="auth/request-password"
+          routerLinkActive="isAcctive"
+          >Request password
+        </a>
+      </li>
+      <li>
+        <a
+          mat-button
+          routerLink="auth/reset-password"
+          routerLinkActive="isAcctive"
+          >Reset Password
+        </a>
+      </li>
+    </ul>
   </nb-sidebar>
   <nb-layout-column>
     <router-outlet></router-outlet>
-    <!-- <app-create-education></app-create-education> -->
   </nb-layout-column>
 
   <nb-layout-footer fixed>

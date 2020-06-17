@@ -38,6 +38,10 @@ import { CreateSubjectComponent } from './features/subject/create-subject.compon
 import { ListSubjectComponent } from './features/subject/list-subject.component';
 import { ListAssignmentComponent } from './features/assignment/list-assignment.component';
 import { CreateAssignmentComponent } from './features/assignment/create-assignment.component';
+import { LoginComponent } from './core/auth/login/login.component';
+import { RegisterComponent } from './core/auth/register/register.component';
+import { RequestPasswordComponent } from './core/auth/request-password/request-password.component';
+import { ResetPasswordComponent } from './core/auth/reset-password/reset-password.component';
 
 @NgModule({
   declarations: [
@@ -51,6 +55,10 @@ import { CreateAssignmentComponent } from './features/assignment/create-assignme
     ListSubjectComponent,
     ListAssignmentComponent,
     CreateAssignmentComponent,
+    LoginComponent,
+    RegisterComponent,
+    RequestPasswordComponent,
+    ResetPasswordComponent,
   ],
   imports: [
     BrowserModule,
