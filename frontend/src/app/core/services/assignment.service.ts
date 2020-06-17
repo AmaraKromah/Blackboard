@@ -43,6 +43,7 @@ export class AssignmentService {
     type: string,
     deadline: Date,
     send_at: Date,
+    subjectID: string,
     files: File[]
   ) {
     const postData = new FormData();
@@ -50,6 +51,7 @@ export class AssignmentService {
     postData.append('description', description);
     postData.append('type', type);
     postData.append('deadline', deadline.toISOString());
+    postData.append('subject', subjectID);
     postData.append('send_at', send_at.toISOString());
     for (let i = 0; i < files.length; i++) {
       postData.append('files', files[i], files[i].name);

@@ -21,7 +21,6 @@ export class ListAssignmentComponent implements OnInit, OnDestroy {
 
   constructor(
     private taskService: AssignmentService,
-    private router: Router,
     private fb: FormBuilder,
     private dialogService: NbDialogService
   ) {
@@ -86,7 +85,7 @@ export class ListAssignmentComponent implements OnInit, OnDestroy {
     );
     this.taskService.deleteAssignment(task_id, filesToDeleteID, true);
   }
-  deleteTaskFiles(task_id: string):void {
+  deleteTaskFiles(task_id: string): void {
     let filesToDeleteID: string[] = [];
 
     filesToDeleteID = this.selectedCheckBox

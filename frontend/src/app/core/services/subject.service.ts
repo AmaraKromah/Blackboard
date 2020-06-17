@@ -10,15 +10,20 @@ import { catchError, retry } from 'rxjs/operators';
 })
 export class SubjectService {
   private education: ISubject[] = [];
-
   private _subjRefreshNeeded$ = new Subject<ISubject[]>();
-
   private baseUrl: string = 'http://localhost:3000/subjects/';
+  private _subjID: string;
 
   constructor(private http: HttpClient, private router: Router) {}
 
   get subjRefreshNeeded$() {
     return this._subjRefreshNeeded$.asObservable();
+  }
+  get subjID(): string {
+    return this._subjID;
+  }
+  set subjID(id: string) {
+    this._subjID = id;
   }
 
   // overweeg om de subscribe hier te doen

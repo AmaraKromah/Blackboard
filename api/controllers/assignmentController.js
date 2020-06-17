@@ -193,7 +193,6 @@ exports.assigments_update = async (req, res, next) => {
 			description: req.body.description,
 			type: req.body.type,
 			file: file,
-			subject: req.body.subject,
 			// teacher: teacher.id,
 			deadline: req.body.deadline,
 		};

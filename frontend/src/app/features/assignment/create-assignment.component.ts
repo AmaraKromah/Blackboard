@@ -6,6 +6,7 @@ import { AssignmentService } from 'src/app/core/services/assignment.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { IAssignment } from 'src/app/core/model/assignment.model';
 import { Subscription } from 'rxjs';
+import { SubjectService } from 'src/app/core/services/subject.service';
 @Component({
   selector: 'app-create-assignment',
   templateUrl: './create-assignment.component.html',
@@ -22,13 +23,16 @@ export class CreateAssignmentComponent implements OnInit {
   private task_id: string = '';
   private file: string[] = [];
   private taskSub: Subscription;
+  private subjID: string;
 
   constructor(
     private fb: FormBuilder,
     public route: ActivatedRoute,
     private taskService: AssignmentService,
-    private router: Router
-  ) {}
+    private subjService: SubjectService
+  ) {
+    this.subjID = this.subjService.subjID;
+  }
 
   ngOnInit(): void {
     this.taskForm = this.fb.group({
@@ -105,6 +109,7 @@ export class CreateAssignmentComponent implements OnInit {
 
     if (this.taskForm.valid) {
       if (this.displayMode === 'create') {
+        this.subjID = this.subjID === 'undefined' ? '' : this.subjID;
         console.log('Sending data', toSubmit);
         this.taskService.addAssignment(
           toSubmit.title,
@@ -112,6 +117,7 @@ export class CreateAssignmentComponent implements OnInit {
           toSubmit.type,
           toSubmit.deadline,
           toSubmit.send_at,
+          this.subjID,
           toSubmit.files
         );
       } else {
@@ -132,7 +138,6 @@ export class CreateAssignmentComponent implements OnInit {
       return;
     }
   }
-
   get title() {
     return this.taskForm.get('title');
   }

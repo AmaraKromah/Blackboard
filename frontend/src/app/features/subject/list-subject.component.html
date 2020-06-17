@@ -13,6 +13,7 @@
               <tr>
                 <th scope="col">Name</th>
                 <th scope="col">Action</th>
+                <th scope="col">Assignment</th>
               </tr>
             </thead>
             <tbody>
@@ -20,7 +21,15 @@
                 <th scope="row">{{ subj.name }}</th>
                 <td>
                   <div class="">
-                    <a role="group" class="mr-2" nbButton status="primary"  [routerLink]="['edit', subj._id]">
+                    <a
+                      role="group"
+                      class="mr-2"
+                      nbButton
+                      status="primary"
+                      outline
+                      size="small"
+                      [routerLink]="['edit', subj._id]"
+                    >
                       edit
                     </a>
                     <button
@@ -28,11 +37,26 @@
                       nbButton
                       class="mr-2"
                       status="danger"
+                      outline
+                      size="small"
                       (click)="deleteSubj(subj._id)"
                     >
                       delete
                     </button>
                   </div>
+                </td>
+                <td>
+                  <button
+                    role="group"
+                    nbButton
+                    class="mr-2"
+                    status="info"
+                    outline
+                    size="small"
+                    (click)="addAssignments(subj._id)"
+                  >
+                    Add assignments
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -45,5 +69,3 @@
     </nb-card>
   </div>
 </div>
-
-

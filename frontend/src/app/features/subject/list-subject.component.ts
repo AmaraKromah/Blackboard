@@ -32,6 +32,11 @@ export class ListSubjectComponent implements OnInit, OnDestroy {
     this.subjService.deleteSubject(id);
   }
 
+  addAssignments(subj_id: string) {
+    this.subjService.subjID = subj_id;
+    this.router.navigate(['/dashboard/assignments/create']);
+  }
+
   ngOnDestroy(): void {
     this.subjSub.unsubscribe();
   }
