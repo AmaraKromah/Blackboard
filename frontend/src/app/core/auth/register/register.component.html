@@ -1,1 +1,157 @@
-<p>register works!</p>
+<!-- arrow-back -->
+<nb-card class="registerCard" *ngIf="!sendLink; else elseBlock">
+  <nb-card-header>
+    <nav class="navigation">
+      <a href="#" class="link">
+        <nb-icon
+          icon="arrow-back"
+          [options]="{ animation: { type: 'pulse' } }"
+        ></nb-icon>
+      </a>
+    </nav>
+  </nb-card-header>
+  <nb-card-body>
+    <div class="auth">
+      <div class="register">
+        <h1 id="title" class="title">Register</h1>
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label for="firstName" class="label">First name</label>
+            <input
+              type="email"
+              nbInput
+              fullWidth
+              id="firstName"
+              placeholder="First name"
+              fieldSize="large"
+              formControlName="firstName"
+            />
+          </div>
+          <div class="form-group">
+            <label for="lastName" class="label">Last name</label>
+            <input
+              type="email"
+              nbInput
+              fullWidth
+              id="lastName"
+              placeholder="Last name"
+              fieldSize="large"
+              formControlName="lastName"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="email" class="label">Email address</label>
+            <input
+              type="email"
+              nbInput
+              fullWidth
+              id="email"
+              placeholder="Email"
+              fieldSize="large"
+              formControlName="email"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="password" class="label">Password</label>
+            <input
+              type="password"
+              nbInput
+              fullWidth
+              fieldSize="large"
+              id="password"
+              placeholder="Password"
+              autocomplete="off"
+              formControlName="password"
+            />
+          </div>
+          <div class="form-group">
+            <label for="confirmPassword" class="label">Comfirm password</label>
+            <input
+              type="password"
+              nbInput
+              fullWidth
+              fieldSize="large"
+              id="confirmPassword"
+              placeholder="Comfirm password"
+              autocomplete="off"
+              formControlName="comfirmPassword"
+            />
+          </div>
+          <div class="form-group">
+            <nb-checkbox (checkedChange)="termofService($event)">
+              Agree to
+              <a href="#" target="_blank" rel="noopener"
+                ><strong>Terms &amp; Conditions</strong></a
+              >
+            </nb-checkbox>
+          </div>
+          <button
+            type="submit"
+            status="primary"
+            nbButton
+            size="large"
+            fullWidth
+          >
+            Register
+          </button>
+        </form>
+
+        <section class="links">
+          or enter with
+          <div class="socials">
+            <a href="#">
+              <nb-icon
+                icon="github"
+                [options]="{ animation: { type: 'pulse' } }"
+              ></nb-icon>
+            </a>
+            <a href="#">
+              <nb-icon
+                icon="facebook"
+                [options]="{ animation: { type: 'pulse' } }"
+              ></nb-icon>
+            </a>
+            <a href="#">
+              <nb-icon
+                icon="twitter"
+                [options]="{ animation: { type: 'pulse' } }"
+              ></nb-icon>
+            </a>
+          </div>
+        </section>
+        <section class="another-action">
+          Already have an account?
+          <a routerLink="../login" class="text-link"> Login</a>
+        </section>
+      </div>
+    </div>
+  </nb-card-body>
+</nb-card>
+
+<ng-template #elseBlock>
+  <nb-card class="sendLinkCard">
+    <nb-card-header>
+      <nav class="navigation">
+        <a href="#" class="link">
+          <nb-icon
+            icon="arrow-back"
+            [options]="{ animation: { type: 'pulse' } }"
+          ></nb-icon>
+        </a>
+      </nav>
+    </nb-card-header>
+    <nb-card-body>
+      <div class="auth">
+        <div class="register">
+          <h1 id="title" class="title">Register</h1>
+          <p>
+            An activation link has been send to your email. Please verify your
+            email.
+          </p>
+        </div>
+      </div>
+    </nb-card-body>
+  </nb-card>
+</ng-template>

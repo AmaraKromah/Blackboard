@@ -13,6 +13,7 @@ import { LoginComponent } from './core/auth/login/login.component';
 import { RegisterComponent } from './core/auth/register/register.component';
 import { RequestPasswordComponent } from './core/auth/request-password/request-password.component';
 import { ResetPasswordComponent } from './core/auth/reset-password/reset-password.component';
+import { ComfirmRegistrationComponent } from './core/auth/register/comfirm-registration.component';
 
 const routes: Routes = [
   { path: 'dashboard', component: HomeComponent },
@@ -44,8 +45,9 @@ const routes: Routes = [
   // AUTH
   { path: 'auth/login', component: LoginComponent },
   { path: 'auth/register', component: RegisterComponent },
+  { path: 'auth/confirmation/:token', component: ComfirmRegistrationComponent },
   { path: 'auth/request-password', component: RequestPasswordComponent },
-  { path: 'auth/reset-password', component: ResetPasswordComponent },
+  { path: 'auth/reset-password/:token', component: ResetPasswordComponent },
 
   //errors
   { path: 'error_500', component: ServerErrorComponent },

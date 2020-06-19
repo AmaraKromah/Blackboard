@@ -9,7 +9,6 @@ import { catchError, retry } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class SubjectService {
-  private education: ISubject[] = [];
   private _subjRefreshNeeded$ = new Subject<ISubject[]>();
   private baseUrl: string = 'http://localhost:3000/subjects/';
   private _subjID: string;

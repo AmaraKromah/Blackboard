@@ -27,7 +27,7 @@ let corsOptions = {
 	optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
-const mongodb = `${mongo_url}${mongo_pass}${mongo_cluster}${mongo_db}?retryWrites=true&w=majority`;
+const mongodb = `${mongo_url}${mongo_pass}${mongo_cluster}${mongo_db}`;
 
 var app = express();
 

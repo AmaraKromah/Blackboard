@@ -13,7 +13,6 @@ import { IAssignment } from '../model/assignment.model';
   providedIn: 'root',
 })
 export class AssignmentService {
-  private assignment: IAssignment[] = [];
   private _taskRefreshNeeded$ = new Subject<string>();
 
   private baseUrl: string = 'http://localhost:3000/assignments/';

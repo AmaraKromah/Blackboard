@@ -10,13 +10,11 @@ import { Subject, throwError, Observable, pipe } from 'rxjs';
 import { tap, filter, map, catchError, retry } from 'rxjs/operators';
 
 //todo
-//! error handling, interceptor for error handling 
+//! error handling, interceptor for error handling
 @Injectable({
   providedIn: 'root',
 })
 export class EducationService {
-  private education: IEducation[] = [];
-
   private _eduRefreshNeeded$ = new Subject<IEducation[]>();
 
   private baseUrl: string = 'http://localhost:3000/educations/';

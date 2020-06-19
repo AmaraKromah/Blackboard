@@ -99,12 +99,12 @@ export class CreateAssignmentComponent implements OnInit {
   onSubmit() {
     let toSubmit = {
       _id: null,
-      title: this.taskForm.value.title,
-      description: this.taskForm.value.description,
+      title: this.title.value,
+      description: this.description.value,
       type: this.taskForm.value.type,
-      deadline: new Date(this.taskForm.value.deadline),
+      deadline: new Date(this.deadline.value),
       send_at: new Date(),
-      files: this.taskForm.value.files,
+      files: this.files.value,
     };
 
     if (this.taskForm.valid) {

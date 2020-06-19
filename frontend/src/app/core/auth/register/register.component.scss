@@ -1,0 +1,71 @@
+.registerCard {
+  margin: 0;
+  height: calc(100vh - 2 * 2.5rem);
+}
+.sendLinkCard {
+  margin: 0;
+  height: calc(50vh - 2 * 2.5rem);
+}
+
+nb-card-body {
+  display: flex;
+  width: 100%;
+}
+
+.link {
+  display: inline-block;
+  text-decoration: none;
+  nb-icon {
+    font-size: 2rem;
+    vertical-align: middle;
+  }
+}
+
+.auth {
+  margin: auto;
+  display: block;
+  width: 100%;
+  max-width: 35rem;
+}
+.register {
+  .title {
+    margin-top: 0;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  p {
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+}
+
+.form-group {
+  margin-bottom: 2rem;
+}
+// text:not(:empty) {
+//   padding-left: 0.6875rem;
+// }
+
+.links {
+  text-align: center;
+  margin-top: 1.75rem;
+  .socials {
+    margin-top: 1.5rem;
+
+    a {
+      margin: 0 1rem;
+      text-decoration: none;
+      vertical-align: middle;
+      color: #8f9bb3;
+    }
+  }
+}
+.another-action {
+  margin-top: 2rem;
+  text-align: center;
+
+  .text-link {
+    color: #8f9bb3;
+  }
+}

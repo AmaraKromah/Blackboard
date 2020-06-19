@@ -1,0 +1,46 @@
+<nb-card>
+  <nb-card-header>
+    <nav class="navigation">
+      <a href="#" class="link">
+        <nb-icon
+          icon="arrow-back"
+          [options]="{ animation: { type: 'pulse' } }"
+        ></nb-icon>
+      </a>
+    </nav>
+  </nb-card-header>
+  <nb-card-body>
+    <div class="auth">
+      <h1 id="title" class="title">Registration verification</h1>
+      <span *ngIf="statusCode == 200; else elseBlock">
+        <p class="sub-title lead">
+          Your email has succesfully been verified!
+        </p>
+        <a
+          nbButton
+          size="large"
+          status="success"
+          fullWidth
+          routerLink="../../../dashboard"
+          class="text-link"
+          >Dashboard</a
+        >
+      </span>
+      <ng-template #elseBlock>
+        <p class="sub-title lead">
+          Link is no longer valid or something went wrong please try again!
+        </p>
+        <a
+          nbButton
+          size="large"
+          status="danger"
+          outline
+          fullWidth
+          routerLink="../../../"
+          class="text-link"
+          >Home</a
+        >
+      </ng-template>
+    </div>
+  </nb-card-body>
+</nb-card>

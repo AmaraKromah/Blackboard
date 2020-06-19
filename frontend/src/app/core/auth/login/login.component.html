@@ -1,1 +1,97 @@
-<p>login works!</p>
+<nb-card>
+  <nb-card-header>
+    <nav class="navigation">
+      <a href="#" class="link">
+        <nb-icon
+          icon="arrow-back"
+          [options]="{ animation: { type: 'pulse' } }"
+        ></nb-icon>
+      </a>
+    </nav>
+  </nb-card-header>
+  <nb-card-body>
+    <div class="auth">
+      <div class="login">
+        <h1 id="title" class="title">Login</h1>
+        <p class="sub-title">Hello! Log in with your email.</p>
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label for="email" class="label">Email address</label>
+            <input
+              type="email"
+              nbInput
+              fullWidth
+              fieldSize="large"
+              id="email"
+              placeholder="Email"
+              formControlName="email"
+            />
+          </div>
+          <div class="form-group">
+            <span class="label-with-link">
+              <label for="password" class="label">Password</label>
+              <a
+                routerLink="../request-password"
+                class="forgot-password caption-2"
+                >Forgot Password?</a
+              >
+            </span>
+
+            <input
+              type="password"
+              nbInput
+              fullWidth
+              fieldSize="large"
+              id="password"
+              placeholder="Password"
+              autocomplete="off"
+              formControlName="password"
+            />
+          </div>
+          <div class="form-group">
+            <nb-checkbox (checkedChange)="rememberMe($event)"
+              >Remember me
+            </nb-checkbox>
+          </div>
+          <button
+            type="submit"
+            status="primary"
+            nbButton
+            size="large"
+            fullWidth
+          >
+            Login
+          </button>
+        </form>
+
+        <section class="links">
+          or enter with
+          <div class="socials">
+            <a href="#">
+              <nb-icon
+                icon="github"
+                [options]="{ animation: { type: 'pulse' } }"
+              ></nb-icon>
+            </a>
+            <a href="#">
+              <nb-icon
+                icon="facebook"
+                [options]="{ animation: { type: 'pulse' } }"
+              ></nb-icon>
+            </a>
+            <a href="#">
+              <nb-icon
+                icon="twitter"
+                [options]="{ animation: { type: 'pulse' } }"
+              ></nb-icon>
+            </a>
+          </div>
+        </section>
+        <section class="another-action">
+          Don't have an account?
+          <a routerLink="../register" class="text-link">Register</a>
+        </section>
+      </div>
+    </div>
+  </nb-card-body>
+</nb-card>

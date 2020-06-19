@@ -23,18 +23,18 @@ exports.registerValidationRules = () => {
 			.withMessage("password must contain one number")
 			// pasword confirm
 			.custom((value, { req, loc, path }) => {
-				if (value !== req.body.confirm_password) {
+				if (value !== req.body.comfirmPassword) {
 					// trow error if passwords do not match
 					throw new Error("Passwords don't match");
 				} else {
 					return value;
 				}
-			})
+			}),
 	];
 };
 
 exports.loginValidationRules = () => {
-	return [ body("email").trim().isLength({ min: 1 }).withMessage("Email is required").isEmail().withMessage("Not a valid email") ];
+	return [body("email").trim().isLength({ min: 1 }).withMessage("Email is required").isEmail().withMessage("Not a valid email")];
 };
 
 exports.resetPassValidationRules = () => {
@@ -57,7 +57,7 @@ exports.resetPassValidationRules = () => {
 				} else {
 					return value;
 				}
-			})
+			}),
 	];
 };
 /*       VALIIDATE            */
@@ -71,11 +71,11 @@ exports.validate = (req, res, next) => {
 	const extractedErrors = [];
 	errors.array().map(err =>
 		extractedErrors.push({
-			[err.param]: err.msg
+			[err.param]: err.msg,
 		})
 	);
 	res.status(422).json({
 		Error: "Creation Error",
-		errors_details: extractedErrors
+		errors_details: extractedErrors,
 	});
 };

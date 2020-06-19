@@ -181,7 +181,7 @@
         <span *ngFor="let file of assignment.file">
           <div class="row">
             <div class="col-md">
-              <a href="{{ file.url }}">
+              <a href="{{ file.url }}" target="_blank" rel="noopener">
                 <nb-icon
                   icon="file-outline"
                   [options]="{ animation: { type: 'pulse' } }"
