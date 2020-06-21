@@ -3,5 +3,5 @@ export interface IUserCreation {
   lastName: string;
   email: string;
   password: string;
-  comfirmPassword: string;
+  confirmPassword: string;
 }

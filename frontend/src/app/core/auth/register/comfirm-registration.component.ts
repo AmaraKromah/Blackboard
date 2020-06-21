@@ -20,7 +20,7 @@ export class ComfirmRegistrationComponent implements OnInit {
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has('token')) {
         let token = paramMap.get('token');
-        this.comfirmService.comfirmRegistration(token).subscribe((data) => {
+        this.comfirmService.confirmRegistration(token).subscribe((data) => {
           this.statusCode = data.status;
         });
       }

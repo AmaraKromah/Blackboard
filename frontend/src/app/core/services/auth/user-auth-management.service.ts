@@ -27,7 +27,7 @@ export class UserAuthManagementService {
   }
 
   //comfirm registration
-  comfirmRegistration(token: string) {
+  confirmRegistration(token: string) {
     let statusCode: number;
     return this.http.get<{ message: string }>(
       `${this.baseUrl}/confirmation/${token}`,

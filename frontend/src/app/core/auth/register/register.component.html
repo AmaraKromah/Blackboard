@@ -1,4 +1,5 @@
-<!-- arrow-back -->
+<p>first valid {{ passwordGroup.valid }}</p>
+
 <nb-card class="registerCard" *ngIf="!sendLink; else elseBlock">
   <nb-card-header>
     <nav class="navigation">
@@ -25,7 +26,22 @@
               placeholder="First name"
               fieldSize="large"
               formControlName="firstName"
+              [ngClass]="{ 'status-danger': formErrors.firstName }"
+              (blur)="
+                customValidators.validateAllFormFields(
+                  registerForm,
+                  this.formErrors
+                )
+              "
             />
+            <span *ngIf="formErrors.firstName">
+              <span
+                class="errors text-danger"
+                *ngFor="let error of getErrors(formErrors.firstName)"
+              >
+                <span>{{ error }}</span>
+              </span>
+            </span>
           </div>
           <div class="form-group">
             <label for="lastName" class="label">Last name</label>
@@ -37,7 +53,22 @@
               placeholder="Last name"
               fieldSize="large"
               formControlName="lastName"
+              [ngClass]="{ 'status-danger': formErrors.lastName }"
+              (blur)="
+                customValidators.validateAllFormFields(
+                  registerForm,
+                  this.formErrors
+                )
+              "
             />
+            <span *ngIf="formErrors.lastName">
+              <span
+                class="errors text-danger"
+                *ngFor="let error of getErrors(formErrors.lastName)"
+              >
+                <span>{{ error }}</span>
+              </span>
+            </span>
           </div>
 
           <div class="form-group">
@@ -50,35 +81,103 @@
               placeholder="Email"
               fieldSize="large"
               formControlName="email"
+              [ngClass]="{ 'status-danger': formErrors.email }"
+              (blur)="
+                customValidators.validateAllFormFields(
+                  registerForm,
+                  this.formErrors
+                )
+              "
             />
+            <span *ngIf="formErrors.email">
+              <span
+                class="errors text-danger"
+                *ngFor="let error of getErrors(formErrors.email)"
+              >
+                <span>{{ error }}</span>
+              </span>
+            </span>
           </div>
 
-          <div class="form-group">
-            <label for="password" class="label">Password</label>
-            <input
-              type="password"
-              nbInput
-              fullWidth
-              fieldSize="large"
-              id="password"
-              placeholder="Password"
-              autocomplete="off"
-              formControlName="password"
-            />
+          <div formGroupName="passwordGroup">
+            <div class="form-group">
+              <label for="password" class="label">Password</label>
+              <input
+                type="password"
+                nbInput
+                fullWidth
+                fieldSize="large"
+                id="password"
+                placeholder="Password"
+                autocomplete="off"
+                formControlName="password"
+                [ngClass]="{ 'status-danger': formErrors.password }"
+                (blur)="
+                  customValidators.validateAllFormFields(
+                    registerForm,
+                    this.formErrors
+                  )
+                "
+              />
+              <span *ngIf="formErrors.password">
+                <span
+                  class="errors text-danger"
+                  *ngFor="let error of getErrors(formErrors.password)"
+                >
+                  <span>{{ error }}</span>
+                </span>
+              </span>
+            </div>
+            <div class="form-group">
+              <label for="confirmPassword" class="label"
+                >Comfirm password</label
+              >
+              <input
+                type="password"
+                nbInput
+                fullWidth
+                fieldSize="large"
+                id="confirmPassword"
+                placeholder="Comfirm password"
+                autocomplete="off"
+                formControlName="confirmPassword"
+                [ngClass]="{
+                  'status-danger':
+                    formErrors.confirmPassword || formErrors.passwordGroup
+                }"
+                (blur)="
+                  customValidators.validateAllFormFields(
+                    registerForm,
+                    this.formErrors
+                  )
+                "
+              />
+              <!-- Password group errors text -->
+              <span
+                *ngIf="formErrors.confirmPassword || formErrors.passwordGroup"
+              >
+                <div *ngIf="formErrors.confirmPassword; else elseBlock">
+                  <span
+                    class="errors text-danger"
+                    *ngFor="let error of getErrors(formErrors.confirmPassword)"
+                  >
+                    <span>{{ error }}</span>
+                  </span>
+                </div>
+                <ng-template #elseBlock>
+                  <span
+                    class="errors text-danger"
+                    *ngFor="let error of getErrors(formErrors.passwordGroup)"
+                  >
+                    <span>{{ error }}</span>
+                  </span>
+                </ng-template>
+              </span>
+
+              <!-- end passwordgroup error text -->
+            </div>
           </div>
-          <div class="form-group">
-            <label for="confirmPassword" class="label">Comfirm password</label>
-            <input
-              type="password"
-              nbInput
-              fullWidth
-              fieldSize="large"
-              id="confirmPassword"
-              placeholder="Comfirm password"
-              autocomplete="off"
-              formControlName="comfirmPassword"
-            />
-          </div>
+
           <div class="form-group">
             <nb-checkbox (checkedChange)="termofService($event)">
               Agree to
@@ -89,15 +188,16 @@
           </div>
           <button
             type="submit"
-            status="primary"
             nbButton
             size="large"
             fullWidth
+            status="primary"
+            outline
+            [disabled]="registerForm.invalid || terms == false"
           >
             Register
           </button>
         </form>
-
         <section class="links">
           or enter with
           <div class="socials">
