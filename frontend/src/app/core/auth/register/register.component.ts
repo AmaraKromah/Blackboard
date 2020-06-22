@@ -3,6 +3,13 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { UserAuthManagementService } from '../../services/auth/user-auth-management.service';
 import { IUserCreation } from '../../model/auth/userCreation.model';
 import { CustomValidators } from '../../../shared/custom-validators';
+import {
+  NbToastrService,
+  NbGlobalPhysicalPosition,
+  NbIconConfig,
+} from '@nebular/theme';
+import { Observable } from 'rxjs';
+import { map, take, debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'app-register',
@@ -14,7 +21,7 @@ export class RegisterComponent implements OnInit {
   sendLink: boolean = false;
   terms: boolean = false;
   customValidators = CustomValidators;
-  formErrors = {
+  formErrors: any = {
     firstName: '',
     lastName: '',
     email: '',
@@ -25,9 +32,10 @@ export class RegisterComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private registerService: UserAuthManagementService
+    private registerService: UserAuthManagementService,
+    private toastrService: NbToastrService
   ) {}
-
+  //todo validaiton spinners
   ngOnInit(): void {
     this.registerForm = this.fb.group({
       firstName: [
@@ -35,14 +43,23 @@ export class RegisterComponent implements OnInit {
         [
           Validators.required,
           Validators.minLength(3),
-          Validators.pattern(/^[a-z ,.'-]{2,}$/i),
+          Validators.pattern(/^[a-z ,.'-]{1,}$/i),
         ],
       ],
       lastName: [
         '',
-        [Validators.required, Validators.pattern(/^[a-z ,.'-]{3,}$/i)],
+        [
+          Validators.required,
+          Validators.minLength(5),
+          Validators.pattern(/^[a-z ,.'-]{1,}$/i),
+        ],
       ],
-      email: ['', [Validators.required]],
+      email: [
+        '',
+        [Validators.required, CustomValidators.validateEmail],
+        //#async
+        CustomValidators.validateEmailExsist(this.registerService),
+      ],
       passwordGroup: this.fb.group(
         {
           password: [
@@ -50,7 +67,7 @@ export class RegisterComponent implements OnInit {
             [
               Validators.required,
               Validators.minLength(6),
-              CustomValidators.validatePassword,
+              // CustomValidators.validatePassword,
             ],
           ],
           confirmPassword: ['', Validators.required],
@@ -58,7 +75,8 @@ export class RegisterComponent implements OnInit {
         { validator: CustomValidators.validateConfirmPassword }
       ),
     });
-    this.registerForm.valueChanges.subscribe(() => {
+    this.registerForm.valueChanges.pipe(debounceTime(200)).subscribe(() => {
+      // console.log(this.password.pending);
       CustomValidators.validateAllFormFields(
         this.registerForm,
         this.formErrors
@@ -73,18 +91,31 @@ export class RegisterComponent implements OnInit {
   }
   // confirm_password
   onSubmit(): void {
-    let response = {
+    let response: IUserCreation = {
       firstName: this.firstName.value,
       lastName: this.lastName.value,
       email: this.email.value,
       password: this.password.value,
       confirmPassword: this.confirmPassword.value,
     };
-    if (this.terms == true && this.registerForm.valid) {
-      //   this.registerService.registerUser(response);
-      //   this.sendLink = true;
-      // } else {
-      //   console.log('Please comfirm the terms');
+    if (this.registerForm.valid) {
+      if (this.terms == true) {
+        this.registerService.registerUser(response);
+        //todo catch errors before changing status
+        this.sendLink = true;
+      } else {
+        const iconConfig: NbIconConfig = {
+          icon: 'alert-circle-outline',
+          pack: 'eva',
+        };
+        this.toastrService.show('', 'Please accept the terms and conditions', {
+          position: NbGlobalPhysicalPosition.TOP_RIGHT,
+          preventDuplicates: true,
+          iconPack: 'eva',
+          icon: 'alert-circle-outline',
+          status: 'warning',
+        });
+      }
     }
   }
   get firstName() {

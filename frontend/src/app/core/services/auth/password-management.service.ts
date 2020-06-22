@@ -17,12 +17,7 @@ export class PasswordManagementService {
       // this.router.navigate(['/dashboard/educations']);
     });
   }
-
   //reset password
-  getResetToken(token: string) {
-    return this.http.get(`${this.baseUrl}/reset/${token}`);
-  }
-
   resetPassword(password: string, token: string) {
     this.http
       .post(`${this.baseUrl}/reset/${token}`, { password })

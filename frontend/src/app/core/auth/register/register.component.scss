@@ -4,7 +4,7 @@
 }
 .sendLinkCard {
   margin: 0;
-  height: calc(50vh - 2 * 2.5rem);
+  height: calc(75vh - 2 * 2.5rem);
 }
 
 nb-card-body {
@@ -43,9 +43,6 @@ nb-card-body {
 .form-group {
   margin-bottom: 2rem;
 }
-// text:not(:empty) {
-//   padding-left: 0.6875rem;
-// }
 
 .links {
   text-align: center;

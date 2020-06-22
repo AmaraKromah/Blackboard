@@ -11,7 +11,21 @@ const Users = require("../models/auth/User"),
 TODO: 
 	- Proberen code die herbruikbaar te zijn apart te zetten 
 */
-
+exports.auth_check_email = async (req, res, next) => {
+	//maak hier een function van (herbruikbaar)
+	let email = req.query.email;
+	// console.log(email);
+	try {
+		user = await Users.find({
+			email: email,
+		});
+		return user.length > 0 ? res.status(200).json(true) : res.status(200).json(false);
+	} catch (error) {
+		return res.status(500).json({
+			message: error.message,
+		});
+	}
+};
 exports.auth_signup = async (req, res, next) => {
 	let JWT_EMAIL_KEY = process.env.JWT_EMAIL_KEY;
 	try {
@@ -228,34 +242,6 @@ exports.pass_forgot_create = async (req, res, next) => {
 	}
 };
 
-exports.pass_forgot_get_token = async (req, res, next) => {
-	let token = req.params.token;
-	let JWT_KEY = process.env.JWT_RESET_EMAIL_KEY;
-	try {
-		//- try to verify the token
-		let { id } = await reuse.consume_token({
-			token,
-			JWT_KEY,
-		});
-
-		// verification failed
-		if (!id) {
-			return res.status(401).json({
-				message: "Link is no longer valid or something went wrong please try again",
-			});
-		}
-
-		return res.status(200).json({
-			message: "You may now reset your pass",
-			token: req.params.token,
-		});
-	} catch (error) {
-		return res.status(500).json({
-			message: "Something went wrong",
-			error: error,
-		});
-	}
-};
 exports.pass_forgot_consume_token = async (req, res, next) => {
 	let token = req.params.token;
 	let password = req.body.password;

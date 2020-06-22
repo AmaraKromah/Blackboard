@@ -6,11 +6,13 @@ export const VALIDATIONMESSAGES = {
   },
   lastName: {
     required: 'Last name is required.',
+    minlength: 'Last Name must be greater than 5 characters.',
     pattern: 'Invalid last name',
   },
   email: {
-    required: 'Email Name is required.',
+    required: 'Email is required.',
     validateEmail: 'Invalid email',
+    alreadyExist: 'Email already taken please try a new one ',
   },
   passwordGroup: {
     passwordMatchFailed:

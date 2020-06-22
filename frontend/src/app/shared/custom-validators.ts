@@ -1,19 +1,41 @@
-import { FormControl, FormGroup, AbstractControl } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  AbstractControl,
+  AsyncValidatorFn,
+  ValidationErrors,
+} from '@angular/forms';
 import { VALIDATIONMESSAGES } from './validation-messages';
+import { UserAuthManagementService } from '../core/services/auth/user-auth-management.service';
+import { debounceTime, take, map, flatMap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 export class CustomValidators {
-  static validateEmail(controls: FormControl) {
+  static validateEmailExsist(
+    service: UserAuthManagementService
+  ): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors> => {
+      return service.checkEmail(control.value).pipe(
+        debounceTime(300),
+        take(1),
+        map((result: boolean) => (result ? { alreadyExist: true } : null))
+      );
+    };
+  }
+
+  static validateEmail(control: FormControl) {
     const regExp = new RegExp(
       // tslint:disable-next-line: max-line-length
       /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     );
-    if (controls.value)
-      if (regExp.test(controls.value)) {
+    if (control.value)
+      if (regExp.test(control.value)) {
         return null;
       } else {
         return { validateEmail: true };
       }
   }
+
   static validatePassword(control: AbstractControl): { [key: string]: any } {
     const password = control.value;
 
@@ -77,6 +99,7 @@ export class CustomValidators {
         const messages = VALIDATIONMESSAGES[key];
         for (const errorKey in abstractControl.errors) {
           if (errorKey) {
+            // console.log(errorKey);
             formErrors[key] += messages[errorKey] + '|';
             // console.log(this.formErrors);
           }

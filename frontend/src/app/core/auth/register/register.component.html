@@ -1,5 +1,3 @@
-<p>first valid {{ passwordGroup.valid }}</p>
-
 <nb-card class="registerCard" *ngIf="!sendLink; else elseBlock">
   <nb-card-header>
     <nav class="navigation">
@@ -34,12 +32,9 @@
                 )
               "
             />
-            <span *ngIf="formErrors.firstName">
-              <span
-                class="errors text-danger"
-                *ngFor="let error of getErrors(formErrors.firstName)"
-              >
-                <span>{{ error }}</span>
+            <span class="errors text-danger" *ngIf="formErrors.firstName">
+              <span *ngFor="let error of getErrors(formErrors.firstName)">
+                {{ error }}
               </span>
             </span>
           </div>
@@ -61,12 +56,9 @@
                 )
               "
             />
-            <span *ngIf="formErrors.lastName">
-              <span
-                class="errors text-danger"
-                *ngFor="let error of getErrors(formErrors.lastName)"
-              >
-                <span>{{ error }}</span>
+            <span class="errors text-danger" *ngIf="formErrors.lastName">
+              <span *ngFor="let error of getErrors(formErrors.lastName)">
+                {{ error }}
               </span>
             </span>
           </div>
@@ -89,12 +81,12 @@
                 )
               "
             />
-            <span *ngIf="formErrors.email">
-              <span
-                class="errors text-danger"
-                *ngFor="let error of getErrors(formErrors.email)"
-              >
-                <span>{{ error }}</span>
+            <span class="text-success" *ngIf="email.pending">
+              checking if {{ email.value }} is taken or not!
+            </span>
+            <span class="errors text-danger" *ngIf="formErrors.email">
+              <span *ngFor="let error of getErrors(formErrors.email)">
+                {{ error }}
               </span>
             </span>
           </div>
@@ -119,12 +111,9 @@
                   )
                 "
               />
-              <span *ngIf="formErrors.password">
-                <span
-                  class="errors text-danger"
-                  *ngFor="let error of getErrors(formErrors.password)"
-                >
-                  <span>{{ error }}</span>
+              <span class="errors text-danger" *ngIf="formErrors.password">
+                <span *ngFor="let error of getErrors(formErrors.password)">
+                  {{ error }}
                 </span>
               </span>
             </div>
@@ -156,12 +145,14 @@
               <span
                 *ngIf="formErrors.confirmPassword || formErrors.passwordGroup"
               >
-                <div *ngIf="formErrors.confirmPassword; else elseBlock">
+                <div
+                  class="errors text-danger"
+                  *ngIf="formErrors.confirmPassword; else elseBlock"
+                >
                   <span
-                    class="errors text-danger"
                     *ngFor="let error of getErrors(formErrors.confirmPassword)"
                   >
-                    <span>{{ error }}</span>
+                    {{ error }}
                   </span>
                 </div>
                 <ng-template #elseBlock>
@@ -193,7 +184,7 @@
             fullWidth
             status="primary"
             outline
-            [disabled]="registerForm.invalid || terms == false"
+            [disabled]="registerForm.invalid"
           >
             Register
           </button>
@@ -245,7 +236,7 @@
     <nb-card-body>
       <div class="auth">
         <div class="register">
-          <h1 id="title" class="title">Register</h1>
+          <h1 id="title" class="title">Forgot Password</h1>
           <p>
             An activation link has been send to your email. Please verify your
             email.

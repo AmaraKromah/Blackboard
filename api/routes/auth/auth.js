@@ -6,11 +6,12 @@ const { registerValidationRules, validate } = require("../../middleware/auth/aut
 
 const {
 	auth_signup,
+	auth_check_email,
 	auth_signin,
 	auth_confirm,
 	pass_forgot_create,
 	pass_forgot_get_token,
-	pass_forgot_consume_token
+	pass_forgot_consume_token,
 } = require("../../controllers/authController");
 
 const Users = require("../../models/auth/User");
@@ -23,6 +24,7 @@ const bcrypt = require("bcrypt");
 // Sign up
 // router.post("/signup", registerValidationRules(), validate, auth_signup);
 router.post("/signup", auth_signup);
+router.get("/signup/email-check", auth_check_email);
 
 router.get("/confirmation/:token", auth_confirm);
 

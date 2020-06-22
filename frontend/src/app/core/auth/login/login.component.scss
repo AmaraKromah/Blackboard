@@ -43,8 +43,13 @@ nb-card-body {
     justify-content: space-between;
     .forgot-password {
       text-decoration: none;
+
       margin-bottom: 0.5rem;
       color: rgba(143, 155, 179, 0.48);
+
+      &:hover {
+        color: rgba(51, 102, 255, 0.55);
+      }
     }
   }
 }

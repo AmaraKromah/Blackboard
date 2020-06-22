@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { PasswordManagementService } from '../../services/auth/password-management.service';
+import { CustomValidators } from 'src/app/shared/custom-validators';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'app-request-password',
@@ -8,7 +10,12 @@ import { PasswordManagementService } from '../../services/auth/password-manageme
   styleUrls: ['./request-password.component.scss'],
 })
 export class RequestPasswordComponent implements OnInit {
-  resetForm: FormGroup;
+  requestForm: FormGroup;
+  customValidators = CustomValidators;
+  sendLink: boolean = false;
+  formErrors: any = {
+    email: '',
+  };
 
   //validation en error handling doen
   constructor(
@@ -17,16 +24,26 @@ export class RequestPasswordComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.resetForm = this.fb.group({
-      email: ['', Validators.required],
+    this.requestForm = this.fb.group({
+      email: ['',   [Validators.required, CustomValidators.validateEmail]],
+    });
+    this.requestForm.valueChanges.pipe(debounceTime(200)).subscribe(() => {
+      CustomValidators.validateAllFormFields(this.requestForm, this.formErrors);
     });
   }
 
   onSubmit() {
     let email = this.email.value;
-    this.passwordService.requestPassword(email);
+    //http error validation
+    if (this.requestForm.valid) {
+      this.passwordService.requestPassword(email);
+      this.sendLink = true;
+    }
+  }
+  getErrors(errors: string): string[] {
+    return errors.split('|');
   }
   get email() {
-    return this.resetForm.get('email');
+    return this.requestForm.get('email');
   }
 }
