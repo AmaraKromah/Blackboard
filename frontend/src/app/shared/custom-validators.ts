@@ -60,8 +60,20 @@ export class CustomValidators {
       ? null
       : { passwordMatchFailed: true };
   }
+  static validateName(control: AbstractControl) {
+    const name = control.value;
 
-  static valiDatenumbersOnly(control: AbstractControl) {
+    if (name === null || name === '') {
+      return null;
+    }
+
+    if (!name.toString().match(/^[a-z ,.'-]{1,}$/i)) {
+      return { invalidName: true };
+    }
+
+    return null;
+  }
+  static validateNumbersOnly(control: AbstractControl) {
     const val = control.value;
 
     if (val === null || val === '') {

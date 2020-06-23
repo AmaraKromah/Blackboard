@@ -43,7 +43,7 @@ export class RegisterComponent implements OnInit {
         [
           Validators.required,
           Validators.minLength(3),
-          Validators.pattern(/^[a-z ,.'-]{1,}$/i),
+          CustomValidators.validateName,
         ],
       ],
       lastName: [
@@ -51,7 +51,7 @@ export class RegisterComponent implements OnInit {
         [
           Validators.required,
           Validators.minLength(5),
-          Validators.pattern(/^[a-z ,.'-]{1,}$/i),
+          CustomValidators.validateName,
         ],
       ],
       email: [

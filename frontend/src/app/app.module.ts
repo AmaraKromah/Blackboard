@@ -30,10 +30,10 @@ import { NbDateFnsDateModule } from '@nebular/date-fns';
 import { ListEducationComponent } from './features/education/list-education.component';
 import { CreateEducationComponent } from './features/education/create-education.component';
 import { HomeComponent } from './features/home/home.component';
-import { NotFoundComponent } from './core/not-found/not-found.component';
+import { NotFoundComponent } from './core/components/not-found/not-found.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { ServerErrorComponent } from './core/server-error/server-error.component';
+import { ServerErrorComponent } from './core/components/server-error/server-error.component';
 import { CreateSubjectComponent } from './features/subject/create-subject.component';
 import { ListSubjectComponent } from './features/subject/list-subject.component';
 import { ListAssignmentComponent } from './features/assignment/list-assignment.component';
@@ -43,6 +43,11 @@ import { RegisterComponent } from './core/auth/register/register.component';
 import { RequestPasswordComponent } from './core/auth/request-password/request-password.component';
 import { ResetPasswordComponent } from './core/auth/reset-password/reset-password.component';
 import { ComfirmRegistrationComponent } from './core/auth/register/comfirm-registration.component';
+import { HttpTokenInterceptor } from './core/interceptors/http-interceptor/http-token-interceptor';
+import { HeaderComponent } from './core/components/header/header.component';
+import { FooterComponent } from './core/components/footer/footer.component';
+import { SidenavComponent } from './core/components/sidenav/sidenav.component';
+import { DashboardLayoutComponent } from './core/layouts/dashboard-layout/dashboard-layout.component';
 
 @NgModule({
   declarations: [
@@ -61,6 +66,10 @@ import { ComfirmRegistrationComponent } from './core/auth/register/comfirm-regis
     RequestPasswordComponent,
     ResetPasswordComponent,
     ComfirmRegistrationComponent,
+    HeaderComponent,
+    FooterComponent,
+    SidenavComponent,
+    DashboardLayoutComponent,
   ],
   imports: [
     BrowserModule,
@@ -109,7 +118,9 @@ import { ComfirmRegistrationComponent } from './core/auth/register/comfirm-regis
     //-uses by task
     NbDialogModule.forChild(),
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: HttpTokenInterceptor, multi: true },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

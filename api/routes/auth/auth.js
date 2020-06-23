@@ -4,15 +4,7 @@ const router = express.Router(),
 
 const { registerValidationRules, validate } = require("../../middleware/auth/authValidation");
 
-const {
-	auth_signup,
-	auth_check_email,
-	auth_signin,
-	auth_confirm,
-	pass_forgot_create,
-	pass_forgot_get_token,
-	pass_forgot_consume_token,
-} = require("../../controllers/authController");
+const { auth_signup, auth_check_email, auth_signin, auth_confirm, pass_forgot_create, pass_forgot_consume_token } = require("../../controllers/authController");
 
 const Users = require("../../models/auth/User");
 
@@ -36,7 +28,6 @@ router.post("/forgot", pass_forgot_create);
     todo: Maybe inmplement a way to make sure a reset pass is only issued once
 	within a given time 
 */
-router.get("/reset/:token", pass_forgot_get_token);
 
 // todo: inmplement a password confirm + validations
 

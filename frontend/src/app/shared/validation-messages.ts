@@ -1,13 +1,26 @@
+// Maak hier een classe van zodat je parameters kunt meegeven
 export const VALIDATIONMESSAGES = {
+  name: { required: 'Name is required.', invalidName: 'Invalid name' },
+  beginDate: {
+    required: 'begin date name is required.',
+    nbDatepickerMin: 'Invalid minimum date',
+    nbDatepickerParse: 'Invalid date format ',
+  },
+  endDate: {
+    required: 'end date name is required.',
+    nbDatepickerMin: 'Invalid minimum date',
+    nbDatepickerMax: 'Invalid maximud date',
+    nbDatepickerParse: 'Invalid date format ',
+  },
   firstName: {
     required: 'First name is required.',
-    pattern: 'Invalid first name',
+    invalidName: 'Invalid first name',
     minlength: 'First Name must be greater than 3 characters.',
   },
   lastName: {
     required: 'Last name is required.',
     minlength: 'Last Name must be greater than 5 characters.',
-    pattern: 'Invalid last name',
+    invalidName: 'Invalid last name',
   },
   email: {
     required: 'Email is required.',

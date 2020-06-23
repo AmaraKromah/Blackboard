@@ -58,12 +58,6 @@ var methods = {
 
 		return errors;
 	},
-	check_valid_sub_id: (req, res, next) => {
-		if (!mongoose.isValidObjectId(req.params.sub_id)) {
-			return res.status(500).json({ error: "Subject ID is not valid" });
-		}
-		next();
-	},
 };
 
 //- misschien file verwijderen aan toevoegen

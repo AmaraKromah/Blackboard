@@ -10,7 +10,7 @@ import { UserAuthManagementService } from '../../services/auth/user-auth-managem
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
 
-  private remember: boolean;
+  private remember: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -28,8 +28,6 @@ export class LoginComponent implements OnInit {
     this.remember = checked;
   }
   onSubmit(): void {
-    console.log(this.loginForm.value);
-    console.log('remember me: ', this.remember);
     let login = {
       email: this.email.value,
       password: this.password.value,

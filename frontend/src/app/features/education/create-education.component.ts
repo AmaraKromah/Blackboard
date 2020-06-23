@@ -19,6 +19,11 @@ export class CreateEducationComponent implements OnInit {
   maxEnd: Date;
   mode: string = 'create';
   edu_id: string = '';
+  formErrors: any = {
+    name: '',
+    beginDate: '',
+    endDate: '',
+  };
 
   constructor(
     private fb: FormBuilder,
@@ -32,6 +37,9 @@ export class CreateEducationComponent implements OnInit {
       name: ['', [Validators.required, Validators.minLength(3)]],
       beginDate: ['', Validators.required],
       endDate: ['', Validators.required],
+    });
+    this.educationForm.valueChanges.subscribe(() => {
+      console.log(this.endDate.errors);
     });
     this.setPickerRange();
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
@@ -66,8 +74,8 @@ export class CreateEducationComponent implements OnInit {
         toSubmit._id = this.education._id;
         this.educationService.updateEducation(toSubmit);
       }
-    }else{
-      console.log("Invalid form");
+    } else {
+      console.log('Invalid form');
     }
   }
 

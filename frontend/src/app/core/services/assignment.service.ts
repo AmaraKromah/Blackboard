@@ -60,7 +60,8 @@ export class AssignmentService {
     // });
     this.http
       .post<{ message: string; assigment: IAssignment }>(this.baseUrl, postData)
-      .subscribe(() => {
+      .subscribe((data) => {
+        console.log(data);
         this._taskRefreshNeeded$.next();
         this.router.navigate(['dashboard/assignments']);
       });

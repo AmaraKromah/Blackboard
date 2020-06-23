@@ -14,14 +14,13 @@ const { assignments_list, assignments_create, assigments_delete, assigments_upda
 	{ isAuth } = require("../middleware/auth/authorization");
 
 const fileUpload = require("../helpers/files/file_uploader");
-const { check_valid_sub_id } = require("../helpers/re_useables/reuse");
 
 // todo:  Permission, push to controller
 
 router.get("/", assignments_list);
 
 // todo validation before other middelwares
-router.post("/", fileUpload({ fileSize: 50, fieldNameSize: 50, fieldName: "files", maxFilesAmount: 5 }), assignmentValidationRules(), validate, assignments_create);
+router.post("/", isAuth, fileUpload({ fileSize: 50, fieldNameSize: 50, fieldName: "files", maxFilesAmount: 5 }), assignmentValidationRules(), validate, assignments_create);
 
 //- Get one
 router.get("/:id", async (req, res, next) => {
@@ -34,10 +33,10 @@ router.get("/:id", async (req, res, next) => {
 	});
 });
 //- update one
-router.patch("/:id", fileUpload({ fileSize: 50, fieldNameSize: 50, fieldName: "files", maxFilesAmount: 5 }), assigments_update);
+router.patch("/:id", isAuth, fileUpload({ fileSize: 50, fieldNameSize: 50, fieldName: "files", maxFilesAmount: 5 }), assigments_update);
 
 //- delete one
-router.delete("/:id", assigments_delete);
+router.delete("/:id", isAuth, assigments_delete);
 
 // delete all
 // router.delete("/", async (req, res, next) => {
