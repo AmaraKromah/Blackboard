@@ -10,7 +10,7 @@ const { subject_list, subject_create, subject_details, subject_delete } = requir
 const Subjects = require("../models/courses/subject"),
 	Assignments = require("../models/courses/assigment"),
 	Files = require("../models/file"),
-	{ isAuth } = require("../middleware/auth/authorization");
+	{ authenticate } = require("../middleware/auth/authorization");
 
 /// Courses ROUTES ///
 
@@ -18,9 +18,9 @@ const Subjects = require("../models/courses/subject"),
  * todo
  * # Improved validations (more advanced),
  * # Permissions
- * 
+ *
  */
-router.get("/", subject_list);
+router.get("/", authenticate, subject_list);
 
 router.post("/", subject_create);
 
@@ -51,7 +51,7 @@ router.patch("/:id", async (req, res, next) => {
 
 		let tsk = Assignments.find({ subject: id }).select("type file description deadline"),
 			sub = Subjects.findByIdAndUpdate(id, bodyObject, { useFindAndModify: false }).select("-__v");
-		subject_array = await Promise.all([ tsk, sub ]);
+		subject_array = await Promise.all([tsk, sub]);
 
 		let task = subject_array[0],
 			subject = subject_array[1];
@@ -61,8 +61,8 @@ router.patch("/:id", async (req, res, next) => {
 			changed: bodyObject,
 			reques: {
 				type: "GET",
-				url: `${fullpath}${subject._id}`
-			}
+				url: `${fullpath}${subject._id}`,
+			},
 		});
 	} catch (error) {
 		res.status(500).json(error.message);
@@ -73,7 +73,7 @@ router.patch("/:id", async (req, res, next) => {
 router.delete("/:id", subject_delete);
 
 // Delete All subjects
-//# Later 
+//# Later
 router.delete("/", (req, res, next) => {
 	subjects
 		.deleteMany()
@@ -82,8 +82,8 @@ router.delete("/", (req, res, next) => {
 			doc.length > 0
 				? res.status(200).json({
 						message: "Al courses were succesfully deleted",
-						courses: doc.deletedCount
-					})
+						courses: doc.deletedCount,
+				  })
 				: res.status(200).json({ message: "No Course to delete" });
 		})
 		.catch(err => {

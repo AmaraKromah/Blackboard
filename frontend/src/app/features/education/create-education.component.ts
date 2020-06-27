@@ -45,6 +45,8 @@ export class CreateEducationComponent implements OnInit {
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has('id')) {
         this.mode = 'edit';
+        // params: Params
+        // this.edu_id = params.id;
         this.edu_id = paramMap.get('id');
         this.educationService.getEducation(this.edu_id).subscribe((data) => {
           this.education = data['response'].education[0];

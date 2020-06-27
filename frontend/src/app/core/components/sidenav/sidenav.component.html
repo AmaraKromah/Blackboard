@@ -1,90 +1,76 @@
 <p>Sidebar Content</p>
 
-<span *ngIf="loggedIn; else elseBlock">
-  <strong>Education</strong>
-  <ul>
-    <li>
-      <a
-        mat-button
-        routerLink="/dashboard/educations"
-        routerLinkActive="isAcctive"
-        >Educations list
-      </a>
-    </li>
-    <li>
-      <a
-        mat-button
-        routerLink="/dashboard/educations/create"
-        routerLinkActive="isAcctive"
-        >Create educations</a
-      >
-    </li>
-  </ul>
-  <strong>Subjects</strong>
-  <ul>
-    <li>
-      <a
-        mat-button
-        routerLink="/dashboard/subjects"
-        routerLinkActive="isAcctive"
-        >Subjects list
-      </a>
-    </li>
-    <li>
-      <a
-        mat-button
-        routerLink="/dashboard/subjects/create"
-        routerLinkActive="isAcctive"
-        >Create subjects</a
-      >
-    </li>
-  </ul>
-  <strong>Assignments</strong>
-  <ul>
-    <li>
-      <a
-        mat-button
-        routerLink="/dashboard/assignments"
-        routerLinkActive="isAcctive"
-        >Assignments list
-      </a>
-    </li>
-  </ul>
-
-  <strong>Auth</strong>
-  <li>
-    <a mat-button routerLink="" (click)="logOut()">logout </a>
-  </li>
+<strong>Education</strong>
+<ul>
   <li>
     <a
       mat-button
-      routerLink="auth/request-password"
+      routerLink="/dashboard/educations"
       routerLinkActive="isAcctive"
-      >Request password
+      >Educations list
     </a>
   </li>
   <li>
     <a
       mat-button
-      routerLink="auth/reset-password/1"
+      routerLink="/dashboard/educations/create"
       routerLinkActive="isAcctive"
-      >Reset Password
+      >Create educations</a
+    >
+  </li>
+</ul>
+<strong>Subjects</strong>
+<ul>
+  <li>
+    <a mat-button routerLink="/dashboard/subjects" routerLinkActive="isAcctive"
+      >Subjects list
     </a>
   </li>
-</span>
+  <li>
+    <a
+      mat-button
+      routerLink="/dashboard/subjects/create"
+      routerLinkActive="isAcctive"
+      >Create subjects</a
+    >
+  </li>
+</ul>
+<strong>Assignments</strong>
+<ul>
+  <li>
+    <a
+      mat-button
+      routerLink="/dashboard/assignments"
+      routerLinkActive="isAcctive"
+      >Assignments list
+    </a>
+  </li>
+</ul>
 
-<ng-template #elseBlock>
-  <strong>Auth</strong>
-  <ul>
-    <li>
-      <a mat-button routerLink="auth/login" routerLinkActive="isAcctive"
-        >Login
-      </a>
-    </li>
-    <li>
-      <a mat-button routerLink="auth/register" routerLinkActive="isAcctive"
-        >Register
-      </a>
-    </li>
-  </ul>
-</ng-template>
+<strong>Auth</strong>
+<li>
+  <a mat-button routerLink="" (click)="logOut()">logout </a>
+</li>
+<li>
+  <a mat-button routerLink="auth/request-password" routerLinkActive="isAcctive"
+    >Request password
+  </a>
+</li>
+<li>
+  <a mat-button routerLink="auth/reset-password/1" routerLinkActive="isAcctive"
+    >Reset Password
+  </a>
+</li>
+<strong>Auth</strong>
+<ul>
+  <li>
+    <a mat-button routerLink="auth/login" routerLinkActive="isAcctive"
+      >Login
+    </a>
+  </li>
+  <li>
+    <a mat-button routerLink="auth/register" routerLinkActive="isAcctive"
+      >Register
+    </a>
+  </li>
+</ul>

@@ -21,7 +21,7 @@ export class AuthGuard implements CanActivate {
     | Promise<boolean | UrlTree>
     | boolean
     | UrlTree {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('x-access-token');
     const loggedIn = token ? true : false;
     console.log('guard loggedin: ', loggedIn);
 

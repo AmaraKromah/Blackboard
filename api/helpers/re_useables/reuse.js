@@ -19,14 +19,6 @@ var methods = {
 		}
 	},
 
-	consume_token: ({ token, JWT_KEY }) => {
-		try {
-			const decoded = jwt.verify(token, JWT_KEY);
-			return decoded;
-		} catch (error) {
-			return error.message;
-		}
-	},
 	remove_files: async ({ files_ids, Model_ref, _id }) => {
 		let errors = [];
 		const try_remove_files = files_ids.map(async file_id => {

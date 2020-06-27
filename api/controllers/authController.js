@@ -3,18 +3,21 @@ const bcrypt = require("bcrypt"),
 	async = require("async");
 
 const Users = require("../models/auth/User"),
-	mailer = require("../helpers/mailers/nodemailer"),
-	reuse = require("../helpers/re_useables/reuse");
-
+	mailer = require("../helpers/mailers/nodemailer");
+/**
+ *# PARANT ROUTE :auth
+ */
 /*
 
-TODO: 
-	- Proberen code die herbruikbaar te zijn apart te zetten 
 */
+/**
+ * GET /signup/email-check
+ * Purpose: check if email already exsist
+ * TODO: Proberen code die herbruikbaar te zijn apart te zetten
+ */
 exports.auth_check_email = async (req, res, next) => {
 	//maak hier een function van (herbruikbaar)
 	let email = req.query.email;
-	// console.log(email);
 	try {
 		user = await Users.find({
 			email: email,
@@ -26,45 +29,34 @@ exports.auth_check_email = async (req, res, next) => {
 		});
 	}
 };
-exports.auth_signup = async (req, res, next) => {
-	let JWT_EMAIL_KEY = process.env.JWT_EMAIL_KEY;
+
+/**
+ * POST /signup
+ * Purpose: Sign up
+ */
+exports.auth_signup = async (req, res) => {
 	try {
-		users = await Users.find({
+		user = await Users.find({
 			email: req.body.email,
 		});
 
 		//- User exist (user returns array)
-		if (users.length >= 1) {
+		if (user.length >= 1) {
 			return res.status(403).json({
 				message: `${req.body.email} already exist`,
 			});
 		}
-		//- User doesn't exsist, so we create one with hashed pass
-		hashed_pass = await bcrypt.hash(req.body.password, 10);
-		let new_user = await new Users({
-			firstname: req.body.firstname,
-			lastname: req.body.lastname,
-			email: req.body.email,
-			password: hashed_pass,
-		}).save();
-
-		//- Create token for mail
-		jwt.sign(
-			{
-				id: new_user._id,
-			},
-			JWT_EMAIL_KEY,
-			{
-				expiresIn: "1d",
-			},
-			(err, token) => {
-				const url = `http://localhost:4200/auth/confirmation/${token}`;
-
-				//# send mail , maak hier een middelware van
+		let body = req.body,
+			newUser = await new Users(body).save();
+		if (newUser) {
+			let accessToken = await newUser.generateAccessAuthToken(48, "h");
+			if (accessToken) {
+				//- Send mail with access token
+				const url = `http://localhost:4200/auth/confirmation/${accessToken}`;
 				try {
 					mailer.transport.sendMail(
 						mailer.options.confirm_email_options({
-							email: `${new_user.email}`,
+							email: `${newUser.email}`,
 							url: url,
 						}),
 						(error, info) => {
@@ -74,11 +66,10 @@ exports.auth_signup = async (req, res, next) => {
 								});
 							}
 							console.log("Message sent: %s", info.messageId);
-
-							return res.status(200).json({
-								message: `welcome ${req.body.email} `,
-								user: new_user,
-							});
+							if (accessToken)
+								res.header("x-access-token", accessToken)
+									.status(201)
+									.json({ message: `Thanks for registration. An activation link was send to ${req.body.email} `, newUser });
 						}
 					);
 				} catch (error) {
@@ -87,127 +78,114 @@ exports.auth_signup = async (req, res, next) => {
 					});
 				}
 			}
-		);
+		}
 	} catch (error) {
-		return res.status(500).json({
-			message: error.message,
-		});
+		return res.status(500).json({ message: "Someting went wrong", error: error.message });
 	}
 };
 
-exports.auth_confirm = async (req, res, next) => {
+// TODO UPDATE THIS !!
+exports.auth_confirm = async (req, res) => {
 	let token = req.params.token;
-	let EMAIL_KEY = process.env.JWT_EMAIL_KEY;
-
 	try {
-		// try to verify the token
-		const { id } = jwt.verify(token, EMAIL_KEY);
-
-		// try to update the user
-		//! Maybe this should be in a try catch or use a Promise
-		let up_user = await Users.findByIdAndUpdate(id, { verified: true }, { useFindAndModify: false });
-
-		//If user was updated response positive else throw error
-		if (!up_user) {
-			throw new Error("Link no longer valid");
-		}
-		return res.status(200).json({
-			message: "You have succesfully confirmed your email, you may now login",
+		let { _id } = jwt.verify(token, Users.getJWTSecret(), function (error, decode) {
+			if (error) {
+				if (error.name == "TokenExpiredError") {
+					console.log("TOKEN EXPIRED");
+					// todo token expired afhandelen
+					return res.status(401).json({
+						message: "Link is no longer valid or something went wrong please try registering again",
+						error: error.message,
+					});
+				}
+			}
+			return decode;
 		});
+		if (_id) {
+			registeredUser = await Users.findByIdAndUpdate(_id, { verified: true }, { useFindAndModify: false });
+			let refreshToken = registeredUser.createSession(10),
+				accessToken = registeredUser.generateAccessAuthToken();
+			tokens = await Promise.all([refreshToken, accessToken]);
+			return res.header("x-refresh-token", tokens[0]).header("x-access-token", tokens[1]).status(200).json({
+				message: "You have succesfully confirmed your email, you may now login",
+				userId: _id,
+			});
+		}
 	} catch (error) {
 		return res.status(401).json({
-			message: "Link is no longer valid or something went wrong please try again",
+			message: "Something went wrong (confirm) please try again",
 			error: error.message,
 		});
 	}
 };
-
+/**
+ * POST /signin
+ * Purpose: Sign in
+ */
 exports.auth_signin = async (req, res, next) => {
-	console.log("bob");
 	let email = req.body.email;
 	let password = req.body.password;
-	let JWT_EMAIL_KEY = process.env.JWT_EMAIL_KEY;
-
-	// ! Misschien waterval async gebruiken?
 	try {
-		user = await Users.findOne({
-			email,
-		}).exec();
-
-		// Wrong Email
-		if (!user) {
-			return res.status(403).json({
+		let logginUser = await Users.findByCredentials(email, password);
+		if (!logginUser) {
+			return res.status(401).json({
 				message: "Authentication Failed",
 			});
 		}
+		/**
+		 * todo:
+		 * do regulate verification
+		 */
 
-		//- Check if user is verified
-		if (!user.verified) {
-			return res.status(403).json({
-				message: "Please verify your email",
-			});
-		}
+		let refreshToken = logginUser.createSession(10),
+			accessToken = logginUser.generateAccessAuthToken(15);
 
-		//- Verify password (returns true/false)
-		isPassMatched = await bcrypt.compare(password, user.password);
-		if (!isPassMatched) {
-			return res.status(403).json({
-				message: "Authentication Failed",
-			});
-		}
+		tokens = await Promise.all([refreshToken, accessToken]);
+		if (tokens[0] && tokens[1])
+			res.header("x-refresh-token", tokens[0]).header("x-access-token", tokens[1]).status(200).send({ message: "Authentication succesvol", logginUser });
+	} catch (error) {
+		return res.status(500).json({ message: "Someting went wrong", error: error.message });
+	}
+};
 
-		//-Logged in, create a JWT  token
-		jwt.sign(
-			{
-				id: user._id,
-				email: user.email,
-			},
-			JWT_EMAIL_KEY,
-			{
-				expiresIn: "7d",
-			},
-			(err, token) => {
-				return res.status(200).json({
-					message: "Authentication succesvol",
-					token: token,
-				});
-			}
-		);
+/**
+ * GET /tokens/access-token
+ * Purpose: generates and returns an access token
+ */
+exports.get_access_token = async (req, res, next) => {
+	// we know that the user/caller is authenticated and we have the user_id and user object available to us
+	console.log("I'm called for REFRESH");
+	try {
+		let accessToken = await req.userObject.generateAccessAuthToken(15, "s");
+		if (accessToken) res.header("x-access-token", accessToken).status(200).json({ accessToken });
 	} catch (error) {
 		return res.status(500).json({
 			message: error.message,
 		});
 	}
 };
-
+/////////////////////////////////////////////////////////////////
+//TODO LEFT
+/**
+ * POST /forgot
+ * Purpose: Request a new password
+ */
 exports.pass_forgot_create = async (req, res, next) => {
 	/*
     todo: Security question when resetting password
     */
 	let email = req.body.email;
-	JWT_KEY = process.env.JWT_RESET_EMAIL_KEY;
-
 	try {
-		//- Check if email exsist
-		user = await Users.findOne({
-			email: email,
-		});
-
-		// Wrong Email
+		user = await Users.findOne({ email });
 		if (!user) {
-			return res.status(404).json({
-				message: "No user witch such email",
+			return res.status(400).json({
+				message: "No user with such email",
 			});
 		}
 		// - Create token if email exist
-		let token = await reuse.create_token({
-			info: { id: user._id },
-			JWT_KEY,
-			expiresIn: "10m",
-		});
 
-		// - create link for mailer
-		const url = ` http://localhost:4200/auth/reset-password/${token}`;
+		let accessToken = await user.generateAccessAuthToken(1, "h");
+		const url = ` http://localhost:4200/auth/reset-password/${accessToken}`;
 
 		//- Send mail
 		try {
@@ -241,45 +219,44 @@ exports.pass_forgot_create = async (req, res, next) => {
 		});
 	}
 };
-
+/**
+ * POST /reset/:token
+ * Purpose: Reset password using token
+ */
+//todo reset accest link in header
 exports.pass_forgot_consume_token = async (req, res, next) => {
 	let token = req.params.token;
 	let password = req.body.password;
-	let JWT_KEY = process.env.JWT_RESET_EMAIL_KEY;
-	console.log(token, password, JWT_KEY);
 	try {
 		//- try to verify the token
-		let { id } = await reuse.consume_token({
-			token,
-			JWT_KEY,
-		});
+		let { _id } = jwt.verify(token, Users.getJWTSecret());
 
-		// verification failed
-		if (!id) {
-			return res.status(401).json({
-				message: "Link is no longer valid or something went wrong please try again",
-			});
-		}
-
-		//- Hash our password
-		hashed_pass = await bcrypt.hash(password, 10);
-		//- try to update the user password
-		Users.findByIdAndUpdate(id, { password: hashed_pass }, { useFindAndModify: false })
-			.exec()
-			.then(updated => {
-				return res.status(200).json({
-					message: "Your password has been updated, Try not to forget it",
-				});
-			})
-			.catch(err => {
-				return res.status(401).json({
+		if (_id) {
+			try {
+				hashed_pass = await bcrypt.hash(password, 10);
+				//- try to update the user password
+				if (hashed_pass) {
+					updateUser = await Users.findByIdAndUpdate(_id, { password: hashed_pass }, { useFindAndModify: false });
+					let refreshToken = updateUser.createSession(10),
+						accessToken = updateUser.generateAccessAuthToken();
+					tokens = await Promise.all([refreshToken, accessToken]);
+					if (updateUser) {
+						return res.header("x-refresh-token", tokens[0]).header("x-access-token", tokens[1]).status(200).json({
+							message: "Your password has been updated, Try not to forget it",
+							userId: _id,
+						});
+					}
+				}
+			} catch (error) {
+				return res.status(500).json({
 					message: "Something went wrong",
 					error: err.message,
 				});
-			});
+			}
+		}
 	} catch (error) {
-		return res.status(500).json({
-			message: "Something went wrong",
+		return res.status(401).json({
+			message: "Something went wrong, Link is no longer valid or something went wrong please try again",
 			error: error.message,
 		});
 	}

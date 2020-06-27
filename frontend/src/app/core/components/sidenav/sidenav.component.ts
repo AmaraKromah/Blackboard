@@ -14,12 +14,7 @@ export class SidenavComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const storedToken = localStorage.getItem('token');
-    this.userAuthSub = this.authService.authRefreshNeeded$.subscribe(
-      (isLoggedIn) => {
-        this.loggedIn = isLoggedIn;
-      }
-    );
-    this.loggedIn = storedToken ? true : false;
+    this.userAuthSub = this.authService.authRefreshNeeded$.subscribe();
   }
 
   logOut() {

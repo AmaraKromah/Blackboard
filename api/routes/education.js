@@ -1,19 +1,13 @@
 const express = require("express"),
 	router = express.Router();
 
-const {
-		education_list,
-		education_create,
-		education_detail,
-		education_update,
-		education_delete,
-		education_delete_list
-	} = require("../controllers/educationController"),
+const { education_list, education_create, education_detail, education_update, education_delete, education_delete_list } = require("../controllers/educationController"),
 	{ educationValidationRules, validate } = require("../middleware/form_validations/educationValidation");
+const {authenticate } = require("../middleware/auth/authorization");
 
 /// Education ROUTES ///
 
-router.get("/", education_list);
+router.get("/", authenticate, education_list);
 
 router.post("/", educationValidationRules(), validate, education_create);
 

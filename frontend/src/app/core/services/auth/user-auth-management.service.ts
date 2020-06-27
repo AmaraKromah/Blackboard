@@ -1,21 +1,26 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { IUserCreation } from '../../model/auth/userCreation.model';
 import { Observable, Subject } from 'rxjs';
+import { share, shareReplay, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
+//todo - maak een aparte service voor webrequests
 export class UserAuthManagementService {
   private _authRefreshNeeded$ = new Subject<boolean>();
   private baseUrl = 'http://localhost:3000/auth';
   constructor(private http: HttpClient, private router: Router) {}
 
+  private acesstoken: string;
   get authRefreshNeeded$() {
     return this._authRefreshNeeded$.asObservable();
   }
 
+  //check if user is verify
+  // checkVerify(email: string) {}
   //check if email exsist
   checkEmail(email: string): Observable<boolean> {
     return this.http.get<boolean>(
@@ -23,44 +28,108 @@ export class UserAuthManagementService {
     );
   }
   registerUser(registration: IUserCreation) {
-    console.log(registration);
     this.http
       .post<{ message: string; user: IUserCreation }>(
         `${this.baseUrl}/signup`,
         registration
       )
-      .subscribe((data) => {
-        console.log(data);
-
-        // this.router.navigate(['/dashboard/educations']);
-      });
+      .subscribe();
   }
 
   confirmRegistration(token: string) {
-    let statusCode: number;
-    return this.http.get<{ message: string }>(
-      `${this.baseUrl}/confirmation/${token}`,
-      {
+    return this.http
+      .get(`${this.baseUrl}/confirmation/${token}`, {
         observe: 'response',
-      }
-    );
+      })
+      .pipe(
+        shareReplay(),
+        tap((res: HttpResponse<any>) => {
+          if (res.status === 200) {
+            this.setSession(
+              res.body.userId,
+              res.headers.get('x-access-token'),
+              res.headers.get('x-refresh-token')
+            );
+          }
+        })
+      );
   }
   //gebruik cookies
   login(login: object) {
-    console.log;
     this.http
-      .post<{ token: string }>(`${this.baseUrl}/signin`, login)
-      .subscribe((response) => {
-        //Gebruik hier toast als het gelukt is
-        localStorage.setItem('token', response.token);
-        this._authRefreshNeeded$.next(true);
+      .post(`${this.baseUrl}/signin`, login, {
+        observe: 'response',
+      })
+      .pipe(
+        shareReplay(),
+        tap((res: HttpResponse<any>) => {
+          this.setSession(
+            res.body.logginUser._id,
+            res.headers.get('x-access-token'),
+            res.headers.get('x-refresh-token')
+          );
+          console.log('LOGGED IN', res);
+          //set timer
+        })
+      )
+      .subscribe(() => {
         this.router.navigate(['/dashboard']);
       });
   }
-
   logout() {
-    localStorage.removeItem('token');
-    this._authRefreshNeeded$.next(false);
+    this.removeSession();
+    // this._authRefreshNeeded$.next(false);
+    //-logout to home page
     this.router.navigate(['/dashboard']);
+  }
+
+  //#try using getters and setters again
+  getAccessToken() {
+    return localStorage.getItem('x-access-token');
+  }
+  setAccesToken(accessToken: string) {
+    localStorage.setItem('x-access-token', accessToken);
+  }
+  getRefreshToken() {
+    return localStorage.getItem('x-refresh-token');
+  }
+
+  getUserId() {
+    return localStorage.getItem('user-id');
+  }
+
+  setSession(
+    userId: string,
+    accessToken: string,
+    refreshToken: string
+  ) {
+    //vervangen door cookies?
+    localStorage.setItem('user-id', userId);
+    localStorage.setItem('x-access-token', accessToken);
+    localStorage.setItem('x-refresh-token', refreshToken);
+  }
+
+  private removeSession() {
+    //vervangen door cookies?
+    localStorage.removeItem('user-id');
+    localStorage.removeItem('x-access-token');
+    localStorage.removeItem('x-refresh-token');
+  }
+
+  getNewAccessToken() {
+    return this.http
+      .get(`${this.baseUrl}/tokens/access-token`, {
+        headers: {
+          'x-refresh-token': this.getRefreshToken(),
+          _id: this.getUserId(),
+        },
+        observe: 'response',
+      })
+      .pipe(
+        tap((res: HttpResponse<any>) => {
+          console.log('TOKEN refreshed: ', res);
+          this.setAccesToken(res.headers.get('x-access-token'));
+        })
+      );
   }
 }

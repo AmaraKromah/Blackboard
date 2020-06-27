@@ -1,11 +1,9 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
-const bcrypt = require('bcrypt'),
-	jwt = require('jsonwebtoken');
+const bcrypt = require("bcrypt"),
+	jwt = require("jsonwebtoken");
 
-const Users = require('../models/auth/User'),
-    {isAuth} = require("../middleware/auth/authorization")
-
+const Users = require("../models/auth/User");
 /* GET users listing. */
 
 /*
@@ -17,16 +15,14 @@ Todo Validation:
 
 //todo code optimaliseren
 
-router.get('/', isAuth, function(req, res, next) {
-
-	console.log("@@@@",req.userData_decode)
+router.get("/", function (req, res, next) {
 	Users.find()
 		.exec()
-		.then((result) => {
+		.then(result => {
 			let response = {
-				message: ' User Profiles',
+				message: " User Profiles",
 				count: result.length,
-				users: result.map((doc) => {
+				users: result.map(doc => {
 					return {
 						_id: doc._id,
 						firstname: doc.firstname,
@@ -34,41 +30,41 @@ router.get('/', isAuth, function(req, res, next) {
 						email: doc.email,
 						password: doc.password,
 						request: {
-							url: 'http://localhost:3000/users/' + doc._id
-						}
+							url: "http://localhost:3000/users/" + doc._id,
+						},
 					};
-				})
+				}),
 			};
 			res.status(200).json({
-				users: response
+				users: response,
 			});
 		})
-		.catch((err) => {
+		.catch(err => {
 			res.status(500).json({
-				message: err
+				message: err,
 			});
 		});
 });
 
 // Delete User
-router.delete('/:id', function(req, res, next) {
+router.delete("/:id", function (req, res, next) {
 	let id = req.params.id;
 	Users.findByIdAndDelete(id)
 		.exec()
-		.then((result) => {
+		.then(result => {
 			if (result) {
 				res.status(201).json({
-					message: 'User deleted'
+					message: "User deleted",
 				});
 			} else {
 				return res.status(404).json({
-					message: "Can't find given User"
+					message: "Can't find given User",
 				});
 			}
 		})
-		.catch((err) => {
+		.catch(err => {
 			res.status(500).json({
-				message: err
+				message: err,
 			});
 		});
 });

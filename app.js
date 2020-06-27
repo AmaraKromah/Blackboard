@@ -24,7 +24,9 @@ let mongo_url = process.env.MONGO_URL,
 // END ENVIRONMENT VARIABLE
 
 let corsOptions = {
-	optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+	optionsSuccessStatus: 200,
+	allowedHeaders: "Origin, X-Requested-With, Content-Type, Accept, x-access-token, x-refresh-token, _id",
+	exposedHeaders: "x-access-token, x-refresh-token",
 };
 
 const mongodb = `${mongo_url}${mongo_pass}${mongo_cluster}${mongo_db}`;
@@ -46,20 +48,6 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cors(corsOptions));
-
-// const sloc = require('node-sloc')
-
-// const options = {
-// 	path: './api',                      // Required. The path to walk or file to read.
-// 	ignorePaths: ['node_modules'],       // A list of directories to ignore.
-// 	ignoreDefault: false,                // Whether to ignore the default file extensions or not
-// 	logger: console.log,                 // Optional. Outputs extra information to if specified.
-//   }
-
-//   // Using promises
-//   sloc(options).then((res) => {
-// 	console.log(res)
-//   })
 
 //- Making fullpath globally available
 app.use((req, res, next) => {

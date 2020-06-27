@@ -8,6 +8,9 @@ const { remove_files } = require("../helpers/re_useables/reuse");
 exports.subject_list = async (req, res, next) => {
 	let origin = req.originalUrl,
 		fullpath = res.fullpath;
+
+	let user_id = res.user_id;
+	console.log(user_id);
 	try {
 		subjects_list = await Subjects.find();
 		if (subjects_list.length >= 1) {
@@ -20,10 +23,10 @@ exports.subject_list = async (req, res, next) => {
 						name: doc.name,
 						request: {
 							type: "GET",
-							url: origin.slice(-1) === "/" ? `${fullpath}${doc._id}` : `${fullpath}/${doc._id}`
-						}
+							url: origin.slice(-1) === "/" ? `${fullpath}${doc._id}` : `${fullpath}/${doc._id}`,
+						},
 					};
-				})
+				}),
 			};
 			res.status(200).json(response);
 		} else {
@@ -32,7 +35,7 @@ exports.subject_list = async (req, res, next) => {
 	} catch (error) {
 		res.status(500).json({
 			messsage: "Something went wrong",
-			error: error.message
+			error: error.message,
 		});
 	}
 };
@@ -42,6 +45,9 @@ exports.subject_create = async (req, res, next) => {
 	let ids_edu = req.body.education,
 		name = req.body.name;
 	fullpath = res.fullpath;
+
+	let teacher = res.user_id;
+	console.log(user_id);
 
 	// convert to array if not already an array
 	if (!(ids_edu instanceof Array)) {
@@ -54,7 +60,8 @@ exports.subject_create = async (req, res, next) => {
 	console.log("edu ", education);
 	let subject = await new Subjects({
 		name,
-		education
+		education,
+		// teacher,
 	}).save();
 
 	res.status(201).json({
@@ -65,9 +72,9 @@ exports.subject_create = async (req, res, next) => {
 			education: subject.education,
 			request: {
 				type: "GET",
-				url: String(fullpath).slice(-1) === "/" ? `${fullpath}${subject._id}` : `${fullpath}/${subject._id}`
-			}
-		}
+				url: String(fullpath).slice(-1) === "/" ? `${fullpath}${subject._id}` : `${fullpath}/${subject._id}`,
+			},
+		},
 	});
 };
 
@@ -83,7 +90,7 @@ exports.subject_details = async (req, res, next) => {
 
 		let tsk = Assignments.find({ subject: id }).select("title type description file"),
 			sub = Subjects.findById(id).select("-__v"),
-			subject_array = await Promise.all([ tsk, sub ]);
+			subject_array = await Promise.all([tsk, sub]);
 		let task = subject_array[0],
 			subject = subject_array[1];
 
@@ -96,19 +103,19 @@ exports.subject_details = async (req, res, next) => {
 			request: {
 				type: "GET",
 				description: "GET ALL subjects",
-				url: fullpath.slice(0, -24)
-			}
+				url: fullpath.slice(0, -24),
+			},
 		});
 	} catch (error) {
 		res.status(500).json({
 			message: "Something went wrong",
-			error: error.message
+			error: error.message,
 		});
 	}
 };
 
 // Update course (PATCH /:id)..
-exports.subject_update = function(req, res, next){};
+exports.subject_update = function (req, res, next) {};
 
 // Delete course (DELETE /:id)..
 exports.subject_delete = async (req, res, next) => {
@@ -122,7 +129,7 @@ exports.subject_delete = async (req, res, next) => {
 		//Subject verwijderen
 		const subj = Subjects.findById(id);
 		const task = Assignments.find({ subject: id });
-		let subject_list = await Promise.all([ subj, task ]);
+		let subject_list = await Promise.all([subj, task]);
 		let del_subject = subject_list[0];
 		let task_list = subject_list[1];
 
@@ -143,19 +150,19 @@ exports.subject_delete = async (req, res, next) => {
 			if (errors.length >= 1) {
 				return res.status(500).json({
 					message: "Something went wrong",
-					err: errors
+					err: errors,
 				});
 			}
 		}
 		const del_subj = Subjects.findByIdAndDelete(id);
 		const del_task = Assignments.deleteMany({ subject: id });
-		await Promise.all([ del_subj, del_task ]);
+		await Promise.all([del_subj, del_task]);
 
 		res.status(200).json({ message: "Subject was succesfully deleted", deleted: del_subject });
 	} catch (err) {
 		res.status(500).json({
 			message: "Something went wrong",
-			error: err.message
+			error: err.message,
 		});
 	}
 };

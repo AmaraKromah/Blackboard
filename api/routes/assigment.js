@@ -11,7 +11,7 @@ const Assignments = require("../models/courses/assigment"),
 
 const { assignments_list, assignments_create, assigments_delete, assigments_update } = require("../controllers/assignmentController"),
 	{ assignmentValidationRules, validate } = require("../middleware/form_validations/assignmentValidation"),
-	{ isAuth } = require("../middleware/auth/authorization");
+	{ authenticate } = require("../middleware/auth/authorization");
 
 const fileUpload = require("../helpers/files/file_uploader");
 
@@ -20,7 +20,7 @@ const fileUpload = require("../helpers/files/file_uploader");
 router.get("/", assignments_list);
 
 // todo validation before other middelwares
-router.post("/", isAuth, fileUpload({ fileSize: 50, fieldNameSize: 50, fieldName: "files", maxFilesAmount: 5 }), assignmentValidationRules(), validate, assignments_create);
+router.post("/", authenticate, fileUpload({ fileSize: 50, fieldNameSize: 50, fieldName: "files", maxFilesAmount: 5 }), assignmentValidationRules(), validate, assignments_create);
 
 //- Get one
 router.get("/:id", async (req, res, next) => {
@@ -33,10 +33,10 @@ router.get("/:id", async (req, res, next) => {
 	});
 });
 //- update one
-router.patch("/:id", isAuth, fileUpload({ fileSize: 50, fieldNameSize: 50, fieldName: "files", maxFilesAmount: 5 }), assigments_update);
+router.patch("/:id", authenticate, fileUpload({ fileSize: 50, fieldNameSize: 50, fieldName: "files", maxFilesAmount: 5 }), assigments_update);
 
 //- delete one
-router.delete("/:id", isAuth, assigments_delete);
+router.delete("/:id", authenticate, assigments_delete);
 
 // delete all
 // router.delete("/", async (req, res, next) => {
