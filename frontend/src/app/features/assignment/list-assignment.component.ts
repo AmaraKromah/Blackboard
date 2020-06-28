@@ -92,6 +92,7 @@ export class ListAssignmentComponent implements OnInit, OnDestroy {
       .filter((files) => files[0] == task_id)
       .map((files) => files[1]);
     this.taskService.deleteAssignment(task_id, filesToDeleteID, false);
+    this.selectedCheckBox = [];
   }
 
   ngOnDestroy(): void {

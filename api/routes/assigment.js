@@ -17,10 +17,17 @@ const fileUpload = require("../helpers/files/file_uploader");
 
 // todo:  Permission, push to controller
 
-router.get("/", assignments_list);
+router.get("/", authenticate, assignments_list);
 
 // todo validation before other middelwares
-router.post("/", authenticate, fileUpload({ fileSize: 50, fieldNameSize: 50, fieldName: "files", maxFilesAmount: 5 }), assignmentValidationRules(), validate, assignments_create);
+router.post(
+	"/",
+	authenticate,
+	fileUpload({ fileSize: 50, fieldNameSize: 50, fieldName: "files", maxFilesAmount: 5 }),
+	assignmentValidationRules(),
+	validate,
+	assignments_create
+);
 
 //- Get one
 router.get("/:id", async (req, res, next) => {

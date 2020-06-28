@@ -61,7 +61,6 @@ export class AssignmentService {
     this.http
       .post<{ message: string; assigment: IAssignment }>(this.baseUrl, postData)
       .subscribe((data) => {
-        console.log(data);
         this._taskRefreshNeeded$.next();
         this.router.navigate(['dashboard/assignments']);
       });
@@ -88,9 +87,6 @@ export class AssignmentService {
     for (let i = 0; i < files.length; i++) {
       postData.append('files', files[i], files[i].name);
     }
-    // postData.forEach((data) => {
-    //   console.log(data);
-    // });
 
     this.http
       .patch<{ message: string; deleted: any }>(

@@ -30,12 +30,19 @@ export class HttpTokenInterceptor implements HttpInterceptor {
           if (
             request.url.includes('access-token') ||
             request.url.includes('signin') ||
-            request.url.includes('confirmation')||
+            request.url.includes('confirmation') ||
             request.url.includes('forgot')
           ) {
-            return throwError(error);
+            if (this.authService.getUserId()) {
+              //todo herbekijken (custom error )
+              console.log("You're already logged in, fix this");
+              this.authService.logout();
+            }
+            const errors =
+              (error && error.error && error.error.message) || error.statusText;
+            console.log('@@: ', error, '\n', errors);
+            return throwError(errors);
           }
-          //401 = not authorized
           return this.refreshAccessToken().pipe(
             switchMap(() => {
               request = this.addAuthHeader(request);
@@ -43,6 +50,7 @@ export class HttpTokenInterceptor implements HttpInterceptor {
             }),
             catchError((err: any) => {
               this.authService.logout();
+
               return empty();
             })
           );

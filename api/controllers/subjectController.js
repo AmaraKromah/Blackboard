@@ -8,9 +8,6 @@ const { remove_files } = require("../helpers/re_useables/reuse");
 exports.subject_list = async (req, res, next) => {
 	let origin = req.originalUrl,
 		fullpath = res.fullpath;
-
-	let user_id = res.user_id;
-	console.log(user_id);
 	try {
 		subjects_list = await Subjects.find();
 		if (subjects_list.length >= 1) {
@@ -47,7 +44,7 @@ exports.subject_create = async (req, res, next) => {
 	fullpath = res.fullpath;
 
 	let teacher = res.user_id;
-	console.log(user_id);
+	console.log(teacher);
 
 	// convert to array if not already an array
 	if (!(ids_edu instanceof Array)) {

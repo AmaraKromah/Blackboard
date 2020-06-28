@@ -14,7 +14,7 @@ module.exports.authenticate = (req, res, next) => {
 		let token = req.headers["x-access-token"];
 		const decoded = jwt.verify(token, User.getJWTSecret());
 		res.user_id = decoded._id;
-		console.log("DOCODED: ", decoded);
+		// console.log("DOCODED: ", decoded);
 		next();
 	} catch (error) {
 		return res.status(401).json({ message: "Not Authorised!", error: error.message });

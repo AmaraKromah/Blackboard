@@ -44,10 +44,13 @@ import { RequestPasswordComponent } from './core/auth/request-password/request-p
 import { ResetPasswordComponent } from './core/auth/reset-password/reset-password.component';
 import { ComfirmRegistrationComponent } from './core/auth/register/comfirm-registration.component';
 import { HttpTokenInterceptor } from './core/interceptors/http-interceptor/http-token-interceptor';
+import { HttpErrorInterceptor } from './core/interceptors/http-interceptor/http-error-interceptor';
 import { HeaderComponent } from './core/components/header/header.component';
 import { FooterComponent } from './core/components/footer/footer.component';
 import { SidenavComponent } from './core/components/sidenav/sidenav.component';
 import { DashboardLayoutComponent } from './core/layouts/dashboard-layout/dashboard-layout.component';
+import { FlashMessagesModule } from 'angular2-flash-messages';
+import { EditorModule } from '@tinymce/tinymce-angular';
 
 @NgModule({
   declarations: [
@@ -96,6 +99,7 @@ import { DashboardLayoutComponent } from './core/layouts/dashboard-layout/dashbo
         useAdditionalDayOfYearTokens: true,
       },
     }),
+    FlashMessagesModule.forRoot(),
     NbDialogModule.forRoot(),
 
     //# libs
@@ -117,9 +121,13 @@ import { DashboardLayoutComponent } from './core/layouts/dashboard-layout/dashbo
 
     //-uses by task
     NbDialogModule.forChild(),
+
+    //-used for assignment
+    EditorModule,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: HttpTokenInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
   ],
   bootstrap: [AppComponent],
 })

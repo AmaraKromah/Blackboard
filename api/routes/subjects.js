@@ -22,7 +22,7 @@ const Subjects = require("../models/courses/subject"),
  */
 router.get("/", authenticate, subject_list);
 
-router.post("/", subject_create);
+router.post("/", authenticate, subject_create);
 
 ///////////////////////////////////////////////
 

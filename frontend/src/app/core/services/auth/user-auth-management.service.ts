@@ -56,7 +56,7 @@ export class UserAuthManagementService {
   }
   //gebruik cookies
   login(login: object) {
-    this.http
+   return  this.http
       .post(`${this.baseUrl}/signin`, login, {
         observe: 'response',
       })
@@ -72,9 +72,6 @@ export class UserAuthManagementService {
           //set timer
         })
       )
-      .subscribe(() => {
-        this.router.navigate(['/dashboard']);
-      });
   }
   logout() {
     this.removeSession();

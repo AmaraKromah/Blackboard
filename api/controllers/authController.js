@@ -138,7 +138,7 @@ exports.auth_signin = async (req, res, next) => {
 		 */
 
 		let refreshToken = logginUser.createSession(10),
-			accessToken = logginUser.generateAccessAuthToken(15);
+			accessToken = logginUser.generateAccessAuthToken();
 
 		tokens = await Promise.all([refreshToken, accessToken]);
 		if (tokens[0] && tokens[1])
@@ -156,7 +156,7 @@ exports.get_access_token = async (req, res, next) => {
 	// we know that the user/caller is authenticated and we have the user_id and user object available to us
 	console.log("I'm called for REFRESH");
 	try {
-		let accessToken = await req.userObject.generateAccessAuthToken(15, "s");
+		let accessToken = await req.userObject.generateAccessAuthToken();
 		if (accessToken) res.header("x-access-token", accessToken).status(200).json({ accessToken });
 	} catch (error) {
 		return res.status(500).json({
