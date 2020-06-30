@@ -13,7 +13,7 @@
       >
 
       <nb-card-body>
-        <form [formGroup]="taskForm">
+        <form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
           <div class="row">
             <div class="col-sm-12">
               <div class="form-group">
@@ -33,13 +33,10 @@
             <div class="col-sm-12">
               <div class="form-group">
                 <label for="Description" class="label">Description</label>
-                <textarea
-                  nbInput
-                  fullWidth
-                  placeholder="Replace with text editor"
-                  id="Description"
-                  formControlName="description"
-                ></textarea>
+                <app-text-editor
+                  [initialParentDescription]="description.value"
+                  (editorEvent)="editorEvent($event)"
+                ></app-text-editor>
               </div>
             </div>
             <div class="col-sm-12">
@@ -109,7 +106,6 @@
             nbButton
             status="primary"
             fullWidth
-            (click)="onSubmit()"
           >
             Create
           </button>
@@ -119,7 +115,6 @@
             nbButton
             status="primary"
             fullWidth
-            (click)="onSubmit()"
           >
             Edit
           </button>

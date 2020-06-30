@@ -1,0 +1,45 @@
+<form [formGroup]="form">
+  <editor
+    apiKey="ro1ehvrsfutf2s1joloq3bvjpia2p4hd91u5sqzzmotyvdg0"
+    formControlName="description"
+    initialValue="{{ _description }}"
+    [init]="{
+      min_height: 450,
+      max_height: 750,
+      autoresize: 'on',
+      menubar: false,
+      branding: false,
+      resize: false,
+      statusbar: true,
+      toolbar_mode: 'sliding',
+      browser_spellcheck: false,
+      contextmenu: false,
+      content_css_cors: true,
+      elementpath: false,
+      menu: {
+        insert: {
+          title: 'Insert',
+          items:
+            'template codesample inserttable | charmap emoticons hr | nonbreaking anchor toc | insertdatetime'
+        }
+      },
+      plugins: [
+        'advlist autolink lists link image charmap print',
+        'preview anchor searchreplace visualblocks code',
+        'fullscreen insertdatetime table paste',
+        'help wordcount emoticons autoresize hr '
+      ],
+      fontsize_formats: '8pt 10pt 12pt 14pt 18pt 24pt 36pt 48pt',
+      toolbar:
+        '|undo redo |  bold italic underline|fontselect |casechange  fontsizeselect| styleselect| \
+          alignleft aligncenter alignright alignjustify | bullist numlist outdent indent \
+         |table| link image | print preview code fullpage |charmap  emoticons | forecolor backcolor|searchreplace hr ',
+      link_assume_external_targets: 'http',
+      link_context_toolbar: true
+    }"
+  >
+  </editor>
+</form>
+<br />
+<br />
+<br />

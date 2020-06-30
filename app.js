@@ -2,6 +2,7 @@ require("dotenv/config");
 const express = require("express"),
 	path = require("path"),
 	cookieParser = require("cookie-parser"),
+	helmet = require('helmet')
 	logger = require("morgan"),
 	cors = require("cors"),
 	mongoose = require("mongoose");
@@ -48,6 +49,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cors(corsOptions));
+app.use(helmet())
 
 //- Making fullpath globally available
 app.use((req, res, next) => {
@@ -68,6 +70,29 @@ app.use("/users", usersRouter);
 app.use("/educations", educationRouter);
 app.use("/subjects", SubjectsRouter);
 app.use("/assignments", AssigmentsRouter);
+
+Editor = require("./api/models/editor");
+const { body, validationResult } = require("express-validator");
+//editor testing
+app.get("/editor", async (req, res, next) => {
+	let response = "Welcome to the editor";
+	let editor = await Editor.find();
+	res.status(200).json(editor);
+});
+app.post("/editor", [body("description").trim().isLength({ min: 2 }).withMessage("too short").escape()], async (req, res, next) => {
+	// Finds the validation errors in this request and wraps them in an object with handy functions
+	const errors = validationResult(req);
+	console.log("errors:", errors);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ errors: errors.array() });
+	}
+	let body = req.body;
+	let response = "Something has been posted to the editor: ";
+	console.log(body);
+	let editor = await new Editor(body).save();
+	console.log("editor: ", editor);
+	res.status(200).json({ message: response, editor });
+});
 
 //# ANGULAR TESTING
 

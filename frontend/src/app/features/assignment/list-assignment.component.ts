@@ -5,6 +5,7 @@ import { IAssignment } from 'src/app/core/model/assignment.model';
 import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';
 import { NbDialogService } from '@nebular/theme';
+import { UtilityService } from 'src/app/shared/utilities/utility.service';
 
 @Component({
   selector: 'app-list-assignment',
@@ -22,7 +23,8 @@ export class ListAssignmentComponent implements OnInit, OnDestroy {
   constructor(
     private taskService: AssignmentService,
     private fb: FormBuilder,
-    private dialogService: NbDialogService
+    private dialogService: NbDialogService,
+    private utility: UtilityService
   ) {
     this.form = this.fb.group({
       checkArray: this.fb.array([]),
@@ -30,7 +32,6 @@ export class ListAssignmentComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    console.log('Getting tasks');
     this.taskSub = this.taskService.taskRefreshNeeded$.subscribe((data) => {
       this.getTaskList();
       if ((data = 'deleteFile')) this.isActive = true;
@@ -105,8 +106,11 @@ export class ListAssignmentComponent implements OnInit, OnDestroy {
     });
   }
   private getTaskList() {
-    this.taskService.getAssignmentList().subscribe((task_list) => {
+    this.taskService.getAssignmentList().subscribe((task_list: any) => {
       this.taskList = task_list.assigments;
+      this.taskList.map((val) => {
+        val.description = this.utility.convertSanitizedToHtml(val.description);
+      });
     });
   }
 }

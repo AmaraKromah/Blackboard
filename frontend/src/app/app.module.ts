@@ -19,7 +19,6 @@ import {
   NbListModule,
   NbTreeGridModule,
   NbSelectModule,
-  NbInfiniteListDirective,
   NbTabsetModule,
   NbRouteTabsetModule,
   NbIconModule,
@@ -51,6 +50,8 @@ import { SidenavComponent } from './core/components/sidenav/sidenav.component';
 import { DashboardLayoutComponent } from './core/layouts/dashboard-layout/dashboard-layout.component';
 import { FlashMessagesModule } from 'angular2-flash-messages';
 import { EditorModule } from '@tinymce/tinymce-angular';
+import { TextEditorComponent } from './shared/components/text-editor.component';
+import { NoSanitizePipe } from './shared/helpers/pipes/no-sanitize.pipe';
 
 @NgModule({
   declarations: [
@@ -73,6 +74,9 @@ import { EditorModule } from '@tinymce/tinymce-angular';
     FooterComponent,
     SidenavComponent,
     DashboardLayoutComponent,
+    TextEditorComponent,
+    //wordt enkel gebruik in assignment (verplaats naar eigen module later)
+    NoSanitizePipe,
   ],
   imports: [
     BrowserModule,

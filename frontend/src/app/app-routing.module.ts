@@ -15,12 +15,15 @@ import { RequestPasswordComponent } from './core/auth/request-password/request-p
 import { ResetPasswordComponent } from './core/auth/reset-password/reset-password.component';
 import { ComfirmRegistrationComponent } from './core/auth/register/comfirm-registration.component';
 import { AuthGuard } from './core/guards/auth.guard';
+import { TextEditorComponent } from './shared/components/text-editor.component';
 
 //todo veranderen canActivate naar canActivateChild wanneer alles apart staat want dit hoort bij de dashboard
 const routes: Routes = [
   { path: 'dashboard', component: HomeComponent },
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
 
+  //editor testing
+  { path: 'dashboard/editor', component: TextEditorComponent },
   //Educations
   {
     path: 'dashboard/educations',

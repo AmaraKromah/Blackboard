@@ -80,8 +80,7 @@ exports.assignments_create = async (req, res, next) => {
 		}
 
 		let file = files_id.length >= 1 ? files_id : [];
-		subject = req.body.subject ? req.body.subject : null;
-
+		subject = typeof req.body.subject === "undefined" ? req.body.subject : null;
 		let new_assigment = await new Assignments({
 			title: req.body.title,
 			description: req.body.description,
@@ -113,7 +112,6 @@ exports.assigments_update = async (req, res, next) => {
 		replace_current = req.body.replaceCurrent,
 		files_id = [];
 	// convert to array
-
 	// files
 	//  find assignment first
 	//todo maak een uitzondering op bestanden dat niet gewijzigd zijn

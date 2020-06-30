@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, SecurityContext } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { TaskType } from './helpers/task_types';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
@@ -7,6 +7,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { IAssignment } from 'src/app/core/model/assignment.model';
 import { Subscription } from 'rxjs';
 import { SubjectService } from 'src/app/core/services/subject.service';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { UtilityService } from 'src/app/shared/utilities/utility.service';
 @Component({
   selector: 'app-create-assignment',
   templateUrl: './create-assignment.component.html',
@@ -29,9 +31,19 @@ export class CreateAssignmentComponent implements OnInit {
     private fb: FormBuilder,
     public route: ActivatedRoute,
     private taskService: AssignmentService,
-    private subjService: SubjectService
-  ) {
-    this.subjID = this.subjService.subjID;
+    private subjService: SubjectService,
+    private sanitized: DomSanitizer,
+    private utility: UtilityService
+  ) {}
+
+  editorEvent(event: any) {
+    const childEditor = this.sanitized.sanitize(
+      SecurityContext.HTML,
+      this.sanitized.bypassSecurityTrustHtml(event)
+    );
+    this.taskForm.patchValue({
+      description: childEditor,
+    });
   }
 
   ngOnInit(): void {
@@ -43,6 +55,8 @@ export class CreateAssignmentComponent implements OnInit {
       deadline: '',
     });
     //valideren
+    this.subjID = this.subjService.subjID;
+    console.log('Subject ID: ', this.subjID);
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has('id')) {
         this.displayMode = 'edit';
@@ -69,7 +83,6 @@ export class CreateAssignmentComponent implements OnInit {
       this.checkBoxFilesSelect.splice(index, 1);
       if (this.checkBoxFilesSelect.length == 1) this.checkBoxFilesSelect.pop();
     }
-    console.log(this.checkBoxFilesSelect.sort());
   }
   selectAll() {
     let task_id = this.assignment._id;
@@ -81,18 +94,15 @@ export class CreateAssignmentComponent implements OnInit {
       this.checkBoxFilesSelect.push(task_id);
       this.checkBoxFilesSelect.push(...this.file);
     }
-
-    // console.log(this.checkBoxFilesSelect);
   }
   replaceCurrent(checked: boolean) {
     this.replaceFile = checked;
-    console.log(this.replaceFile);
   }
   deleteSelected() {
     let toDelete = this.checkBoxFilesSelect.filter(
       (el) => el != this.assignment._id
     );
-    console.log('delete selected files without task', toDelete);
+    // console.log('delete selected files without task', toDelete);
 
     this.taskService.deleteAssignment(this.assignment._id, toDelete, false);
   }
@@ -109,8 +119,13 @@ export class CreateAssignmentComponent implements OnInit {
 
     if (this.taskForm.valid) {
       if (this.displayMode === 'create') {
-        this.subjID = this.subjID === 'undefined' ? '' : this.subjID;
-        console.log('Sending data', toSubmit);
+        this.subjID = typeof this.subjID === 'undefined' ? '' : this.subjID;
+        console.log(
+          'Sending data',
+          toSubmit,
+          'fix subject id after refresh',
+          this.subjID
+        );
         this.taskService.addAssignment(
           toSubmit.title,
           toSubmit.description,
@@ -134,7 +149,7 @@ export class CreateAssignmentComponent implements OnInit {
         );
       }
     } else {
-      console.log('Invalid form');
+      console.log('Invalid form: flash massage must be shown');
       return;
     }
   }
@@ -162,7 +177,9 @@ export class CreateAssignmentComponent implements OnInit {
       this.fileLength = this.file.length;
       this.taskForm.patchValue({
         title: this.assignment.title,
-        description: this.assignment.description,
+        description: this.utility.convertSanitizedToHtml(
+          this.assignment.description
+        ),
         type: this.assignment.type,
         deadline: new Date(this.assignment.deadline),
       });
@@ -173,7 +190,7 @@ export class CreateAssignmentComponent implements OnInit {
     if (this.displayMode === 'edit') this.taskSub.unsubscribe();
   }
 }
-
+//cutom validation
 function checkFileType(
   control: AbstractControl
 ): { [key: string]: any } | null {

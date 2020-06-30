@@ -38,7 +38,7 @@ export class AssignmentService {
 
   addAssignment(
     title: string,
-    description: string,
+    description: any,
     type: string,
     deadline: Date,
     send_at: Date,
@@ -69,7 +69,7 @@ export class AssignmentService {
   updateAssignment(
     task_id: string,
     title: string,
-    description: string,
+    description: any,
     type: string,
     deadline: Date,
     send_at: Date,

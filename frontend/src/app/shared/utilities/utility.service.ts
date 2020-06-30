@@ -79,6 +79,11 @@ export class UtilityService {
   stringToNumber(str: string) {
     return +str;
   }
+  convertSanitizedToHtml(input: string) {
+    var e = document.createElement('div');
+    e.innerHTML = input;
+    return e.childNodes[0].nodeValue ? e.childNodes[0].nodeValue : input;
+  }
 
   //# -----------  CHECKS ---------------//
 

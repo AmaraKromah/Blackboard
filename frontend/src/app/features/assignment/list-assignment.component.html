@@ -27,7 +27,7 @@
               </span>
             </div>
           </div>
-          {{ task.description }}
+          <span [innerHTML]="task.description | noSanitize"></span>
         </nb-tab>
 
         <!-- Bestanden Tab  -->

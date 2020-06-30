@@ -40,7 +40,14 @@ router.get("/:id", async (req, res, next) => {
 	});
 });
 //- update one
-router.patch("/:id", authenticate, fileUpload({ fileSize: 50, fieldNameSize: 50, fieldName: "files", maxFilesAmount: 5 }), assigments_update);
+router.patch(
+	"/:id",
+	authenticate,
+	fileUpload({ fileSize: 50, fieldNameSize: 50, fieldName: "files", maxFilesAmount: 5 }),
+	assignmentValidationRules(),
+	validate,
+	assigments_update
+);
 
 //- delete one
 router.delete("/:id", authenticate, assigments_delete);
