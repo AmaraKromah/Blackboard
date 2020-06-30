@@ -26,6 +26,7 @@ import {
 } from '@nebular/theme';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { NbDateFnsDateModule } from '@nebular/date-fns';
+
 import { ListEducationComponent } from './features/education/list-education.component';
 import { CreateEducationComponent } from './features/education/create-education.component';
 import { HomeComponent } from './features/home/home.component';
@@ -52,6 +53,9 @@ import { FlashMessagesModule } from 'angular2-flash-messages';
 import { EditorModule } from '@tinymce/tinymce-angular';
 import { TextEditorComponent } from './shared/components/text-editor.component';
 import { NoSanitizePipe } from './shared/helpers/pipes/no-sanitize.pipe';
+import { CalendarModule, DateAdapter } from 'angular-calendar';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+import { CookieService } from 'ngx-cookie-service';
 
 @NgModule({
   declarations: [
@@ -125,11 +129,16 @@ import { NoSanitizePipe } from './shared/helpers/pipes/no-sanitize.pipe';
 
     //-uses by task
     NbDialogModule.forChild(),
-
     //-used for assignment
     EditorModule,
+
+    CalendarModule.forRoot({
+      provide: DateAdapter,
+      useFactory: adapterFactory,
+    }),
   ],
   providers: [
+    CookieService,
     { provide: HTTP_INTERCEPTORS, useClass: HttpTokenInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
   ],

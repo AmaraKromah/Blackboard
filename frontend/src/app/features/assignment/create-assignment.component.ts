@@ -33,7 +33,7 @@ export class CreateAssignmentComponent implements OnInit {
     private taskService: AssignmentService,
     private subjService: SubjectService,
     private sanitized: DomSanitizer,
-    private utility: UtilityService
+    private utility: UtilityService,
   ) {}
 
   editorEvent(event: any) {
@@ -55,8 +55,15 @@ export class CreateAssignmentComponent implements OnInit {
       deadline: '',
     });
     //valideren
-    this.subjID = this.subjService.subjID;
-    console.log('Subject ID: ', this.subjID);
+
+    // this.subjID = this.subjService.subjID;
+    // console.log('Subject ID: ', this.subjID);
+    if (this.subjService.subjID) {
+      localStorage.setItem('subjID', this.subjService.subjID);
+      this.subjID = localStorage.getItem('subjID');
+    }
+    console.log('We got them cookies', this.subjID);
+
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has('id')) {
         this.displayMode = 'edit';
@@ -188,6 +195,7 @@ export class CreateAssignmentComponent implements OnInit {
 
   ngOnDestroy(): void {
     if (this.displayMode === 'edit') this.taskSub.unsubscribe();
+    localStorage.removeItem('subjID');
   }
 }
 //cutom validation
