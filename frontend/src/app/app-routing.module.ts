@@ -16,6 +16,7 @@ import { ResetPasswordComponent } from './core/auth/reset-password/reset-passwor
 import { ComfirmRegistrationComponent } from './core/auth/register/comfirm-registration.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { TextEditorComponent } from './shared/components/text-editor.component';
+import { AuthModule } from './core/auth/auth.module';
 
 //todo veranderen canActivate naar canActivateChild wanneer alles apart staat want dit hoort bij de dashboard
 const routes: Routes = [
@@ -75,11 +76,7 @@ const routes: Routes = [
   },
 
   // AUTH
-  { path: 'auth/login', component: LoginComponent },
-  { path: 'auth/register', component: RegisterComponent },
-  { path: 'auth/confirmation/:token', component: ComfirmRegistrationComponent },
-  { path: 'auth/request-password', component: RequestPasswordComponent },
-  { path: 'auth/reset-password/:token', component: ResetPasswordComponent },
+  { path: 'auth', loadChildren: './core/auth/auth.module#AuthModule' },
 
   //errors
   { path: 'error_500', component: ServerErrorComponent },

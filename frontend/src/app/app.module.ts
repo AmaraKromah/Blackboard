@@ -38,11 +38,6 @@ import { CreateSubjectComponent } from './features/subject/create-subject.compon
 import { ListSubjectComponent } from './features/subject/list-subject.component';
 import { ListAssignmentComponent } from './features/assignment/list-assignment.component';
 import { CreateAssignmentComponent } from './features/assignment/create-assignment.component';
-import { LoginComponent } from './core/auth/login/login.component';
-import { RegisterComponent } from './core/auth/register/register.component';
-import { RequestPasswordComponent } from './core/auth/request-password/request-password.component';
-import { ResetPasswordComponent } from './core/auth/reset-password/reset-password.component';
-import { ComfirmRegistrationComponent } from './core/auth/register/comfirm-registration.component';
 import { HttpTokenInterceptor } from './core/interceptors/http-interceptor/http-token-interceptor';
 import { HttpErrorInterceptor } from './core/interceptors/http-interceptor/http-error-interceptor';
 import { HeaderComponent } from './core/components/header/header.component';
@@ -69,11 +64,6 @@ import { CookieService } from 'ngx-cookie-service';
     ListSubjectComponent,
     ListAssignmentComponent,
     CreateAssignmentComponent,
-    LoginComponent,
-    RegisterComponent,
-    RequestPasswordComponent,
-    ResetPasswordComponent,
-    ComfirmRegistrationComponent,
     HeaderComponent,
     FooterComponent,
     SidenavComponent,
