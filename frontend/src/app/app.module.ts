@@ -12,7 +12,7 @@ import {
   NbDatepickerModule,
   NbDialogModule,
   NbWindowModule,
-  NbToastrModule,
+  // NbToastrModule,
   NbCardModule,
   NbInputModule,
   NbButtonModule,
@@ -27,17 +27,17 @@ import {
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { NbDateFnsDateModule } from '@nebular/date-fns';
 
-import { ListEducationComponent } from './features/education/list-education.component';
-import { CreateEducationComponent } from './features/education/create-education.component';
+import { ListEducationComponent } from './features/content/education/list-education.component';
+import { CreateEducationComponent } from './features/content/education/create-education.component';
 import { HomeComponent } from './features/home/home.component';
 import { NotFoundComponent } from './core/components/not-found/not-found.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ServerErrorComponent } from './core/components/server-error/server-error.component';
-import { CreateSubjectComponent } from './features/subject/create-subject.component';
-import { ListSubjectComponent } from './features/subject/list-subject.component';
-import { ListAssignmentComponent } from './features/assignment/list-assignment.component';
-import { CreateAssignmentComponent } from './features/assignment/create-assignment.component';
+import { CreateSubjectComponent } from './features/content/subject/create-subject.component';
+import { ListSubjectComponent } from './features/content/subject/list-subject.component';
+import { ListAssignmentComponent } from './features/content/assignment/list-assignment.component';
+import { CreateAssignmentComponent } from './features/content/assignment/create-assignment.component';
 import { HttpTokenInterceptor } from './core/interceptors/http-interceptor/http-token-interceptor';
 import { HttpErrorInterceptor } from './core/interceptors/http-interceptor/http-error-interceptor';
 import { HeaderComponent } from './core/components/header/header.component';
@@ -85,7 +85,7 @@ import { CookieService } from 'ngx-cookie-service';
     NbDatepickerModule.forRoot(),
     NbDialogModule.forRoot(),
     NbWindowModule.forRoot(),
-    NbToastrModule.forRoot(),
+    // NbToastrModule.forRoot(),
     NbDateFnsDateModule.forRoot({
       format: 'dd.MM.yyyy',
       parseOptions: {
@@ -97,7 +97,7 @@ import { CookieService } from 'ngx-cookie-service';
         useAdditionalDayOfYearTokens: true,
       },
     }),
-    FlashMessagesModule.forRoot(),
+    // FlashMessagesModule.forRoot(),
     NbDialogModule.forRoot(),
 
     //# libs

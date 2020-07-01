@@ -1,14 +1,12 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './features/home/home.component';
-import { ListEducationComponent } from './features/education/list-education.component';
-import { CreateEducationComponent } from './features/education/create-education.component';
 import { NotFoundComponent } from './core/components/not-found/not-found.component';
 import { ServerErrorComponent } from './core/components/server-error/server-error.component';
-import { ListSubjectComponent } from './features/subject/list-subject.component';
-import { CreateSubjectComponent } from './features/subject/create-subject.component';
-import { ListAssignmentComponent } from './features/assignment/list-assignment.component';
-import { CreateAssignmentComponent } from './features/assignment/create-assignment.component';
+import { ListSubjectComponent } from './features/content/subject/list-subject.component';
+import { CreateSubjectComponent } from './features/content/subject/create-subject.component';
+import { ListAssignmentComponent } from './features/content/assignment/list-assignment.component';
+import { CreateAssignmentComponent } from './features/content/assignment/create-assignment.component';
 import { LoginComponent } from './core/auth/login/login.component';
 import { RegisterComponent } from './core/auth/register/register.component';
 import { RequestPasswordComponent } from './core/auth/request-password/request-password.component';
@@ -17,6 +15,8 @@ import { ComfirmRegistrationComponent } from './core/auth/register/comfirm-regis
 import { AuthGuard } from './core/guards/auth.guard';
 import { TextEditorComponent } from './shared/components/text-editor.component';
 import { AuthModule } from './core/auth/auth.module';
+import { ListEducationComponent } from './features/content/education/list-education.component';
+import { CreateEducationComponent } from './features/content/education/create-education.component';
 
 //todo veranderen canActivate naar canActivateChild wanneer alles apart staat want dit hoort bij de dashboard
 const routes: Routes = [
