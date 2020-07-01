@@ -42,7 +42,7 @@ export class EducationService {
       .post<{ message: string; educations: IEducation[] }>(this.baseUrl, edu)
       .subscribe(() => {
         this._eduRefreshNeeded$.next();
-        this.router.navigate(['/dashboard/educations']);
+        this.router.navigate(['/dashboard/content/educations']);
       });
   }
 
@@ -55,7 +55,7 @@ export class EducationService {
       )
       .subscribe((data) => {
         this._eduRefreshNeeded$.next();
-        this.router.navigate(['/dashboard/educations']);
+        this.router.navigate(['/dashboard/content/educations']);
       });
   }
 

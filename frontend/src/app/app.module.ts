@@ -12,17 +12,10 @@ import {
   NbDatepickerModule,
   NbDialogModule,
   NbWindowModule,
-  // NbToastrModule,
   NbCardModule,
   NbInputModule,
   NbButtonModule,
-  NbListModule,
-  NbTreeGridModule,
   NbSelectModule,
-  NbTabsetModule,
-  NbRouteTabsetModule,
-  NbIconModule,
-  NbCheckboxModule,
 } from '@nebular/theme';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { NbDateFnsDateModule } from '@nebular/date-fns';
@@ -31,20 +24,12 @@ import { NotFoundComponent } from './core/components/not-found/not-found.compone
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ServerErrorComponent } from './core/components/server-error/server-error.component';
-import { CreateSubjectComponent } from './features/content/subject/create-subject.component';
-import { ListSubjectComponent } from './features/content/subject/list-subject.component';
-import { ListAssignmentComponent } from './features/content/assignment/list-assignment.component';
-import { CreateAssignmentComponent } from './features/content/assignment/create-assignment.component';
 import { HttpTokenInterceptor } from './core/interceptors/http-interceptor/http-token-interceptor';
 import { HttpErrorInterceptor } from './core/interceptors/http-interceptor/http-error-interceptor';
 import { HeaderComponent } from './core/components/header/header.component';
 import { FooterComponent } from './core/components/footer/footer.component';
 import { SidenavComponent } from './core/components/sidenav/sidenav.component';
 import { DashboardLayoutComponent } from './core/layouts/dashboard-layout/dashboard-layout.component';
-import { FlashMessagesModule } from 'angular2-flash-messages';
-import { EditorModule } from '@tinymce/tinymce-angular';
-import { TextEditorComponent } from './shared/components/text-editor.component';
-import { NoSanitizePipe } from './shared/helpers/pipes/no-sanitize.pipe';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { CookieService } from 'ngx-cookie-service';
@@ -55,17 +40,10 @@ import { CookieService } from 'ngx-cookie-service';
     HomeComponent,
     NotFoundComponent,
     ServerErrorComponent,
-    CreateSubjectComponent,
-    ListSubjectComponent,
-    ListAssignmentComponent,
-    CreateAssignmentComponent,
     HeaderComponent,
     FooterComponent,
     SidenavComponent,
     DashboardLayoutComponent,
-    TextEditorComponent,
-    //wordt enkel gebruik in assignment (verplaats naar eigen module later)
-    NoSanitizePipe,
   ],
   imports: [
     BrowserModule,
@@ -80,7 +58,6 @@ import { CookieService } from 'ngx-cookie-service';
     NbDatepickerModule.forRoot(),
     NbDialogModule.forRoot(),
     NbWindowModule.forRoot(),
-    // NbToastrModule.forRoot(),
     NbDateFnsDateModule.forRoot({
       format: 'dd.MM.yyyy',
       parseOptions: {
@@ -92,7 +69,6 @@ import { CookieService } from 'ngx-cookie-service';
         useAdditionalDayOfYearTokens: true,
       },
     }),
-    // FlashMessagesModule.forRoot(),
     NbDialogModule.forRoot(),
 
     //# libs
@@ -100,22 +76,12 @@ import { CookieService } from 'ngx-cookie-service';
     //# add to features
     //- Used by edu
     NbCardModule,
-    NbInputModule,
+    // NbInputModule,
     NbButtonModule,
-    NbListModule,
-    NbTreeGridModule,
     NbMenuModule,
-    //- used by subject
-
-    NbSelectModule,
-    NbTabsetModule,
-    NbIconModule,
-    NbCheckboxModule,
-
     //-uses by task
     NbDialogModule.forChild(),
     //-used for assignment
-    EditorModule,
 
     CalendarModule.forRoot({
       provide: DateAdapter,

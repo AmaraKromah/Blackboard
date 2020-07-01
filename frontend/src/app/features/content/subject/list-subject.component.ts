@@ -34,7 +34,7 @@ export class ListSubjectComponent implements OnInit, OnDestroy {
 
   addAssignments(subj_id: string) {
     this.subjService.subjID = subj_id;
-    this.router.navigate(['/dashboard/assignments/create']);
+    this.router.navigate(['/dashboard/content/assignments/create']);
   }
 
   ngOnDestroy(): void {

@@ -62,7 +62,7 @@ export class AssignmentService {
       .post<{ message: string; assigment: IAssignment }>(this.baseUrl, postData)
       .subscribe((data) => {
         this._taskRefreshNeeded$.next();
-        this.router.navigate(['dashboard/assignments']);
+        this.router.navigate(['dashboard/content/assignments']);
       });
   }
 
@@ -95,7 +95,7 @@ export class AssignmentService {
       )
       .subscribe((data) => {
         this._taskRefreshNeeded$.next();
-        this.router.navigate(['/dashboard/assignments']);
+        this.router.navigate(['/dashboard/content/assignments']);
       });
   }
 

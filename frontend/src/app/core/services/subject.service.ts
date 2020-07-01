@@ -43,7 +43,7 @@ export class SubjectService {
       .post<{ message: string; educations: ISubject[] }>(this.baseUrl, subj)
       .subscribe(() => {
         this._subjRefreshNeeded$.next();
-        this.router.navigate(['/dashboard/subjects']);
+        this.router.navigate(['/dashboard/content/subjects']);
       });
   }
 
@@ -55,7 +55,7 @@ export class SubjectService {
       )
       .subscribe((data) => {
         this._subjRefreshNeeded$.next();
-        this.router.navigate(['/dashboard/subjects']);
+        this.router.navigate(['dashboard/content/subjects']);
       });
   }
 
