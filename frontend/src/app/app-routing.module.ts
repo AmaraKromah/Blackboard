@@ -7,16 +7,8 @@ import { ListSubjectComponent } from './features/content/subject/list-subject.co
 import { CreateSubjectComponent } from './features/content/subject/create-subject.component';
 import { ListAssignmentComponent } from './features/content/assignment/list-assignment.component';
 import { CreateAssignmentComponent } from './features/content/assignment/create-assignment.component';
-import { LoginComponent } from './core/auth/login/login.component';
-import { RegisterComponent } from './core/auth/register/register.component';
-import { RequestPasswordComponent } from './core/auth/request-password/request-password.component';
-import { ResetPasswordComponent } from './core/auth/reset-password/reset-password.component';
-import { ComfirmRegistrationComponent } from './core/auth/register/comfirm-registration.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { TextEditorComponent } from './shared/components/text-editor.component';
-import { AuthModule } from './core/auth/auth.module';
-import { ListEducationComponent } from './features/content/education/list-education.component';
-import { CreateEducationComponent } from './features/content/education/create-education.component';
 
 //todo veranderen canActivate naar canActivateChild wanneer alles apart staat want dit hoort bij de dashboard
 const routes: Routes = [
@@ -25,22 +17,6 @@ const routes: Routes = [
 
   //editor testing
   { path: 'dashboard/editor', component: TextEditorComponent },
-  //Educations
-  {
-    path: 'dashboard/educations',
-    component: ListEducationComponent,
-    canActivate: [AuthGuard],
-  },
-  {
-    path: 'dashboard/educations/create',
-    component: CreateEducationComponent,
-    canActivate: [AuthGuard],
-  },
-  {
-    path: 'dashboard/educations/edit/:id',
-    component: CreateEducationComponent,
-    canActivate: [AuthGuard],
-  },
   //subjects
   {
     path: 'dashboard/subjects',
@@ -76,6 +52,11 @@ const routes: Routes = [
   },
 
   // AUTH
+  {
+    // 'dashboard/content/educations',
+    path: 'dashboard/content',
+    loadChildren: './features/content/content.module#ContentModule',
+  },
   { path: 'auth', loadChildren: './core/auth/auth.module#AuthModule' },
 
   //errors

@@ -26,9 +26,6 @@ import {
 } from '@nebular/theme';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { NbDateFnsDateModule } from '@nebular/date-fns';
-
-import { ListEducationComponent } from './features/content/education/list-education.component';
-import { CreateEducationComponent } from './features/content/education/create-education.component';
 import { HomeComponent } from './features/home/home.component';
 import { NotFoundComponent } from './core/components/not-found/not-found.component';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -55,8 +52,6 @@ import { CookieService } from 'ngx-cookie-service';
 @NgModule({
   declarations: [
     AppComponent,
-    ListEducationComponent,
-    CreateEducationComponent,
     HomeComponent,
     NotFoundComponent,
     ServerErrorComponent,
