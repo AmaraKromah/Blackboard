@@ -31,7 +31,7 @@ import { AuthRoutingModule } from './auth-routing.module';
     ReactiveFormsModule,
     RouterModule,
     FlashMessagesModule.forRoot(),
-    // NbToastrModule.forRoot(),
+    NbToastrModule.forRoot(),
     NbCardModule,
     NbInputModule,
     NbButtonModule,

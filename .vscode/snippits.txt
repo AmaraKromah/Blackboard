@@ -1,0 +1,19 @@
+  private updateMenu(state: boolean) {
+    let authorised: string[] = [
+      'education',
+      'content',
+      'subject',
+      'assignments',
+    ];
+    this.items.forEach((item) => {
+      const title = item.title.toLowerCase();
+      if (authorised.includes(title)) {
+        item.hidden = !state;
+      }
+
+      if (title == 'auth' && item.children) {
+        //login/logout
+        item.children[1].hidden = state;
+        item.children[item.children.length - 1].hidden = !state;
+      }
+    });

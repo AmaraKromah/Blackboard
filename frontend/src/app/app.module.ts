@@ -16,6 +16,8 @@ import {
   NbInputModule,
   NbButtonModule,
   NbSelectModule,
+  NbIconModule,
+  NbActionsModule,
 } from '@nebular/theme';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { NbDateFnsDateModule } from '@nebular/date-fns';
@@ -82,6 +84,13 @@ import { CookieService } from 'ngx-cookie-service';
     //-uses by task
     NbDialogModule.forChild(),
     //-used for assignment
+
+    //- header
+    NbIconModule,
+    NbActionsModule,
+    //-sidenav
+    NbMenuModule.forRoot(),
+    NbMenuModule,
 
     CalendarModule.forRoot({
       provide: DateAdapter,

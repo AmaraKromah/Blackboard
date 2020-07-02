@@ -7,12 +7,16 @@ import {
   Router,
 } from '@angular/router';
 import { Observable } from 'rxjs';
+import { UserAuthManagementService } from '../services/auth/user-auth-management.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthGuard implements CanActivate {
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private authService: UserAuthManagementService
+  ) {}
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
@@ -21,9 +25,7 @@ export class AuthGuard implements CanActivate {
     | Promise<boolean | UrlTree>
     | boolean
     | UrlTree {
-    const token = localStorage.getItem('x-access-token');
-    const loggedIn = token ? true : false;
-    console.log('guard loggedin: ', loggedIn);
+    const loggedIn = this.authService.loggedIn;
 
     //Alert/flashcard hier tonen
     if (!loggedIn) this.router.navigate(['/dashboard']);

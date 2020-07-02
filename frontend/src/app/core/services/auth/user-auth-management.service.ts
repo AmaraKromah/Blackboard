@@ -56,7 +56,7 @@ export class UserAuthManagementService {
   }
   //gebruik cookies
   login(login: object) {
-   return  this.http
+    return this.http
       .post(`${this.baseUrl}/signin`, login, {
         observe: 'response',
       })
@@ -69,14 +69,18 @@ export class UserAuthManagementService {
             res.headers.get('x-refresh-token')
           );
           console.log('LOGGED IN', res);
-          //set timer
+          this._authRefreshNeeded$.next();
         })
-      )
+      );
+  }
+
+  get loggedIn() {
+    return localStorage.getItem('x-access-token') ? true : false;
   }
   logout() {
     this.removeSession();
-    // this._authRefreshNeeded$.next(false);
     //-logout to home page
+    this._authRefreshNeeded$.next();
     this.router.navigate(['/dashboard']);
   }
 
@@ -87,6 +91,7 @@ export class UserAuthManagementService {
   setAccesToken(accessToken: string) {
     localStorage.setItem('x-access-token', accessToken);
   }
+
   getRefreshToken() {
     return localStorage.getItem('x-refresh-token');
   }
@@ -95,11 +100,7 @@ export class UserAuthManagementService {
     return localStorage.getItem('user-id');
   }
 
-  setSession(
-    userId: string,
-    accessToken: string,
-    refreshToken: string
-  ) {
+  setSession(userId: string, accessToken: string, refreshToken: string) {
     //vervangen door cookies?
     localStorage.setItem('user-id', userId);
     localStorage.setItem('x-access-token', accessToken);
