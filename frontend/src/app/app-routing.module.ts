@@ -4,16 +4,29 @@ import { HomeComponent } from './features/home/home.component';
 import { NotFoundComponent } from './core/components/not-found/not-found.component';
 import { ServerErrorComponent } from './core/components/server-error/server-error.component';
 import { AuthGuard } from './core/guards/auth.guard';
+import { MainComponent } from './pages/main/main.component';
 
 //todo veranderen canActivate naar canActivateChild wanneer alles apart staat want dit hoort bij de dashboard
 const routes: Routes = [
-  { path: 'dashboard', component: HomeComponent },
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   {
-    // 'dashboard/content/educations',
-    path: 'dashboard/content',
-    loadChildren: () =>
-      import('./features/content/content.module').then((m) => m.ContentModule),
+    path: 'dashboard',
+    children: [
+      {
+        // 'dashboard/content/',
+        path: 'content',
+        loadChildren: () =>
+          import('./features/content/content.module').then(
+            (m) => m.ContentModule
+          ),
+      },
+      // 'dashboard/settings/',
+      {
+        path: '',
+        component: HomeComponent,
+        pathMatch: 'full',
+        canActivate: [AuthGuard],
+      },
+    ],
   },
   // AUTH
   {
@@ -21,6 +34,7 @@ const routes: Routes = [
     loadChildren: () =>
       import('./core/auth/auth.module').then((m) => m.AuthModule),
   },
+  { path: '', component: MainComponent },
 
   //errors
   { path: 'error_500', component: ServerErrorComponent },

@@ -1,0 +1,17 @@
+<nb-layout windowMode>
+  <nb-layout-header fixed>
+    <app-header></app-header>
+  </nb-layout-header>
+  <nb-layout-column>
+    <router-outlet></router-outlet>
+    <li>
+      <a mat-button routerLink="/auth/login" routerLinkActive="isAcctive"
+        >login
+      </a>
+    </li>
+  </nb-layout-column>
+
+  <!-- <nb-layout-footer fixed>
+    <app-footer></app-footer>
+  </nb-layout-footer> -->
+</nb-layout>

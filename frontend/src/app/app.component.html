@@ -1,1 +1,7 @@
-<app-dashboard-layout></app-dashboard-layout>
+<span *ngIf="loggedIn; else elseBlock">
+  <app-dashboard-layout></app-dashboard-layout>
+</span>
+
+<ng-template #elseBlock>
+  <app-home-layout></app-home-layout>
+</ng-template>

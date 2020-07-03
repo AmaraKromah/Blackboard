@@ -35,6 +35,8 @@ import { DashboardLayoutComponent } from './core/layouts/dashboard-layout/dashbo
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { CookieService } from 'ngx-cookie-service';
+import { MainComponent } from './pages/main/main.component';
+import { HomeLayoutComponent } from './core/layouts/home-layout/home-layout.component';
 
 @NgModule({
   declarations: [
@@ -46,6 +48,8 @@ import { CookieService } from 'ngx-cookie-service';
     FooterComponent,
     SidenavComponent,
     DashboardLayoutComponent,
+    MainComponent,
+    HomeLayoutComponent,
   ],
   imports: [
     BrowserModule,

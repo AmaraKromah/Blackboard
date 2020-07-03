@@ -28,7 +28,7 @@ export class AuthGuard implements CanActivate {
     const loggedIn = this.authService.loggedIn;
 
     //Alert/flashcard hier tonen
-    if (!loggedIn) this.router.navigate(['/dashboard']);
+    if (!loggedIn) this.router.navigate(['/']);
 
     return loggedIn;
   }

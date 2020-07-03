@@ -81,7 +81,7 @@ export class UserAuthManagementService {
     this.removeSession();
     //-logout to home page
     this._authRefreshNeeded$.next();
-    this.router.navigate(['/dashboard']);
+    this.router.navigate(['/']);
   }
 
   //#try using getters and setters again
