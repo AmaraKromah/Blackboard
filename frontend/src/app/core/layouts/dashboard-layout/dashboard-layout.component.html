@@ -3,10 +3,10 @@
     <app-header></app-header>
   </nb-layout-header>
 
-  <nb-sidebar responsive #sidenav>
+  <nb-sidebar tag="menu-sidebar" responsive>
     <app-sidenav></app-sidenav>
   </nb-sidebar>
-  <nb-layout-column>
+  <nb-layout-column (click)="clickMe()">
     <router-outlet></router-outlet>
   </nb-layout-column>
 

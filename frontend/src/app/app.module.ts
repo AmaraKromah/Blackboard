@@ -18,6 +18,8 @@ import {
   NbSelectModule,
   NbIconModule,
   NbActionsModule,
+  NbContextMenuModule,
+  NbUserModule,
 } from '@nebular/theme';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { NbDateFnsDateModule } from '@nebular/date-fns';
@@ -92,6 +94,9 @@ import { HomeLayoutComponent } from './core/layouts/home-layout/home-layout.comp
     //- header
     NbIconModule,
     NbActionsModule,
+    NbMenuModule.forRoot(),
+    NbContextMenuModule,
+    NbUserModule,
     //-sidenav
     NbMenuModule.forRoot(),
     NbMenuModule,

@@ -17,6 +17,11 @@ export class SidenavComponent implements OnInit, OnDestroy {
   ) {}
   items: NbMenuItem[] = [
     {
+      title: 'Dashboard',
+      link: '/dashboard',
+      home: true,
+    },
+    {
       title: 'CONTENT',
       group: true,
       hidden: false,
