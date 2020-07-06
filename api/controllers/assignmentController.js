@@ -80,7 +80,7 @@ exports.assignments_create = async (req, res, next) => {
 		}
 
 		let file = files_id.length >= 1 ? files_id : [];
-		subject = typeof req.body.subject === "undefined" ? req.body.subject : null;
+		subject = typeof req.body.subject === "undefined" ? null : req.body.subject;
 		let new_assigment = await new Assignments({
 			title: req.body.title,
 			description: req.body.description,

@@ -33,10 +33,11 @@ export class CreateAssignmentComponent implements OnInit {
     private taskService: AssignmentService,
     private subjService: SubjectService,
     private sanitized: DomSanitizer,
-    private utility: UtilityService,
+    private utility: UtilityService
   ) {}
 
   editorEvent(event: any) {
+    // console.log('Editor event: ', event);
     const childEditor = this.sanitized.sanitize(
       SecurityContext.HTML,
       this.sanitized.bypassSecurityTrustHtml(event)
@@ -56,14 +57,12 @@ export class CreateAssignmentComponent implements OnInit {
     });
     //valideren
 
-    // this.subjID = this.subjService.subjID;
-    // console.log('Subject ID: ', this.subjID);
     if (this.subjService.subjID) {
       localStorage.setItem('subjID', this.subjService.subjID);
       this.subjID = localStorage.getItem('subjID');
+    } else {
+      this.subjID = localStorage.getItem('subjID');
     }
-    console.log('We got them cookies', this.subjID);
-
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has('id')) {
         this.displayMode = 'edit';
@@ -127,12 +126,7 @@ export class CreateAssignmentComponent implements OnInit {
     if (this.taskForm.valid) {
       if (this.displayMode === 'create') {
         this.subjID = typeof this.subjID === 'undefined' ? '' : this.subjID;
-        console.log(
-          'Sending data',
-          toSubmit,
-          'fix subject id after refresh',
-          this.subjID
-        );
+        console.log('Sending data', toSubmit);
         this.taskService.addAssignment(
           toSubmit.title,
           toSubmit.description,

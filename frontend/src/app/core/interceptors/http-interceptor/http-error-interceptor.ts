@@ -23,7 +23,8 @@ export class HttpErrorInterceptor implements HttpInterceptor {
         if (err.status != 401) {
           const error =
             (err && err.error && err.error.error.message) || err.statusText;
-          console.error('@@@', error);
+          console.error('@@@', err);
+
           return throwError(err);
         } else {
           return throwError(err);

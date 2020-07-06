@@ -82,7 +82,11 @@ export class UtilityService {
   convertSanitizedToHtml(input: string) {
     var e = document.createElement('div');
     e.innerHTML = input;
-    return e.childNodes[0].nodeValue ? e.childNodes[0].nodeValue : input;
+    return input
+      ? e.childNodes[0].nodeValue
+        ? e.childNodes[0].nodeValue
+        : input
+      : '';
   }
 
   //# -----------  CHECKS ---------------//

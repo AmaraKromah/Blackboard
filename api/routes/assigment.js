@@ -24,8 +24,8 @@ router.post(
 	"/",
 	authenticate,
 	fileUpload({ fileSize: 50, fieldNameSize: 50, fieldName: "files", maxFilesAmount: 5 }),
-	assignmentValidationRules(),
-	validate,
+	// assignmentValidationRules(),
+	// validate,
 	assignments_create
 );
 
@@ -44,8 +44,8 @@ router.patch(
 	"/:id",
 	authenticate,
 	fileUpload({ fileSize: 50, fieldNameSize: 50, fieldName: "files", maxFilesAmount: 5 }),
-	assignmentValidationRules(),
-	validate,
+	// assignmentValidationRules(),
+	// validate,
 	assigments_update
 );
 

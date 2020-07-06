@@ -16,7 +16,6 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class TextEditorComponent implements OnInit {
   form: FormGroup;
-  private baseUrl: string = 'http://localhost:3000/editor';
   private _initialParentDescription = new BehaviorSubject<string>('');
   _description: string;
 
