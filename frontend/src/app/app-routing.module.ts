@@ -5,6 +5,7 @@ import { NotFoundComponent } from './core/components/not-found/not-found.compone
 import { ServerErrorComponent } from './core/components/server-error/server-error.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { MainComponent } from './pages/main/main.component';
+import { ScedulerComponent } from './features/sceduler/sceduler.component';
 
 //todo veranderen canActivate naar canActivateChild wanneer alles apart staat want dit hoort bij de dashboard
 const routes: Routes = [
@@ -20,6 +21,11 @@ const routes: Routes = [
           ),
       },
       // 'dashboard/settings/',
+      {
+        path: 'sceduler',
+        component: ScedulerComponent,
+        // canActivate: [AuthGuard],
+      },
       {
         path: '',
         component: HomeComponent,

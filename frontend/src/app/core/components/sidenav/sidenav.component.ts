@@ -90,6 +90,16 @@ export class SidenavComponent implements OnInit, OnDestroy {
         },
       ],
     },
+    {
+      title: 'TESTING ZONE',
+      group: true,
+      hidden: false,
+    },
+    {
+      title: 'sceduler',
+      hidden: false,
+      link:'/dashboard/sceduler'
+    },
   ];
 
   ngOnInit(): void {

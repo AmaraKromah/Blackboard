@@ -11,20 +11,14 @@ let SceduleSchema = new Schema({
 		enum: ["hoorcollege", "practicum", "regular"],
 	},
 
-	begin_date: { type: String },
-	end_date: { type: String },
+	begin_date: { type: Date },
+	end_date: { type: Date },
 	begin_time: { type: String },
 	end_time: { type: String },
 
 	created_at: { type: Date, default: Date.now() },
 	changed_at: { type: Date, default: Date.now() },
 });
-
-/**
- * todo:
- * -Date in moment time (readable)
- *
- */
 
 //Export model
 module.exports = mongoose.model("Scedule", SceduleSchema);

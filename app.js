@@ -11,6 +11,7 @@ const indexRouter = require("./api/routes/index"),
 	educationRouter = require("./api/routes/education"),
 	SubjectsRouter = require("./api/routes/subjects"),
 	AssigmentsRouter = require("./api/routes/assigment"),
+	SceduleRouter = require("./api/routes/scedule"),
 	//angular
 	postRouter = require("./api/routes/post");
 
@@ -68,6 +69,7 @@ app.use("/users", usersRouter);
 app.use("/educations", educationRouter);
 app.use("/subjects", SubjectsRouter);
 app.use("/assignments", AssigmentsRouter);
+app.use("/scedule", SceduleRouter);
 
 //# ANGULAR TESTING
 

@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
+import localeNl from '@angular/common/locales/nl';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -39,7 +39,10 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { CookieService } from 'ngx-cookie-service';
 import { MainComponent } from './pages/main/main.component';
 import { HomeLayoutComponent } from './core/layouts/home-layout/home-layout.component';
+import { ScedulerComponent } from './features/sceduler/sceduler.component';
+import { registerLocaleData } from '@angular/common';
 
+registerLocaleData(localeNl);
 @NgModule({
   declarations: [
     AppComponent,
@@ -52,6 +55,7 @@ import { HomeLayoutComponent } from './core/layouts/home-layout/home-layout.comp
     DashboardLayoutComponent,
     MainComponent,
     HomeLayoutComponent,
+    ScedulerComponent,
   ],
   imports: [
     BrowserModule,
