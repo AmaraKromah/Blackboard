@@ -11,11 +11,8 @@ let SceduleSchema = new Schema({
 		enum: ["hoorcollege", "practicum", "regular"],
 	},
 
-	begin_date: { type: Date },
-	end_date: { type: Date },
-	begin_time: { type: String },
-	end_time: { type: String },
-
+	beginDateTime: { type: Date },
+	endDateTime: { type: Date },
 	created_at: { type: Date, default: Date.now() },
 	changed_at: { type: Date, default: Date.now() },
 });

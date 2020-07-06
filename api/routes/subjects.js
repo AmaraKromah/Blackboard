@@ -20,7 +20,8 @@ const Subjects = require("../models/courses/subject"),
  * # Permissions
  *
  */
-router.get("/", authenticate, subject_list);
+router.get("/", subject_list);
+// router.get("/", authenticate, subject_list);
 
 router.post("/", authenticate, subject_create);
 
