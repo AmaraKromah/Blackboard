@@ -1,0 +1,132 @@
+#dialog {
+  nb-card {
+    // min-width: 25rem;
+    nb-card-header {
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba($color: #edf1f7, $alpha: 0.4);
+      .close {
+        outline: none;
+        color: #8f9bb3;
+        opacity: 1;
+        margin-left: 1rem;
+        font-size: 1.8rem;
+        font-weight: 600;
+      }
+    }
+
+    nb-card-body.info {
+      padding-left: 2.5rem;
+      .titleDate {
+        margin-bottom: 1rem;
+        display: flex;
+        flex-flow: column wrap;
+        letter-spacing: 0.2px;
+        .title {
+          font-family: "Google Sans", Roboto, Arial, sans-serif;
+          font-size: 1.5rem;
+          font-weight: 400;
+          line-height: 2rem;
+          max-height: 2.5rem;
+          word-break: break-word;
+          overflow: hidden;
+        }
+        .date {
+          font-size: 1rem;
+          line-height: 1.5rem;
+          font-weight: 400;
+          .dot {
+            margin: 0 8px;
+            font-weight: 700;
+          }
+        }
+      }
+      .location,
+      .type {
+        margin-bottom: 1rem;
+      }
+    }
+  }
+}
+//////
+.scedule {
+  nb-card-header {
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba($color: #edf1f7, $alpha: 0.4);
+    .close {
+      outline: none;
+      color: #8f9bb3;
+      opacity: 1;
+      margin-left: 1rem;
+      font-size: 1.8rem;
+      font-weight: 600;
+      &:hover {
+        color: #0e2d89;
+      }
+    }
+  }
+  #showCardBody {
+    min-width: 30rem;
+  }
+  nb-card-body {
+    #showScedule {
+      padding-left: 1rem;
+      text-transform: capitalize;
+      .titleDate {
+        margin-bottom: 1rem;
+        display: flex;
+        flex-flow: column wrap;
+        letter-spacing: 0.2px;
+        .title {
+          font-family: "Google Sans", Roboto, Arial, sans-serif;
+          font-size: 1.5rem;
+          font-weight: 400;
+          line-height: 2rem;
+          max-height: 2.5rem;
+          word-break: break-word;
+          overflow: hidden;
+        }
+        .date {
+          font-size: 1rem;
+          line-height: 1.5rem;
+          font-weight: 400;
+          .dot {
+            margin: 0 8px;
+            font-weight: 700;
+          }
+        }
+      }
+      .location,
+      .type {
+        margin-bottom: 1rem;
+      }
+    }
+  }
+  .timeMang {
+    display: flex;
+    justify-content: center;
+    .ndash {
+      margin: 0 0.5rem;
+      position: relative;
+      top: 2rem;
+      color: #1944da;
+    }
+    timepicker {
+      ::ng-deep input {
+        background-color: #f7f9fc;
+      }
+
+      ::ng-deep td a {
+        color: #1944da;
+      }
+    }
+  }
+
+  button[type="submit"],
+  .edit {
+    color: #fff;
+    background: #1944da;
+    &:hover {
+      background: #1939b7;
+    }
+  }
+}

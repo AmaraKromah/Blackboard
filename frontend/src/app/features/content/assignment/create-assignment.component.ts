@@ -1,6 +1,6 @@
 import { Component, OnInit, SecurityContext } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
-import { TaskType } from './helpers/task_types';
+import { TaskType } from '../../../shared/helpers/task_types';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { AssignmentService } from 'src/app/core/services/assignment.service';
 import { FormBuilder, FormGroup } from '@angular/forms';

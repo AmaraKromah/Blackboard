@@ -1,98 +1,207 @@
-<div class="row text-center">
-  <div class="col-md-4">
-    <div class="btn-group">
-      <div
-        class="btn btn-primary"
-        mwlCalendarPreviousView
-        [view]="view"
-        [(viewDate)]="viewDate"
-        [excludeDays]="excludeDays"
-      >
-        Previous
-      </div>
-      <div
-        class="btn btn-outline-secondary"
-        mwlCalendarToday
-        [(viewDate)]="viewDate"
-      >
-        Today
-      </div>
-      <div
-        class="btn btn-primary"
-        mwlCalendarNextView
-        [view]="view"
-        [(viewDate)]="viewDate"
-        [excludeDays]="excludeDays"
-      >
-        Next
-      </div>
-    </div>
-  </div>
-
-  <div class="col-md-4">
-    <h3>{{ viewDate | calendarDate: view + "ViewTitle":"nl" }}</h3>
-  </div>
-  <div class="col-md-4">
-    <div class="btn-group">
-      <div
-        class="btn btn-primary"
-        (click)="setView(CalendarView.Month)"
-        [class.active]="view === CalendarView.Month"
-      >
-        Month
-      </div>
-      <div
-        class="btn btn-primary"
-        (click)="setView(CalendarView.Week)"
-        [class.active]="view === CalendarView.Week"
-      >
-        Week
-      </div>
-      <div
-        class="btn btn-primary"
-        (click)="setView(CalendarView.Day)"
-        [class.active]="view === CalendarView.Day"
-      >
-        Day
-      </div>
-    </div>
-  </div>
-</div>
-
-<br />
-<div [ngSwitch]="view">
-  <mwl-calendar-month-view
-    *ngSwitchCase="CalendarView.Month"
-    [viewDate]="viewDate"
+<span>
+  <app-scedule-header
+    class="sticky"
+    [(view)]="view"
+    [(viewDate)]="viewDate"
+    (viewDateChange)="fetchEvents()"
+    (viewChange)="fetchEvents()"
+    (daysInWeek)="responsiveWeek($event)"
     [locale]="locale"
-    [events]="events"
-    [weekStartsOn]="weekStartsOn"
-    (dayClicked)="changeDayView($event.day.date, 'w')"
+    [excludeDays]="excludeDays"
   >
-    >
-  </mwl-calendar-month-view>
+  </app-scedule-header>
 
-  <mwl-calendar-week-view
-    *ngSwitchCase="CalendarView.Week"
-    [viewDate]="viewDate"
-    [daysInWeek]="daysInWeek"
-    [locale]="locale"
-    [dayStartHour]="startHour"
-    [dayEndHour]="endHour"
-    [weekStartsOn]="weekStartsOn"
-    [events]="events"
-    (dayHeaderClicked)="changeDayView($event.day.date, 'd')"
-  >
-  </mwl-calendar-week-view>
+  <nb-card>
+    <nb-card-body>
+      <div *ngIf="events$ | async; else loading; let events">
+        <div [ngSwitch]="view">
+          <mwl-calendar-month-view
+            *ngSwitchCase="CalendarView.Month"
+            [viewDate]="viewDate"
+            [locale]="locale"
+            [weekStartsOn]="weekStartsOn"
+            [events]="events"
+            [activeDayIsOpen]="activeDayIsOpen"
+            (dayClicked)="dayClicked($event.day, dialog)"
+            (eventClicked)="eventClicked($event.event, dialog)"
+          >
+          </mwl-calendar-month-view>
 
-  <mwl-calendar-day-view
-    *ngSwitchCase="CalendarView.Day"
-    [viewDate]="viewDate"
-    [locale]="locale"
-    [dayStartHour]="startHour"
-    [dayEndHour]="endHour"
-    [events]="events"
-  >
-    >
-  </mwl-calendar-day-view>
-</div>
+          <mwl-calendar-week-view
+            *ngSwitchCase="CalendarView.Week"
+            [viewDate]="viewDate"
+            [daysInWeek]="daysInWeek"
+            [locale]="locale"
+            [dayStartHour]="startHour"
+            [dayEndHour]="endHour"
+            [events]="events"
+            (eventClicked)="eventClicked($event.event, dialog)"
+            (dayHeaderClicked)="changeDayView($event.day.date, 'd')"
+            [hourSegments]="3"
+            (hourSegmentClicked)="hourSegmentClicked($event.date, dialog)"
+          >
+          </mwl-calendar-week-view>
+
+          <mwl-calendar-day-view
+            *ngSwitchCase="CalendarView.Day"
+            [viewDate]="viewDate"
+            [locale]="locale"
+            [dayStartHour]="startHour"
+            [events]="events"
+            [dayEndHour]="endHour"
+            (eventClicked)="eventClicked($event.event, dialog)"
+            [hourSegments]="4"
+            (hourSegmentClicked)="hourSegmentClicked($event.date, dialog)"
+          >
+          </mwl-calendar-day-view>
+        </div>
+      </div>
+    </nb-card-body>
+  </nb-card>
+</span>
+
+<!-- -- gebruik content projection -->
+<ng-template #dialog let-data let-ref="dialogRef">
+  <div class="row scedule">
+    <nb-card>
+      <nb-card-header>
+        <button
+          type="button"
+          class="close"
+          aria-label="Close"
+          (click)="ref.close()"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <span *ngIf="viewType === 'add'">
+          Add scedule
+        </span>
+      </nb-card-header>
+      <nb-card-body id="showCardBody" *ngIf="viewType === 'show'">
+        <div id="showScedule">
+          <div class="row titleDate">
+            <span class="title">subject: {{ subject.value }}</span>
+            <div class="date">
+              {{ data.date }}<span class="dot">&middot;</span>
+              {{ beginTime.value | date: "HH:mm" }} &ndash;
+              {{ endTime.value | date: "HH:mm" }}
+            </div>
+          </div>
+          <div class="row location">
+            <span class="right">classroom: {{ classroom.value }} </span>
+          </div>
+          <div class="row type">
+            <!-- <nb-icon icon="options-2-outline"></nb-icon> -->
+            <span class="type">Type: {{ type.value }}</span>
+          </div>
+        </div>
+      </nb-card-body>
+      <nb-card-footer *ngIf="viewType === 'show'">
+        <button class="edit" nbButton fullWidth (click)="viewType = 'edit'">
+          Edit
+        </button>
+      </nb-card-footer>
+      <!-- //////////////////////////////////// -->
+      <nb-card-body *ngIf="viewType === 'add' || viewType === 'edit'">
+        <form [formGroup]="sceduleForm">
+          <div class="form-group">
+            <label class="label">Subject</label>
+            <input
+              nbInput
+              fullWidth
+              formControlName="subject"
+              placeholder="subject"
+            />
+          </div>
+          <label class="label">Type</label>
+          <div class="form-group">
+            <nb-select
+              fullWidth
+              formControlName="type"
+              placeholder="Select type"
+            >
+              <nb-option [value]="type" *ngFor="let type of taskType">
+                {{ type }}
+              </nb-option>
+            </nb-select>
+          </div>
+
+          <div class="row">
+            <!-- begin date -->
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="label">begin date</label>
+                <input
+                  nbInput
+                  fullWidth
+                  placeholder="Begin date"
+                  formControlName="beginDate"
+                  bsDatepicker
+                  (bsValueChange)="onBeginDateValueChange$($event)"
+                  [dateCustomClasses]="dateCustomClasses"
+                  [minDate]="minbeginDate"
+                  [bsConfig]="bsConfig"
+                />
+              </div>
+            </div>
+            <!-- begin time  -->
+            <div class="col-md-4 timeMang">
+              <div class="form-group">
+                <timepicker
+                  formControlName="beginTime"
+                  [showMeridian]="false"
+                  [minuteStep]="minuteStep"
+                  (ngModelChange)="minEndTimeValueChanged$()"
+                ></timepicker>
+              </div>
+              <span class="ndash">&ndash;</span>
+              <!-- End time  -->
+              <div class="form-group">
+                <timepicker
+                  formControlName="endTime"
+                  [showMeridian]="false"
+                  [minuteStep]="minuteStep"
+                  [min]="minEndTime"
+                ></timepicker>
+              </div>
+            </div>
+
+            <!-- end date -->
+            <div class="col-xs-12 col-12 col-md-4">
+              <div class="form-group">
+                <label class="label">end date</label>
+                <input
+                  nbInput
+                  fullWidth
+                  formControlName="endDate"
+                  placeholder="end date"
+                  bsDatepicker
+                  [minDate]="minEndDate"
+                  [bsConfig]="bsConfig"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="label">classroom</label>
+            <input
+              nbInput
+              fullWidth
+              formControlName="classroom"
+              placeholder="classroom"
+            />
+          </div>
+
+          <button type="submit" nbButton fullWidth>
+            Submit
+          </button>
+        </form>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</ng-template>
+<ng-template #loading>
+  <div class="text-center">
+    Loading events...
+  </div>
+</ng-template>

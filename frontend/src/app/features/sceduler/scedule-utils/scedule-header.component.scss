@@ -1,0 +1,50 @@
+.leftNav {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0;
+  .beforeAfterNow {
+    padding: initial;
+
+    .today {
+      border-color: #dfe5f2;
+      &:focus {
+        box-shadow: none;
+      }
+      &:hover {
+        background-color: #d1d5db;
+      }
+    }
+
+    .viewChange {
+      margin-left: 0.5rem;
+      button {
+        border: none;
+        background: none;
+        transition-duration: 0s;
+        &:hover {
+          border-radius: 50%;
+          background-color: #edf1f7;
+        }
+        &:focus {
+          box-shadow: none;
+        }
+      }
+    }
+  }
+  :nth-child(2) {
+    text-transform: capitalize;
+    h4 {
+      margin-left: -1rem;
+    }
+  }
+}
+.rightNav .btn-group :nth-child(n + 2) {
+  margin-left: 0.5rem;
+}
+.sticky {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 5rem;
+  z-index: 2;
+  box-shadow: 0 0.5rem 1rem 0 rgba(44, 51, 73, 0.1);
+}

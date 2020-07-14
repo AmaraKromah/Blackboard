@@ -1,5 +1,4 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
 import localeNl from '@angular/common/locales/nl';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -41,6 +40,12 @@ import { MainComponent } from './pages/main/main.component';
 import { HomeLayoutComponent } from './core/layouts/home-layout/home-layout.component';
 import { ScedulerComponent } from './features/sceduler/sceduler.component';
 import { registerLocaleData } from '@angular/common';
+import { SceduleHeaderComponent } from './features/sceduler/scedule-utils/scedule-header.component';
+import { NgModule } from '@angular/core';
+//ngx bootstrap
+import { AlertModule } from 'ngx-bootstrap/Alert';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 
 registerLocaleData(localeNl);
 @NgModule({
@@ -56,6 +61,7 @@ registerLocaleData(localeNl);
     MainComponent,
     HomeLayoutComponent,
     ScedulerComponent,
+    SceduleHeaderComponent,
   ],
   imports: [
     BrowserModule,
@@ -88,7 +94,7 @@ registerLocaleData(localeNl);
     //# add to features
     //- Used by edu
     NbCardModule,
-    // NbInputModule,
+    NbInputModule,
     NbButtonModule,
     NbMenuModule,
     //-uses by task
@@ -104,7 +110,21 @@ registerLocaleData(localeNl);
     //-sidenav
     NbMenuModule.forRoot(),
     NbMenuModule,
+    //-sceduler
 
+    NbCardModule,
+    NbInputModule,
+    NbSelectModule,
+    NbDialogModule.forRoot(),
+    NbDialogModule.forChild(),
+    NbDatepickerModule.forRoot(),
+    NbDatepickerModule,
+
+    //bootstrap ngx
+    AlertModule.forRoot(), // niet nodig
+    BsDatepickerModule.forRoot(),
+    TimepickerModule.forRoot(),
+    //calender
     CalendarModule.forRoot({
       provide: DateAdapter,
       useFactory: adapterFactory,

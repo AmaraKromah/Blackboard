@@ -5,7 +5,7 @@ router.get("/", async (req, res, next) => {
 	try {
 		let scedule = await Scedule.find().select("-created_at -changed_at").populate("subject", "name -_id");
 
-		res.status(200).json({ message: "We are good to go", scedule });
+		res.status(200).json(scedule);
 	} catch (error) {
 		res.status(500).json({ message: "Something went wrong", error });
 	}
@@ -14,6 +14,8 @@ router.get("/", async (req, res, next) => {
 var format = require("date-fns/format");
 var addMinutes = require("date-fns/addMinutes");
 var addHours = require("date-fns/addHours");
+var addDays = require("date-fns/addDays");
+
 router.post("/", async (req, res, next) => {
 	let origin = res.origin,
 		fullpath = res.fullpath;
@@ -28,6 +30,7 @@ router.post("/", async (req, res, next) => {
 	let randSubject = Math.floor(Math.random() * (subject.length - 1)),
 		randType = Math.floor(Math.random() * (type.length - 1)),
 		randClassroom = Math.floor(Math.random() * (classroom.length - 1)),
+		RandomDay = Math.floor(Math.random() * 10),
 		beginRandomHour = Math.floor(Math.random() * 3) + 1,
 		beginRandomMin = Math.floor(Math.random() * 120) + 30,
 		endRandomHour = Math.floor(Math.random() * (beginRandomHour + 3)) + beginRandomHour,
@@ -36,15 +39,18 @@ router.post("/", async (req, res, next) => {
 	try {
 		// console.log(beginRandomHour, " : ", beginRandomMin);
 		// console.log("added: ", endRandomHour, "hours and ", endRandomMin, "min");
+		beginDateTime = addDays(beginDateTime, RandomDay);
+		// console.log("begin date: ", beginDateTime, "added days: ", beginRandomDay);
 		beginDateTime = addHours(beginDateTime, beginRandomHour);
 		beginDateTime = addMinutes(beginDateTime, beginRandomMin);
+		endDateTime = addDays(endDateTime, RandomDay);
 		endDateTime = addHours(endDateTime, endRandomHour);
 		endDateTime = addMinutes(endDateTime, endRandomMin);
 		beginTime = format(beginDateTime, "HH:mm:ss");
 		endTime = format(endDateTime, "HH:mm:ss");
 
-		console.log("begin date: ", beginDateTime, "new begin time: ", beginTime);
-		console.log("end date: ", endDateTime, "new begin time: ", endTime);
+		// console.log("begin date: ", beginDateTime, "new begin time: ", beginTime);
+		// console.log("end date: ", endDateTime, "new begin time: ", endTime);
 
 		body.subject = subject[randSubject];
 		body.type = type[randType];
