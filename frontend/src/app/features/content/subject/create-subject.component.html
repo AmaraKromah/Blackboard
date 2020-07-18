@@ -5,7 +5,7 @@
         >Create Subject</nb-card-header
       >
       <nb-card-body>
-        <form [formGroup]="subjectForm">
+        <form [formGroup]="subjectForm" (ngSubmit)="onSubmit()">
           <div class="form-group">
             <label for="name" class="label">Name</label>
             <input
@@ -62,7 +62,6 @@
             nbButton
             status="primary"
             fullWidth
-            (click)="onSubmit()"
             [disabled]="subjectForm.invalid"
           >
             Submit

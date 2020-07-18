@@ -5,7 +5,14 @@ import {
   TemplateRef,
   OnDestroy,
 } from '@angular/core';
-import { isSameDay, isSameMonth, format, addMinutes, addHours } from 'date-fns';
+import {
+  isSameDay,
+  isSameMonth,
+  format,
+  addMinutes,
+  addHours,
+  getDay,
+} from 'date-fns';
 // import { nl } from 'date-fns/locale';
 import {
   CalendarView,
@@ -14,22 +21,22 @@ import {
   CalendarEvent,
   CalendarEventTitleFormatter,
 } from 'angular-calendar';
-import { Subject, Observable, from } from 'rxjs';
+import { Subject, Observable, from, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CustomDateFormatter } from './scedule-utils/custom-date-formatter';
 import { SceduleService } from 'src/app/core/services/scedule.service';
-import { IScedule } from 'src/app/core/model/scedule.model';
 import { colors } from './scedule-utils/colors';
 import { NbDialogService } from '@nebular/theme';
 import { CustomEventTitleFormatter } from './scedule-utils/custom-event-title-formatter.provider';
 import { DatePipe } from '@angular/common';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { TaskType } from 'src/app/shared/helpers/task_types';
-import {
-  DatepickerDateCustomClasses,
-  BsDaterangepickerConfig,
-} from 'ngx-bootstrap/datepicker';
-
+import { DatepickerDateCustomClasses } from 'ngx-bootstrap/datepicker';
+import { IScedule } from 'src/app/core/model/scedule.model';
+import { ISubject } from '../../core/model/subject.model';
+import { SubjectService } from '../../core/services/subject.service';
+import { UtilityService } from '../../shared/utilities/utility.service';
+import { RRule, RRuleSet, rrulestr } from 'rrule';
 @Component({
   selector: 'app-sceduler',
   templateUrl: './sceduler.component.html',
@@ -49,7 +56,10 @@ import {
 export class ScedulerComponent implements OnInit, OnDestroy {
   //-form related
   sceduleForm: FormGroup;
-  taskType = Object.keys(TaskType);
+  taskTypes = Object.keys(TaskType);
+  subjectNames$: Observable<{ _id: string; name: string }[]>;
+  sceduleSub: Subscription;
+
   //-date and timepicker
   minbeginDate: Date;
   minEndDate: Date;
@@ -57,6 +67,7 @@ export class ScedulerComponent implements OnInit, OnDestroy {
   minuteStep: number;
   dateCustomClasses: DatepickerDateCustomClasses[];
   viewType: string;
+  bsConfig: object;
   //-Calendar
   view: CalendarView = CalendarView.Month;
   CalendarView = CalendarView;
@@ -68,6 +79,16 @@ export class ScedulerComponent implements OnInit, OnDestroy {
   endHour: number = 20;
   refresh: Subject<any> = new Subject();
   activeDayIsOpen: boolean = false;
+  //apart in shared?
+  weekDays: any[] = [
+    { day: 0, name: 'Monday' },
+    { day: 1, name: 'Tuesday' },
+    { day: 2, name: 'Wednesday' },
+    { day: 3, name: 'Thursday' },
+    { day: 4, name: 'Friday' },
+    { day: 5, name: 'Saturday' },
+    { day: 6, name: 'Sunday' },
+  ];
 
   private destroy$ = new Subject();
   private color: any;
@@ -75,18 +96,15 @@ export class ScedulerComponent implements OnInit, OnDestroy {
   excludeDays: number[] = [0, 6];
 
   events$: Observable<CalendarEvent<{ scedule: IScedule }>[]>;
-  bsConfig;
-  bsConf: BsDaterangepickerConfig;
+  //change timezone accordingly
   constructor(
     private fb: FormBuilder,
+    private subjService: SubjectService,
     private sceduleService: SceduleService,
-    private dialogService: NbDialogService
+    private dialogService: NbDialogService,
+    private utility: UtilityService
   ) {
     //verplaatsen naar init
-    this.minbeginDate = new Date();
-    this.minEndDate = new Date();
-    // this.minEndTime = new Date()
-    this.minEndTime = new Date(addMinutes(new Date(), 10));
     this.minuteStep = 5;
     this.bsConfig = {
       isAnimated: true,
@@ -98,9 +116,7 @@ export class ScedulerComponent implements OnInit, OnDestroy {
       { date: new Date(), classes: ['bg-success', 'text-light'] },
     ];
   }
-  responsiveWeek(daysInWeek: number) {
-    this.daysInWeek = daysInWeek;
-  }
+
   ngOnInit() {
     this.sceduleForm = this.fb.group({
       subject: [''],
@@ -110,12 +126,34 @@ export class ScedulerComponent implements OnInit, OnDestroy {
       beginTime: [''],
       endDate: [''],
       endTime: [''],
+      recurWeekDay: [['']],
     });
+    this.sceduleSub = this.sceduleService.sceduleRefreshNeeded$.subscribe(
+      () => {
+        this.fetchEvents();
+        this.refresh.next();
+      }
+    );
     this.fetchEvents();
+    this.fetchSubjects();
+  }
+
+  fetchSubjects(): void {
+    this.subjectNames$ = this.subjService.getSubjectList().pipe(
+      map(({ subjects }: { subjects: ISubject[] }) => {
+        return subjects.map((subject: ISubject) => {
+          return {
+            _id: subject._id,
+            name: subject.name,
+          };
+        });
+      })
+    );
   }
   fetchEvents(): void {
     this.events$ = this.sceduleService.getSceduletList().pipe(
       map((results: IScedule[]) => {
+        this.refresh.next();
         return results.map((scedule: IScedule) => {
           if (scedule.type === 'practicum') this.color = colors.yellow;
           if (scedule.type === 'hoorcollege') this.color = colors.blue;
@@ -156,18 +194,23 @@ export class ScedulerComponent implements OnInit, OnDestroy {
         this.viewDate = date;
       }
     }
+    let daySelect = getDay(date) == 0 ? 6 : getDay(date) - 1;
     this.sceduleForm.reset();
+    this.minEndTime = addHours(date, 12);
     this.sceduleForm.patchValue({
-      type: this.taskType[2], //regular
+      type: this.taskTypes[2], //regular
       beginDate: date,
-      endDate: date,
+      endDate: new Date(date),
       beginTime: addHours(date, 12),
       endTime: addMinutes(addHours(date, 12), 15),
+      recurWeekDay: [daySelect],
     });
     this.showDailog(dialog);
   }
+
   hourSegmentClicked(selectedDateTime: Date, dialog: TemplateRef<any>) {
     this.sceduleForm.reset();
+    this.minEndTime = selectedDateTime;
     this.sceduleForm.patchValue({
       beginDate: selectedDateTime,
       endDate: selectedDateTime,
@@ -176,11 +219,18 @@ export class ScedulerComponent implements OnInit, OnDestroy {
     });
     this.showDailog(dialog);
   }
+
   eventClicked(
     event: CalendarEvent<{ scedule: IScedule }>,
     dialog?: TemplateRef<any>
   ): void {
     const scedule: IScedule = event.meta.scedule;
+    this.sceduleForm.reset();
+
+    let daySelect =
+      getDay(new Date(scedule.beginDateTime)) == 0
+        ? 6
+        : getDay(new Date(scedule.beginDateTime)) - 1;
     this.sceduleForm.patchValue({
       subject: scedule.subject.name,
       type: scedule.type,
@@ -189,10 +239,11 @@ export class ScedulerComponent implements OnInit, OnDestroy {
       endDate: new Date(scedule.endDateTime),
       beginTime: new Date(scedule.beginDateTime),
       endTime: new Date(scedule.endDateTime),
+      recurWeekDay: [daySelect],
     });
+    this.minEndTime = this.beginTime.value;
     this.showDailog(dialog, event);
   }
-
   private showDailog(
     dialog: TemplateRef<any>,
     event?: CalendarEvent<{ scedule: IScedule }>
@@ -214,27 +265,87 @@ export class ScedulerComponent implements OnInit, OnDestroy {
       this.dialogService.open(dialog, {});
     }
   }
+  onSubmit() {
+    ///////////////////////////////////
+    let beginDate = this.utility
+        .convertAnytoDate(this.beginDate.value)
+        .toDateString(),
+      beginTime = new Date(this.beginTime.value).toTimeString();
+    let endDate = this.utility
+        .convertAnytoDate(this.endDate.value)
+        .toDateString(),
+      endTime = new Date(this.endTime.value).toTimeString();
 
-  changeDayView(date: Date, view: string) {
-    this.viewDate = date;
-    this.view =
-      view.trim().toLowerCase() === 'w' ? CalendarView.Week : CalendarView.Day;
+    const beginDateTime = new Date(`${beginDate} ${beginTime}`),
+      endDateTime = new Date(`${endDate} ${endTime}`),
+      repeatedDates: { beginDateTime: Date; endDateTime: Date }[] = [];
+    let repeated: boolean = false;
+
+    ///////////////////////////////////////////
+
+    if (this.sceduleForm.valid) {
+      const rule = new RRule({
+        freq: RRule.WEEKLY,
+        interval: 1,
+        // count: 1,
+        byweekday: this.recurWeekDay.value,
+        dtstart: beginDateTime,
+        until: endDateTime,
+      });
+
+      console.log(rule.toText());
+      console.log(this.recurWeekDay.value);
+
+      repeated =
+        (this.recurWeekDay.value as Array<any>).length >= 1 ? true : false;
+
+      console.log(repeated);
+      rule.all().forEach((rrBeginDateTime: Date) => {
+        let rrbeginDate = rrBeginDateTime.toDateString(),
+          repeatEndDateTime: Date = new Date(`${rrbeginDate}  ${endTime}`);
+        repeatedDates.push({
+          beginDateTime: rrBeginDateTime,
+          endDateTime: repeatEndDateTime,
+        });
+      });
+
+      let toSubmit: IScedule = {
+        _id: null,
+        subject: this.subject.value,
+        classroom: this.classroom.value,
+        type: this.type.value,
+        beginDateTime,
+        endDateTime,
+        repeated: repeated,
+        repeatedDates,
+      };
+      // console.log(toSubmit);
+      this.sceduleService.addScedules(toSubmit);
+    }
+  }
+
+  minEndTimeValueChanged$(): void {
+    const beginTime = new Date(this.beginTime.value);
+    this.minEndTime = beginTime;
+    this.sceduleForm.patchValue({
+      endTime: addMinutes(beginTime, 15),
+    });
   }
   onBeginDateValueChange$(value: Date): void {
     const date: Date = value;
     if (date) {
+      this.minEndDate = date;
       this.minEndDate.setDate(date.getDate());
       this.sceduleForm.patchValue({
         endDate: format(date, 'dd/MM/yyyy'),
       });
     }
   }
-  minEndTimeValueChanged$(): void {
-    const beginTime = new Date(this.beginTime.value);
-    this.minEndTime = addMinutes(beginTime, 10);
-    this.sceduleForm.patchValue({
-      endTime: addMinutes(this.minEndTime, 5),
-    });
+
+  changeDayView(date: Date, view: string) {
+    this.viewDate = date;
+    this.view =
+      view.trim().toLowerCase() === 'w' ? CalendarView.Week : CalendarView.Day;
   }
 
   //getters and setters
@@ -259,7 +370,12 @@ export class ScedulerComponent implements OnInit, OnDestroy {
   get endTime() {
     return this.sceduleForm.get('endTime');
   }
+  get recurWeekDay() {
+    return this.sceduleForm.get('recurWeekDay');
+  }
+
   ngOnDestroy() {
-    this.destroy$.next();
+    this.destroy$.next(); //verwijderen ?
+    this.sceduleSub.unsubscribe();
   }
 }

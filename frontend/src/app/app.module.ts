@@ -19,6 +19,7 @@ import {
   NbActionsModule,
   NbContextMenuModule,
   NbUserModule,
+  NbCheckboxModule,
 } from '@nebular/theme';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { NbDateFnsDateModule } from '@nebular/date-fns';
@@ -119,6 +120,7 @@ registerLocaleData(localeNl);
     NbDialogModule.forChild(),
     NbDatepickerModule.forRoot(),
     NbDatepickerModule,
+    NbCheckboxModule,
 
     //bootstrap ngx
     AlertModule.forRoot(), // niet nodig

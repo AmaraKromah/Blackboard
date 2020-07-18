@@ -16,7 +16,16 @@ export class SceduleService {
     return this._sceduleRefreshNeeded$.asObservable();
   }
 
-  getSceduletList(){
+  getSceduletList() {
     return this.http.get(this.baseUrl);
+  }
+
+  addScedules(scedule: IScedule) {
+    this.http
+      .post<{ scedule: IScedule[] }>(this.baseUrl, scedule)
+      .subscribe((data) => {
+        this._sceduleRefreshNeeded$.next();
+        console.log(data);
+      });
   }
 }

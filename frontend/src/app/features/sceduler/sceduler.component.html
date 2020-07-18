@@ -5,7 +5,7 @@
     [(viewDate)]="viewDate"
     (viewDateChange)="fetchEvents()"
     (viewChange)="fetchEvents()"
-    (daysInWeek)="responsiveWeek($event)"
+    (daysInWeek)="(daysInWeek)"
     [locale]="locale"
     [excludeDays]="excludeDays"
   >
@@ -21,6 +21,7 @@
             [locale]="locale"
             [weekStartsOn]="weekStartsOn"
             [events]="events"
+            [refresh]="refresh"
             [activeDayIsOpen]="activeDayIsOpen"
             (dayClicked)="dayClicked($event.day, dialog)"
             (eventClicked)="eventClicked($event.event, dialog)"
@@ -35,6 +36,7 @@
             [dayStartHour]="startHour"
             [dayEndHour]="endHour"
             [events]="events"
+            [refresh]="refresh"
             (eventClicked)="eventClicked($event.event, dialog)"
             (dayHeaderClicked)="changeDayView($event.day.date, 'd')"
             [hourSegments]="3"
@@ -48,6 +50,7 @@
             [locale]="locale"
             [dayStartHour]="startHour"
             [events]="events"
+            [refresh]="refresh"
             [dayEndHour]="endHour"
             (eventClicked)="eventClicked($event.event, dialog)"
             [hourSegments]="4"
@@ -103,15 +106,22 @@
       </nb-card-footer>
       <!-- //////////////////////////////////// -->
       <nb-card-body *ngIf="viewType === 'add' || viewType === 'edit'">
-        <form [formGroup]="sceduleForm">
+        <form [formGroup]="sceduleForm" (ngSubmit)="onSubmit(); ref.close()">
           <div class="form-group">
             <label class="label">Subject</label>
-            <input
-              nbInput
+            <!-- todo maybe use autoComplete functionanlity -->
+            <nb-select
               fullWidth
               formControlName="subject"
               placeholder="subject"
-            />
+            >
+              <nb-option
+                [value]="subject._id"
+                *ngFor="let subject of subjectNames$ | async"
+              >
+                {{ subject.name }}
+              </nb-option>
+            </nb-select>
           </div>
           <label class="label">Type</label>
           <div class="form-group">
@@ -120,7 +130,7 @@
               formControlName="type"
               placeholder="Select type"
             >
-              <nb-option [value]="type" *ngFor="let type of taskType">
+              <nb-option [value]="type" *ngFor="let type of taskTypes">
                 {{ type }}
               </nb-option>
             </nb-select>
@@ -182,6 +192,42 @@
               </div>
             </div>
           </div>
+          <nb-checkbox>Toggle me</nb-checkbox>
+          <fieldset id="recuring">
+            <legend>recurring days</legend>
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label class="label">Select weekday</label>
+                  <nb-select
+                    fullWidth
+                    multiple
+                    formControlName="recurWeekDay"
+                    placeholder="Weekday"
+                  >
+                    <nb-option
+                      [value]="weekday.day"
+                      *ngFor="let weekday of weekDays"
+                    >
+                      {{ weekday.name }}
+                    </nb-option>
+                  </nb-select>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label class="label">classroom</label>
+                  <input nbInput fullWidth placeholder="classroom" />
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label class="label">classroom</label>
+                  <input nbInput fullWidth placeholder="classroom" />
+                </div>
+              </div>
+            </div>
+          </fieldset>
           <div class="form-group">
             <label class="label">classroom</label>
             <input

@@ -1,14 +1,14 @@
 export const colors: any = {
   red: {
-    primary: '#ad2121',
-    secondary: '#FAE3E3',
+    primary: '#FF3C35',
+    secondary: '#FFE5D6',
   },
   blue: {
-    primary: '#1e90ff',
-    secondary: '#D1E8FF',
+    primary: '#3366FF',
+    secondary: '#CCFFFD',
   },
   yellow: {
-    primary: '#e3bc08',
-    secondary: '#FDF1BA',
+    primary: '#FFD621',
+    secondary: '#FFFAD2',
   },
 };

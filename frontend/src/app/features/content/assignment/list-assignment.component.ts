@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy, TemplateRef } from '@angular/core';
 import { AssignmentService } from 'src/app/core/services/assignment.service';
-import { Router } from '@angular/router';
 import { IAssignment } from 'src/app/core/model/assignment.model';
 import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';

@@ -3,11 +3,34 @@ const express = require("express"),
 const Scedule = require("../models/courses/scedule");
 router.get("/", async (req, res, next) => {
 	try {
-		let scedule = await Scedule.find().select("-created_at -changed_at").populate("subject", "name -_id");
+		let sceduleList = await Scedule.find().select("-created_at -changed_at").populate("subject", "name -_id");
+		let newSceduleList = [];
+		console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+		sceduleList.forEach(scedule => {
+			//gebruik repeated check
+			if (scedule.repeated == false) {
+				//uitzoeken waarom gewoon object delete niet werkt
+				let newScedule = JSON.parse(JSON.stringify(scedule));
+				delete newScedule.repeated;
+				delete newScedule.repeatedDates;
+				newSceduleList.push(newScedule);
+			} else {
+				let repeatedDateList = scedule.repeatedDates;
+				repeatedDateList.forEach(repeatScedule => {
+					let newRepScedule = JSON.parse(JSON.stringify(scedule));
+					delete newRepScedule.repeated;
+					delete newRepScedule.repeatedDates;
+					newRepScedule.beginDateTime = repeatScedule.beginDateTime;
+					newRepScedule.endDateTime = repeatScedule.endDateTime;
 
-		res.status(200).json(scedule);
+					newSceduleList.push(newRepScedule);
+				});
+			}
+		});
+
+		res.status(200).json(newSceduleList);
 	} catch (error) {
-		res.status(500).json({ message: "Something went wrong", error });
+		res.status(500).json({ message: "Something went wrong", error: error.message });
 	}
 });
 
@@ -17,11 +40,22 @@ var addHours = require("date-fns/addHours");
 var addDays = require("date-fns/addDays");
 
 router.post("/", async (req, res, next) => {
+	let body = req.body;
+	try {
+		console.log(body);
+		let scedule = await new Scedule(body).save();
+		return res.status(200).json(scedule);
+	} catch (error) {
+		res.status(500).json({ message: "Something went wrong", error: error.message });
+	}
+});
+
+router.post("/random", async (req, res, next) => {
 	let origin = res.origin,
 		fullpath = res.fullpath;
 
 	let subject = ["5f0273ada475b90d484043b9", "5f02849774ee2c17e8784199", "5f0295174e7a055064ee111f", "5f02954e4e7a055064ee1120"],
-		type = ["hoorcollege", "practicum", "regular"],
+		type = ["hoorcollege-", "practicum", "regular"],
 		classroom = ["1A", "1B", "1C", "1D", "2A", "2B", "2C", "2D", "3A", "3B", "3C", "3D"];
 	let body = req.body;
 

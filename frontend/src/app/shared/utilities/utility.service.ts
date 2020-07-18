@@ -89,6 +89,14 @@ export class UtilityService {
       : '';
   }
 
+  convertAnytoDate(date: any): Date {
+    if (typeof date === 'string') {
+      let dateArray = date.split('/').map((item: string) => parseInt(item));
+      return new Date(dateArray[2], dateArray[1] - 1, dateArray[0]);
+    } else {
+      return new Date(date);
+    }
+  }
   //# -----------  CHECKS ---------------//
 
   checkNumberOnly(event: any) {

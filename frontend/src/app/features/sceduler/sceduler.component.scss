@@ -98,6 +98,9 @@
       .location,
       .type {
         margin-bottom: 1rem;
+        font-size: 1rem;
+        line-height: 1.5rem;
+        font-weight: 400;
       }
     }
   }
@@ -118,6 +121,23 @@
       ::ng-deep td a {
         color: #1944da;
       }
+    }
+  }
+  fieldset#recuring {
+    border: 1px solid #1944da;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-top: 0.5rem;
+    legend {
+      position: relative;
+      border: medium none;
+      padding: 0 1rem;
+      width: auto;
+      color: #1944da;
+      text-transform: capitalize;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: bold;
     }
   }
 
