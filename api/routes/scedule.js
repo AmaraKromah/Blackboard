@@ -103,7 +103,6 @@ router.delete("/:id", async (req, res, next) => {
 					}
 				})
 				.map(toDeleteDate => toDeleteDate._id);
-			console.log(deleteOption, "\n", toDeleterepeatedDates, "\n");
 			if (toDeleterepeatedDates.length >= 1) {
 				//verwijder alle id die overeenkomen met de te verwijderen ID
 				await Scedule.findByIdAndUpdate(sceduleID, { $pull: { repeatedDates: { _id: { $in: toDeleterepeatedDates } } } });

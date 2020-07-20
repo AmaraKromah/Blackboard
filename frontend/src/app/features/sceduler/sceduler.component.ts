@@ -36,8 +36,7 @@ import { IScedule } from 'src/app/core/model/scedule.model';
 import { ISubject } from '../../core/model/subject.model';
 import { SubjectService } from '../../core/services/subject.service';
 import { UtilityService } from '../../shared/utilities/utility.service';
-import { RRule, RRuleSet, rrulestr } from 'rrule';
-import { BsDropdownConfig } from 'ngx-bootstrap/dropdown';
+import { RRule} from 'rrule';
 @Component({
   selector: 'app-sceduler',
   templateUrl: './sceduler.component.html',
@@ -250,8 +249,6 @@ export class ScedulerComponent implements OnInit, OnDestroy {
     this.isRepeated = scedule.repeated;
     this.showDailog(dialog, event);
   }
-
-  itemss = [{ title: 'Profile' }, { title: 'Log out' }];
 
   onDelete(deleteOption?: number) {
     const deleteDates = {
