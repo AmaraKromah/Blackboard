@@ -47,6 +47,8 @@ import { NgModule } from '@angular/core';
 import { AlertModule } from 'ngx-bootstrap/Alert';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { TimepickerModule } from 'ngx-bootstrap/timepicker';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 
 registerLocaleData(localeNl);
 @NgModule({
@@ -126,6 +128,7 @@ registerLocaleData(localeNl);
     AlertModule.forRoot(), // niet nodig
     BsDatepickerModule.forRoot(),
     TimepickerModule.forRoot(),
+    BsDropdownModule.forRoot(),
     //calender
     CalendarModule.forRoot({
       provide: DateAdapter,

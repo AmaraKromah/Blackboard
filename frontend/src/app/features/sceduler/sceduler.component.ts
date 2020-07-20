@@ -37,6 +37,7 @@ import { ISubject } from '../../core/model/subject.model';
 import { SubjectService } from '../../core/services/subject.service';
 import { UtilityService } from '../../shared/utilities/utility.service';
 import { RRule, RRuleSet, rrulestr } from 'rrule';
+import { BsDropdownConfig } from 'ngx-bootstrap/dropdown';
 @Component({
   selector: 'app-sceduler',
   templateUrl: './sceduler.component.html',
@@ -59,6 +60,8 @@ export class ScedulerComponent implements OnInit, OnDestroy {
   taskTypes = Object.keys(TaskType);
   subjectNames$: Observable<{ _id: string; name: string }[]>;
   sceduleSub: Subscription;
+  repeated: boolean = false;
+  sceduleID: string;
 
   //-date and timepicker
   minbeginDate: Date;
@@ -116,7 +119,7 @@ export class ScedulerComponent implements OnInit, OnDestroy {
       { date: new Date(), classes: ['bg-success', 'text-light'] },
     ];
   }
-
+  stuff: string[];
   ngOnInit() {
     this.sceduleForm = this.fb.group({
       subject: [''],
@@ -220,6 +223,7 @@ export class ScedulerComponent implements OnInit, OnDestroy {
     this.showDailog(dialog);
   }
 
+  isRepeated: boolean;
   eventClicked(
     event: CalendarEvent<{ scedule: IScedule }>,
     dialog?: TemplateRef<any>
@@ -242,8 +246,30 @@ export class ScedulerComponent implements OnInit, OnDestroy {
       recurWeekDay: [daySelect],
     });
     this.minEndTime = this.beginTime.value;
+    this.sceduleID = scedule._id;
+    this.isRepeated = scedule.repeated;
     this.showDailog(dialog, event);
   }
+
+  itemss = [{ title: 'Profile' }, { title: 'Log out' }];
+
+  onDelete(deleteOption?: number) {
+    const deleteDates = {
+      beginDateTime: this.beginDate.value,
+      endDateTime: this.endDate.value,
+    };
+    // #delete sequence
+    deleteOption >= 0
+      ? this.sceduleService.deleteScedudle(
+          this.sceduleID,
+          deleteDates,
+          deleteOption
+        )
+      : // #deleteSIngle
+        this.sceduleService.deleteScedudle(this.sceduleID);
+    console.log(deleteOption);
+  }
+
   private showDailog(
     dialog: TemplateRef<any>,
     event?: CalendarEvent<{ scedule: IScedule }>
@@ -284,6 +310,7 @@ export class ScedulerComponent implements OnInit, OnDestroy {
     ///////////////////////////////////////////
 
     if (this.sceduleForm.valid) {
+      //maak hier een interface van ?
       const rule = new RRule({
         freq: RRule.WEEKLY,
         interval: 1,

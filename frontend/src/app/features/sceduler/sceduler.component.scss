@@ -1,53 +1,11 @@
-#dialog {
-  nb-card {
-    // min-width: 25rem;
-    nb-card-header {
-      padding-bottom: 0.5rem;
-      border-bottom: 1px solid rgba($color: #edf1f7, $alpha: 0.4);
-      .close {
-        outline: none;
-        color: #8f9bb3;
-        opacity: 1;
-        margin-left: 1rem;
-        font-size: 1.8rem;
-        font-weight: 600;
-      }
-    }
-
-    nb-card-body.info {
-      padding-left: 2.5rem;
-      .titleDate {
-        margin-bottom: 1rem;
-        display: flex;
-        flex-flow: column wrap;
-        letter-spacing: 0.2px;
-        .title {
-          font-family: "Google Sans", Roboto, Arial, sans-serif;
-          font-size: 1.5rem;
-          font-weight: 400;
-          line-height: 2rem;
-          max-height: 2.5rem;
-          word-break: break-word;
-          overflow: hidden;
-        }
-        .date {
-          font-size: 1rem;
-          line-height: 1.5rem;
-          font-weight: 400;
-          .dot {
-            margin: 0 8px;
-            font-weight: 700;
-          }
-        }
-      }
-      .location,
-      .type {
-        margin-bottom: 1rem;
-      }
-    }
-  }
-}
 //////
+.editAddSizeLarge {
+  max-height: 32.5rem;
+}
+.editAddSizeGiant {
+  max-height: 43rem;
+}
+
 .scedule {
   nb-card-header {
     padding-bottom: 0.5rem;
@@ -63,8 +21,54 @@
         color: #0e2d89;
       }
     }
+    .deleteSingle {
+      position: relative;
+      bottom: 0.15rem;
+      margin-left: 0;
+      nb-icon {
+        font-size: 1.35rem;
+        color: #8f9bb3;
+        &:hover {
+          color: #ff3932;
+        }
+      }
+    }
+    .deleteMulti {
+      button {
+        background: none;
+        border: none;
+        outline: none;
+        position: relative;
+        bottom: 0.17rem;
+        nb-icon {
+          font-size: 1.35rem;
+          color: #8f9bb3;
+          &:hover {
+            color: #ff3932;
+          }
+        }
+      }
+      .dropdown-menu {
+        li {
+          margin-bottom: 0.5rem;
+          a {
+            text-decoration: none;
+            color: #222b45;
+            &:hover {
+              color: #598bff;
+              background: transparent;
+            }
+            &:active {
+              color: #ff3932;
+              background: transparent;
+            }
+          }
+        }
+      }
+    }
   }
   #showCardBody {
+    //screensize in acht nemen hier
     min-width: 30rem;
   }
   nb-card-body {
@@ -123,11 +127,14 @@
       }
     }
   }
+  .checkRecur {
+    margin-bottom: 0.5rem;
+  }
   fieldset#recuring {
     border: 1px solid #1944da;
     border-radius: 0.5rem;
     padding: 1rem;
-    margin-top: 0.5rem;
+    margin: 0.5rem 0;
     legend {
       position: relative;
       border: medium none;

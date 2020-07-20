@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { IScedule } from '../model/scedule.model';
 import { Subject, Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -25,7 +25,33 @@ export class SceduleService {
       .post<{ scedule: IScedule[] }>(this.baseUrl, scedule)
       .subscribe((data) => {
         this._sceduleRefreshNeeded$.next();
+      });
+  }
+
+  deleteScedudle(
+    sceduleID: string,
+    deleteDates?: { beginDateTime: Date; endDateTime: Date },
+    deleteOption?: number
+  ) {
+    // console.log(sceduleID, deleteDates, 'option: ', deleteOption);
+    const options = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+      body: {
+        deleteDates,
+        deleteOption,
+      },
+    };
+    this.http
+      .delete<{ message: string; deleted: any }>(
+        `${this.baseUrl}${sceduleID}`,
+        options
+      )
+      .subscribe((data) => {
         console.log(data);
+
+        this._sceduleRefreshNeeded$.next();
       });
   }
 }

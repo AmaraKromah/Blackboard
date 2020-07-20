@@ -1,3 +1,8 @@
+<a [routerLink]="" [nbContextMenu]="itemss">bob</a>
+<br />
+<br />
+<br />
+
 <span>
   <app-scedule-header
     class="sticky"
@@ -66,7 +71,8 @@
 <!-- -- gebruik content projection -->
 <ng-template #dialog let-data let-ref="dialogRef">
   <div class="row scedule">
-    <nb-card>
+    <!-- show -->
+    <nb-card *ngIf="viewType === 'show'">
       <nb-card-header>
         <button
           type="button"
@@ -76,11 +82,83 @@
         >
           <span aria-hidden="true">&times;</span>
         </button>
-        <span *ngIf="viewType === 'add'">
-          Add scedule
-        </span>
+        <div *ngIf="!isRepeated" class="deleteSingle close">
+          <a [routerLink]="" (click)="onDelete(-1); ref.close()">
+            <nb-icon icon="trash-2-outline"></nb-icon>
+          </a>
+        </div>
+        <!-- # deleting scedule -->
+        <div
+          *ngIf="isRepeated"
+          class="btn-group close deleteMulti"
+          dropdown
+          [isAnimated]="true"
+        >
+          <button dropdownToggle>
+            <nb-icon icon="trash-2-outline"></nb-icon>
+          </button>
+          <ul *dropdownMenu class="dropdown-menu" role="menu">
+            <li role="menuitem">
+              <a
+                class="dropdown-item"
+                [routerLink]=""
+                (click)="onDelete(0); ref.close()"
+              >
+                Delete entire scedule</a
+              >
+            </li>
+            <li role="menuitem">
+              <a
+                class="dropdown-item"
+                [routerLink]=""
+                (click)="onDelete(1); ref.close()"
+              >
+                Delete only this occurence
+              </a>
+            </li>
+            <li role="menuitem">
+              <a
+                class="dropdown-item"
+                [routerLink]=""
+                (click)="onDelete(2); ref.close()"
+              >
+                Delete all but this occurence
+              </a>
+            </li>
+            <li class="divider dropdown-divider"></li>
+            <li role="menuitem">
+              <a
+                class="dropdown-item"
+                [routerLink]=""
+                (click)="onDelete(3); ref.close()"
+              >
+                Delete all occurence after this occurence
+              </a>
+            </li>
+            <li role="menuitem">
+              <a
+                class="dropdown-item"
+                [routerLink]=""
+                (click)="onDelete(4); ref.close()"
+              >
+                Delete all occurence before this occurence
+              </a>
+            </li>
+            <li class="divider dropdown-divider"></li>
+            <li role="menuitem">
+              <a class="dropdown-item" [routerLink]="" (click)="onDelete(5)">
+                Delete all occurence equal or after this occurence
+              </a>
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item" [routerLink]="" (click)="onDelete(6)">
+                Delete all occurence equal or before this occurence
+              </a>
+            </li>
+          </ul>
+        </div>
       </nb-card-header>
-      <nb-card-body id="showCardBody" *ngIf="viewType === 'show'">
+      <nb-card-body id="showCardBody">
         <div id="showScedule">
           <div class="row titleDate">
             <span class="title">subject: {{ subject.value }}</span>
@@ -99,13 +177,35 @@
           </div>
         </div>
       </nb-card-body>
-      <nb-card-footer *ngIf="viewType === 'show'">
+      <nb-card-footer>
         <button class="edit" nbButton fullWidth (click)="viewType = 'edit'">
           Edit
         </button>
       </nb-card-footer>
-      <!-- //////////////////////////////////// -->
-      <nb-card-body *ngIf="viewType === 'add' || viewType === 'edit'">
+    </nb-card>
+    <!-- edit and add -->
+    <nb-card
+      size="giant"
+      *ngIf="viewType === 'add' || viewType === 'edit'"
+      [ngClass]="repeated ? 'editAddSizeGiant' : 'editAddSizeLarge'"
+    >
+      <nb-card-header>
+        <button
+          type="button"
+          class="close"
+          aria-label="Close"
+          (click)="ref.close()"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <span *ngIf="viewType === 'add'">
+          Add scedule
+        </span>
+        <span *ngIf="viewType === 'edit'">
+          Edit scedule
+        </span>
+      </nb-card-header>
+      <nb-card-body>
         <form [formGroup]="sceduleForm" (ngSubmit)="onSubmit(); ref.close()">
           <div class="form-group">
             <label class="label">Subject</label>
@@ -192,8 +292,15 @@
               </div>
             </div>
           </div>
-          <nb-checkbox>Toggle me</nb-checkbox>
-          <fieldset id="recuring">
+          <div class="row">
+            <span class="col-md-12 checkRecur">
+              <nb-checkbox (checkedChange)="repeated = !repeated"
+                >Recurring</nb-checkbox
+              >
+            </span>
+          </div>
+
+          <fieldset id="recuring" *ngIf="repeated">
             <legend>recurring days</legend>
             <div class="row">
               <div class="col-md-4">
