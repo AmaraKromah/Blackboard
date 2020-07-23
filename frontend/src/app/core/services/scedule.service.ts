@@ -24,6 +24,15 @@ export class SceduleService {
     this.http
       .post<{ scedule: IScedule[] }>(this.baseUrl, scedule)
       .subscribe((data) => {
+        console.log(data);
+        this._sceduleRefreshNeeded$.next();
+      });
+  }
+  updateScedules(scedule: IScedule) {
+    this.http
+      .patch<{ scedule: IScedule[] }>(`${this.baseUrl}${scedule._id}`, scedule)
+      .subscribe((data) => {
+        console.log(data);
         this._sceduleRefreshNeeded$.next();
       });
   }

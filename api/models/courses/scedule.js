@@ -12,16 +12,23 @@ let SceduleSchema = new Schema({
 	},
 	beginDateTime: { type: Date },
 	endDateTime: { type: Date },
-	repeated: Boolean, // misschien niet nodig
+	occurenceText: String,
+	repeated: Boolean,
 	repeatedDates: [
 		{
 			beginDateTime: Date,
 			endDateTime: Date,
+			classroom: String,
+			type: { type: String },
+			subject: {
+				_id: String,
+				name: String,
+			},
+			updatesingle: Boolean,
 		},
 	],
 	created_at: { type: Date, default: Date.now() },
 	changed_at: { type: Date, default: Date.now() },
 });
-
 //Export model
 module.exports = mongoose.model("Scedule", SceduleSchema);

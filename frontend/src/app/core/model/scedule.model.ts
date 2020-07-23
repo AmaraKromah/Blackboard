@@ -15,8 +15,11 @@ export interface IScedule {
   beginDateTime: Date;
   endDateTime: Date;
   repeated?: boolean;
+  repeatID?: string;
   repeatedDates?: {
     [index: number]: { beginDateTime: Date; endDateTime: Date };
   };
   deleteRepeates?: boolean;
+  occurenceText?: string;
+  updateAll?: boolean;
 }

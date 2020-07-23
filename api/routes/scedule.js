@@ -1,39 +1,52 @@
 const express = require("express"),
 	router = express.Router();
-const Scedule = require("../models/courses/scedule");
-const format = require("date-fns/format"),
-	addMinutes = require("date-fns/addMinutes"),
-	addHours = require("date-fns/addHours"),
-	addDays = require("date-fns/addDays"),
-	isEqual = require("date-fns/isEqual"),
+const Scedule = require("../models/courses/scedule"),
+	Subject = require("../models/courses/subject");
+const isEqual = require("date-fns/isEqual"),
 	isAfter = require("date-fns/isAfter"),
 	isBefore = require("date-fns/isBefore");
+const _ = require("lodash");
 
+/**
+ * verplaatsen naar controller
+ * validatie en authorisatie implementeren
+ */
 router.get("/", async (req, res, next) => {
 	try {
-		let sceduleList = await Scedule.find().select("-created_at -changed_at").populate("subject", "name -_id");
+		let sceduleList = await Scedule.find().select("-created_at -changed_at").populate("subject", "name _id");
 		let newSceduleList = [];
 		sceduleList.forEach(scedule => {
+			//-for single events
 			if (scedule.repeated == false) {
-				//uitzoeken waarom gewoon object delete niet werkt
-				let newScedule = JSON.parse(JSON.stringify(scedule));
-				// delete newScedule.repeated;
+				let newScedule = scedule.toJSON();
 				delete newScedule.repeatedDates;
 				newSceduleList.push(newScedule);
 			} else {
 				let repeatedDateList = scedule.repeatedDates;
-				repeatedDateList.forEach(repeatScedule => {
-					let newRepScedule = JSON.parse(JSON.stringify(scedule));
-					// delete newRepScedule.repeated;
-					delete newRepScedule.repeatedDates;
-					newRepScedule.beginDateTime = repeatScedule.beginDateTime;
-					newRepScedule.endDateTime = repeatScedule.endDateTime;
+				//-for event in sequence
+				repeatedDateList.forEach(async repeatScedule => {
+					//-for event in sequence that has been updated individually
+					if (repeatScedule.updatesingle) {
+						let updatedScedule = repeatScedule.toJSON();
+						updatedScedule.repeatID = updatedScedule._id;
+						updatedScedule._id = String(scedule._id);
+						updatedScedule.repeated = scedule.repeated;
+						updatedScedule.occurenceText = scedule.occurenceText;
+						delete updatedScedule.updatedScedule;
+						newSceduleList.push(updatedScedule);
 
-					newSceduleList.push(newRepScedule);
+						//-for event that has been updated in bluk/ have to the same data as parent
+					} else {
+						let newRepScedule = scedule.toJSON();
+						delete newRepScedule.repeatedDates;
+						newRepScedule.beginDateTime = repeatScedule.beginDateTime;
+						newRepScedule.endDateTime = repeatScedule.endDateTime;
+						newRepScedule.repeatID = repeatScedule._id;
+						newSceduleList.push(newRepScedule);
+					}
 				});
 			}
 		});
-
 		res.status(200).json(newSceduleList);
 	} catch (error) {
 		res.status(500).json({ message: "Something went wrong", error: error.message });
@@ -42,15 +55,66 @@ router.get("/", async (req, res, next) => {
 router.post("/", async (req, res, next) => {
 	let body = req.body;
 	try {
-		console.log(body);
 		let scedule = await new Scedule(body).save();
 		return res.status(200).json(scedule);
 	} catch (error) {
-		res.status(500).json({ message: "Something went wrong", error: error.message });
+		res.status(500).json({ message: "Something went wrong add", error: error.message });
 	}
 });
+router.patch("/:id", async (req, res, next) => {
+	let body = req.body;
+	let _id = req.params.id,
+		repeatID = body.repeatID;
+	try {
+		let updateAll = body.updateAll;
+		let subjectref = await Subject.findById(body.subject, "name _id"),
+			esentialUpdate = _.pick(body, ["subject", "classroom", "type"]);
+		let beginTime = new Date(body.beginDateTime).toTimeString(),
+			endTime = new Date(body.endDateTime).toTimeString();
+		let scedule = await Scedule.findById(_id);
 
-// todo, logic in model? (zie User)
+		let repeatDates = scedule.repeatedDates;
+		// console.log("________________________------------------------------_________________\n");
+		repeatDates.forEach((dates, index) => {
+			let beginDate = new Date(dates.beginDateTime).toDateString(),
+				endDate = new Date(dates.endDateTime).toDateString();
+			let newBeginDateTime = new Date(`${beginDate} ${beginTime}`),
+				endDateTime = new Date(`${endDate} ${endTime}`);
+
+			if (updateAll) {
+				scedule.repeatedDates[index].beginDateTime = newBeginDateTime;
+				scedule.repeatedDates[index].endDateTime = endDateTime;
+				scedule.repeatedDates[index].type = scedule.repeatedDates[index].subject = scedule.repeatedDates[index].classroom = scedule.repeatedDates[
+					index
+				].updatesingle = undefined;
+			}
+			//#update single
+			if (String(repeatID) === String(dates._id) && !updateAll) {
+				let soloUpdate = (scedule.repeatedDates[index] = esentialUpdate);
+				soloUpdate.beginDateTime = new Date(body.beginDateTime);
+				soloUpdate.endDateTime = new Date(dates.endDateTime);
+				soloUpdate.endDateTime = new Date(dates.endDateTime);
+				soloUpdate.updatesingle = true;
+				soloUpdate.subject = subjectref;
+			}
+		});
+		scedule.save();
+		if (updateAll) {
+			let updateAllScedule = await Scedule.findByIdAndUpdate(
+				_id,
+				esentialUpdate,
+				(options = {
+					useFindAndModify: false,
+					new: true,
+				})
+			);
+			return res.status(200).json(updateAllScedule);
+		}
+		return res.status(200).json(scedule);
+	} catch (error) {
+		res.status(500).json({ message: "Something went wrong edit", error: error.message });
+	}
+});
 router.delete("/:id", async (req, res, next) => {
 	/**
 	 * #Delete options:
@@ -89,7 +153,6 @@ router.delete("/:id", async (req, res, next) => {
 						case 4:
 							return isBefore(dateBegin, beginDateToDelete) && isBefore(lefEnd, endDateToDelete);
 						/////////////////////////////////////////////////////////////////////
-
 						case 5:
 							return (
 								(isAfter(dateBegin, beginDateToDelete) && isAfter(lefEnd, endDateToDelete)) ||
@@ -112,59 +175,10 @@ router.delete("/:id", async (req, res, next) => {
 			}
 		}
 		await Scedule.findByIdAndDelete(sceduleID);
-
 		return res.status(200).json("Scedule successfully deleted");
 	} catch (error) {
-		res.status(500).json({ message: "Something went wrong", error: error.message });
+		res.status(500).json({ message: "Something went wrong delete", error: error.message });
 	}
 });
 
-router.post("/random", async (req, res, next) => {
-	let origin = res.origin,
-		fullpath = res.fullpath;
-
-	let subject = ["5f0273ada475b90d484043b9", "5f02849774ee2c17e8784199", "5f0295174e7a055064ee111f", "5f02954e4e7a055064ee1120"],
-		type = ["hoorcollege-", "practicum", "regular"],
-		classroom = ["1A", "1B", "1C", "1D", "2A", "2B", "2C", "2D", "3A", "3B", "3C", "3D"];
-	let body = req.body;
-
-	let beginDateTime = new Date(body.beginDateTime),
-		endDateTime = new Date(body.endDateTime);
-	let randSubject = Math.floor(Math.random() * (subject.length - 1)),
-		randType = Math.floor(Math.random() * (type.length - 1)),
-		randClassroom = Math.floor(Math.random() * (classroom.length - 1)),
-		RandomDay = Math.floor(Math.random() * 10),
-		beginRandomHour = Math.floor(Math.random() * 3) + 1,
-		beginRandomMin = Math.floor(Math.random() * 120) + 30,
-		endRandomHour = Math.floor(Math.random() * (beginRandomHour + 3)) + beginRandomHour,
-		endRandomMin = Math.floor(Math.random() * (beginRandomMin + 60)) + beginRandomMin;
-
-	try {
-		// console.log(beginRandomHour, " : ", beginRandomMin);
-		// console.log("added: ", endRandomHour, "hours and ", endRandomMin, "min");
-		beginDateTime = addDays(beginDateTime, RandomDay);
-		// console.log("begin date: ", beginDateTime, "added days: ", beginRandomDay);
-		beginDateTime = addHours(beginDateTime, beginRandomHour);
-		beginDateTime = addMinutes(beginDateTime, beginRandomMin);
-		endDateTime = addDays(endDateTime, RandomDay);
-		endDateTime = addHours(endDateTime, endRandomHour);
-		endDateTime = addMinutes(endDateTime, endRandomMin);
-		beginTime = format(beginDateTime, "HH:mm:ss");
-		endTime = format(endDateTime, "HH:mm:ss");
-
-		// console.log("begin date: ", beginDateTime, "new begin time: ", beginTime);
-		// console.log("end date: ", endDateTime, "new begin time: ", endTime);
-
-		body.subject = subject[randSubject];
-		body.type = type[randType];
-		body.classroom = classroom[randClassroom];
-		body.beginDateTime = beginDateTime;
-		body.endDateTime = endDateTime;
-		let scedule = await new Scedule(body).save();
-
-		return res.status(200).json({ message: "We are good to go", scedule });
-	} catch (error) {
-		res.status(500).json({ message: "Something went wrong", error: error.message });
-	}
-});
 module.exports = router;

@@ -36,7 +36,7 @@ import { IScedule } from 'src/app/core/model/scedule.model';
 import { ISubject } from '../../core/model/subject.model';
 import { SubjectService } from '../../core/services/subject.service';
 import { UtilityService } from '../../shared/utilities/utility.service';
-import { RRule} from 'rrule';
+import { RRule } from 'rrule';
 @Component({
   selector: 'app-sceduler',
   templateUrl: './sceduler.component.html',
@@ -59,8 +59,9 @@ export class ScedulerComponent implements OnInit, OnDestroy {
   taskTypes = Object.keys(TaskType);
   subjectNames$: Observable<{ _id: string; name: string }[]>;
   sceduleSub: Subscription;
-  repeated: boolean = false;
-  sceduleID: string;
+  isRepeated: boolean;
+  repeats: boolean = false;
+  updateAll: boolean = false;
 
   //-date and timepicker
   minbeginDate: Date;
@@ -94,6 +95,8 @@ export class ScedulerComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject();
   private color: any;
+  private sceduleID: string;
+
   // exclude weekends
   excludeDays: number[] = [0, 6];
 
@@ -133,13 +136,17 @@ export class ScedulerComponent implements OnInit, OnDestroy {
     this.sceduleSub = this.sceduleService.sceduleRefreshNeeded$.subscribe(
       () => {
         this.fetchEvents();
+        this.fetchSubjects();
+        this.repeats = false;
+        this.updateAll = false;
+        this.sceduleID = null;
         this.refresh.next();
       }
     );
     this.fetchEvents();
     this.fetchSubjects();
   }
-
+  //-deal with empty array
   fetchSubjects(): void {
     this.subjectNames$ = this.subjService.getSubjectList().pipe(
       map(({ subjects }: { subjects: ISubject[] }) => {
@@ -157,6 +164,7 @@ export class ScedulerComponent implements OnInit, OnDestroy {
       map((results: IScedule[]) => {
         this.refresh.next();
         return results.map((scedule: IScedule) => {
+          // console.log(scedule);
           if (scedule.type === 'practicum') this.color = colors.yellow;
           if (scedule.type === 'hoorcollege') this.color = colors.blue;
           if (scedule.type === 'regular') this.color = colors.red;
@@ -222,7 +230,7 @@ export class ScedulerComponent implements OnInit, OnDestroy {
     this.showDailog(dialog);
   }
 
-  isRepeated: boolean;
+  private repeatID: string;
   eventClicked(
     event: CalendarEvent<{ scedule: IScedule }>,
     dialog?: TemplateRef<any>
@@ -235,7 +243,7 @@ export class ScedulerComponent implements OnInit, OnDestroy {
         ? 6
         : getDay(new Date(scedule.beginDateTime)) - 1;
     this.sceduleForm.patchValue({
-      subject: scedule.subject.name,
+      subject: scedule.subject._id,
       type: scedule.type,
       classroom: scedule.classroom,
       beginDate: new Date(scedule.beginDateTime),
@@ -247,6 +255,8 @@ export class ScedulerComponent implements OnInit, OnDestroy {
     this.minEndTime = this.beginTime.value;
     this.sceduleID = scedule._id;
     this.isRepeated = scedule.repeated;
+    this.repeatID = scedule.repeatID;
+    // console.log(scedule.repeatID);
     this.showDailog(dialog, event);
   }
 
@@ -264,31 +274,11 @@ export class ScedulerComponent implements OnInit, OnDestroy {
         )
       : // #deleteSIngle
         this.sceduleService.deleteScedudle(this.sceduleID);
-    console.log(deleteOption);
+    // console.log(deleteOption);
   }
 
-  private showDailog(
-    dialog: TemplateRef<any>,
-    event?: CalendarEvent<{ scedule: IScedule }>
-  ) {
-    if (event) {
-      this.viewType = 'show';
-      const scedule: IScedule = event.meta.scedule;
-      this.dialogService.open(dialog, {
-        context: {
-          date: new DatePipe(this.locale).transform(
-            scedule.beginDateTime,
-            'EEEE, dd MMMM yyyy',
-            this.locale
-          ),
-        },
-      });
-    } else {
-      this.viewType = 'add';
-      this.dialogService.open(dialog, {});
-    }
-  }
   onSubmit() {
+    console.log('sceduleID:', this.sceduleID);
     ///////////////////////////////////
     let beginDate = this.utility
         .convertAnytoDate(this.beginDate.value)
@@ -302,49 +292,50 @@ export class ScedulerComponent implements OnInit, OnDestroy {
     const beginDateTime = new Date(`${beginDate} ${beginTime}`),
       endDateTime = new Date(`${endDate} ${endTime}`),
       repeatedDates: { beginDateTime: Date; endDateTime: Date }[] = [];
-    let repeated: boolean = false;
 
     ///////////////////////////////////////////
-
     if (this.sceduleForm.valid) {
       //maak hier een interface van ?
       const rule = new RRule({
         freq: RRule.WEEKLY,
         interval: 1,
-        // count: 1,
         byweekday: this.recurWeekDay.value,
         dtstart: beginDateTime,
         until: endDateTime,
       });
-
-      console.log(rule.toText());
-      console.log(this.recurWeekDay.value);
-
-      repeated =
-        (this.recurWeekDay.value as Array<any>).length >= 1 ? true : false;
-
-      console.log(repeated);
-      rule.all().forEach((rrBeginDateTime: Date) => {
-        let rrbeginDate = rrBeginDateTime.toDateString(),
-          repeatEndDateTime: Date = new Date(`${rrbeginDate}  ${endTime}`);
-        repeatedDates.push({
-          beginDateTime: rrBeginDateTime,
-          endDateTime: repeatEndDateTime,
+      //fix repeat bug
+      if (this.repeats) {
+        rule.all().forEach((rrBeginDateTime: Date) => {
+          let rrbeginDate = rrBeginDateTime.toDateString(),
+            repeatEndDateTime: Date = new Date(`${rrbeginDate}  ${endTime}`);
+          repeatedDates.push({
+            beginDateTime: rrBeginDateTime,
+            endDateTime: repeatEndDateTime,
+          });
         });
-      });
-
-      let toSubmit: IScedule = {
+      }
+      // console.log(rule.toText());
+      let addScedule: IScedule = {
         _id: null,
         subject: this.subject.value,
         classroom: this.classroom.value,
         type: this.type.value,
         beginDateTime,
         endDateTime,
-        repeated: repeated,
+        repeated: this.repeats,
         repeatedDates,
+        occurenceText: this.repeats ? rule.toText() : '',
       };
-      // console.log(toSubmit);
-      this.sceduleService.addScedules(toSubmit);
+
+      let editScedule = addScedule;
+      editScedule._id = this.sceduleID;
+      editScedule.updateAll = this.updateAll;
+      editScedule.repeatID = this.repeatID;
+
+      this.sceduleID
+        ? this.sceduleService.updateScedules(editScedule)
+        : this.sceduleService.addScedules(addScedule);
+
     }
   }
 
@@ -371,8 +362,30 @@ export class ScedulerComponent implements OnInit, OnDestroy {
     this.view =
       view.trim().toLowerCase() === 'w' ? CalendarView.Week : CalendarView.Day;
   }
-
-  //getters and setters
+  private showDailog(
+    dialog: TemplateRef<any>,
+    event?: CalendarEvent<{ scedule: IScedule }>
+  ) {
+    if (event) {
+      this.viewType = 'show';
+      const scedule: IScedule = event.meta.scedule;
+      this.dialogService.open(dialog, {
+        context: {
+          date: new DatePipe(this.locale).transform(
+            scedule.beginDateTime,
+            'EEEE, dd MMMM yyyy',
+            this.locale
+          ),
+          subject: scedule.subject.name,
+          occurenceText:scedule.occurenceText
+        },
+      });
+    } else {
+      this.viewType = 'add';
+      this.dialogService.open(dialog, {});
+    }
+  }
+  //getters
   get subject() {
     return this.sceduleForm.get('subject');
   }

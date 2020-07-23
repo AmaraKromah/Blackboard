@@ -143,7 +143,7 @@ UserSchema.pre("save", async function (next) {
  * Saves the session (refresh token + expiry time)
  * And update the user with the the newly created session
  */
-let saveSessionToDatabase = async (user, refreshToken, durationInDays=10) => {
+let saveSessionToDatabase = async (user, refreshToken, durationInDays = 10) => {
 	try {
 		let expiresAt = generateRefreshTokenExpiryTime(durationInDays);
 		await user.sessions.push({ token: refreshToken, expiresAt });

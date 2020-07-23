@@ -156,7 +156,7 @@
       <nb-card-body id="showCardBody">
         <div id="showScedule">
           <div class="row titleDate">
-            <span class="title">subject: {{ subject.value }}</span>
+            <span class="title">subject: {{ data.subject }}</span>
             <div class="date">
               {{ data.date }}<span class="dot">&middot;</span>
               {{ beginTime.value | date: "HH:mm" }} &ndash;
@@ -167,8 +167,10 @@
             <span class="right">classroom: {{ classroom.value }} </span>
           </div>
           <div class="row type">
-            <!-- <nb-icon icon="options-2-outline"></nb-icon> -->
             <span class="type">Type: {{ type.value }}</span>
+          </div>
+          <div class="row">
+            <span class="type">Occurence: {{ data.occurenceText }}</span>
           </div>
         </div>
       </nb-card-body>
@@ -182,7 +184,7 @@
     <nb-card
       size="giant"
       *ngIf="viewType === 'add' || viewType === 'edit'"
-      [ngClass]="repeated ? 'editAddSizeGiant' : 'editAddSizeLarge'"
+      [ngClass]="repeats ? 'editAddSizeGiant' : 'editAddSizeLarge'"
     >
       <nb-card-header>
         <button
@@ -287,49 +289,63 @@
               </div>
             </div>
           </div>
-          <div class="row">
-            <span class="col-md-12 checkRecur">
-              <nb-checkbox (checkedChange)="repeated = !repeated"
-                >Recurring</nb-checkbox
-              >
-            </span>
-          </div>
-
-          <fieldset id="recuring" *ngIf="repeated">
-            <legend>recurring days</legend>
+          <!-- only show if in add mode -->
+          <span *ngIf="viewType === 'add'">
             <div class="row">
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="label">Select weekday</label>
-                  <nb-select
-                    fullWidth
-                    multiple
-                    formControlName="recurWeekDay"
-                    placeholder="Weekday"
-                  >
-                    <nb-option
-                      [value]="weekday.day"
-                      *ngFor="let weekday of weekDays"
-                    >
-                      {{ weekday.name }}
-                    </nb-option>
-                  </nb-select>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="label">classroom</label>
-                  <input nbInput fullWidth placeholder="classroom" />
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="label">classroom</label>
-                  <input nbInput fullWidth placeholder="classroom" />
-                </div>
-              </div>
+              <span class="col-md-12 checkRecur">
+                <nb-checkbox (checkedChange)="repeats = !repeats"
+                  >Recurring</nb-checkbox
+                >
+              </span>
             </div>
-          </fieldset>
+
+            <fieldset id="recuring" *ngIf="repeats">
+              <legend>recurring days</legend>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label class="label">Select weekday</label>
+                    <nb-select
+                      fullWidth
+                      multiple
+                      formControlName="recurWeekDay"
+                      placeholder="Weekday"
+                    >
+                      <nb-option
+                        [value]="weekday.day"
+                        *ngFor="let weekday of weekDays"
+                      >
+                        {{ weekday.name }}
+                      </nb-option>
+                    </nb-select>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label class="label">classroom</label>
+                    <input nbInput fullWidth placeholder="classroom" />
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label class="label">classroom</label>
+                    <input nbInput fullWidth placeholder="classroom" />
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+          </span>
+          <!-- only show if in edit mode and if part of sequence-->
+          <span *ngIf="viewType === 'edit' && isRepeated">
+            <div class="row">
+              <span class="col-md-12 checkRecur">
+                <nb-checkbox (checkedChange)="updateAll = !updateAll"
+                  >Edit all occurence</nb-checkbox
+                >
+              </span>
+            </div>
+          </span>
+
           <div class="form-group">
             <label class="label">classroom</label>
             <input
