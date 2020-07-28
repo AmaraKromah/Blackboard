@@ -1,0 +1,21 @@
+<span>
+    <app-scedule-header
+      class="sticky"
+      [(view)]="view"
+      [(viewDate)]="viewDate"
+      (viewDateChange)="fetchEvents()"
+      (viewChange)="fetchEvents()"
+      (daysInWeek)="(daysInWeek)"
+      [locale]="locale"
+      [excludeDays]="excludeDays"
+    >
+    </app-scedule-header>
+  
+
+  </span>
+
+  <ng-template #loading>
+    <div class="text-center">
+      Loading events...
+    </div>
+  </ng-template>

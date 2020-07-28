@@ -248,6 +248,7 @@
                   [dateCustomClasses]="dateCustomClasses"
                   [minDate]="minbeginDate"
                   [bsConfig]="bsConfig"
+                  [isDisabled]="updateAll"
                 />
               </div>
             </div>
@@ -285,6 +286,7 @@
                   bsDatepicker
                   [minDate]="minEndDate"
                   [bsConfig]="bsConfig"
+                  [isDisabled]="updateAll"
                 />
               </div>
             </div>
@@ -339,7 +341,9 @@
           <span *ngIf="viewType === 'edit' && isRepeated">
             <div class="row">
               <span class="col-md-12 checkRecur">
-                <nb-checkbox (checkedChange)="updateAll = !updateAll"
+                <nb-checkbox
+                  checked="false"
+                  (checkedChange)="updateAll = !updateAll"
                   >Edit all occurence</nb-checkbox
                 >
               </span>

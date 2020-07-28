@@ -347,6 +347,8 @@ export class ScedulerComponent implements OnInit, OnDestroy {
     dialog: TemplateRef<any>,
     event?: CalendarEvent<{ scedule: IScedule }>
   ) {
+    this.updateAll = false;
+    this.repeats = false;
     if (event) {
       this.viewType = 'show';
       const scedule: IScedule = event.meta.scedule;

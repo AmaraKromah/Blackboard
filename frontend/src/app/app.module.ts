@@ -49,6 +49,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { SceduleCalendarComponent } from './features/sceduler/scedule-calendar.component';
 
 registerLocaleData(localeNl);
 @NgModule({
@@ -65,6 +66,7 @@ registerLocaleData(localeNl);
     HomeLayoutComponent,
     ScedulerComponent,
     SceduleHeaderComponent,
+    SceduleCalendarComponent,
   ],
   imports: [
     BrowserModule,
