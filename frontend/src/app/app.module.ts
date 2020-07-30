@@ -1,5 +1,4 @@
 import { BrowserModule } from '@angular/platform-browser';
-import localeNl from '@angular/common/locales/nl';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -14,12 +13,10 @@ import {
   NbCardModule,
   NbInputModule,
   NbButtonModule,
-  NbSelectModule,
   NbIconModule,
   NbActionsModule,
   NbContextMenuModule,
   NbUserModule,
-  NbCheckboxModule,
 } from '@nebular/theme';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { NbDateFnsDateModule } from '@nebular/date-fns';
@@ -34,24 +31,10 @@ import { HeaderComponent } from './core/components/header/header.component';
 import { FooterComponent } from './core/components/footer/footer.component';
 import { SidenavComponent } from './core/components/sidenav/sidenav.component';
 import { DashboardLayoutComponent } from './core/layouts/dashboard-layout/dashboard-layout.component';
-import { CalendarModule, DateAdapter } from 'angular-calendar';
-import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { CookieService } from 'ngx-cookie-service';
 import { MainComponent } from './pages/main/main.component';
 import { HomeLayoutComponent } from './core/layouts/home-layout/home-layout.component';
-import { ScedulerComponent } from './features/sceduler/sceduler.component';
-import { registerLocaleData } from '@angular/common';
-import { SceduleHeaderComponent } from './features/sceduler/scedule-utils/scedule-header.component';
 import { NgModule } from '@angular/core';
-//ngx bootstrap
-import { AlertModule } from 'ngx-bootstrap/Alert';
-import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-import { TimepickerModule } from 'ngx-bootstrap/timepicker';
-import { ModalModule } from 'ngx-bootstrap/modal';
-import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
-import { SceduleCalendarComponent } from './features/sceduler/scedule-calendar.component';
-
-registerLocaleData(localeNl);
 @NgModule({
   declarations: [
     AppComponent,
@@ -64,9 +47,6 @@ registerLocaleData(localeNl);
     DashboardLayoutComponent,
     MainComponent,
     HomeLayoutComponent,
-    ScedulerComponent,
-    SceduleHeaderComponent,
-    SceduleCalendarComponent,
   ],
   imports: [
     BrowserModule,
@@ -92,8 +72,6 @@ registerLocaleData(localeNl);
         useAdditionalDayOfYearTokens: true,
       },
     }),
-    NbDialogModule.forRoot(),
-
     //# libs
     ReactiveFormsModule,
     //# add to features
@@ -115,27 +93,6 @@ registerLocaleData(localeNl);
     //-sidenav
     NbMenuModule.forRoot(),
     NbMenuModule,
-    //-sceduler
-
-    NbCardModule,
-    NbInputModule,
-    NbSelectModule,
-    NbDialogModule.forRoot(),
-    NbDialogModule.forChild(),
-    NbDatepickerModule.forRoot(),
-    NbDatepickerModule,
-    NbCheckboxModule,
-
-    //bootstrap ngx
-    AlertModule.forRoot(), // niet nodig
-    BsDatepickerModule.forRoot(),
-    TimepickerModule.forRoot(),
-    BsDropdownModule.forRoot(),
-    //calender
-    CalendarModule.forRoot({
-      provide: DateAdapter,
-      useFactory: adapterFactory,
-    }),
   ],
   providers: [
     CookieService,

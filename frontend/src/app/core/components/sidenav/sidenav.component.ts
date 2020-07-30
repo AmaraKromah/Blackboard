@@ -66,6 +66,11 @@ export class SidenavComponent implements OnInit, OnDestroy {
       ],
     },
     {
+      title: 'sceduler',
+      hidden: false,
+      link: '/dashboard/content/sceduler',
+    },
+    {
       title: 'AUTH',
       group: true,
     },
@@ -94,11 +99,6 @@ export class SidenavComponent implements OnInit, OnDestroy {
       title: 'TESTING ZONE',
       group: true,
       hidden: false,
-    },
-    {
-      title: 'sceduler',
-      hidden: false,
-      link:'/dashboard/sceduler'
     },
   ];
 

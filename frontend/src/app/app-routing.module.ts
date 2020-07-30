@@ -20,12 +20,16 @@ const routes: Routes = [
             (m) => m.ContentModule
           ),
       },
-      // 'dashboard/settings/',
       {
-        path: 'sceduler',
-        component: ScedulerComponent,
-        // canActivate: [AuthGuard],
+        path: 'content/sceduler',
+        pathMatch: 'full',
+        loadChildren: () =>
+          import('./features/sceduler/scedule.module').then(
+            (m) => m.SceduleModule
+          ),
       },
+      // 'dashboard/settings/',
+
       {
         path: '',
         component: HomeComponent,
